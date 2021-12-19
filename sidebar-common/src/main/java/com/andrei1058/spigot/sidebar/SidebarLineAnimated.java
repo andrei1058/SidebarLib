@@ -1,5 +1,7 @@
 package com.andrei1058.spigot.sidebar;
 
+import org.jetbrains.annotations.NotNull;
+
 public class SidebarLineAnimated extends SidebarLine {
 
     private String[] lines;
@@ -18,9 +20,14 @@ public class SidebarLineAnimated extends SidebarLine {
     /**
      * @return message.
      */
+    @NotNull
     @Override
     public String getLine() {
         return lines[++pos == lines.length ? pos = 0 : pos];
+    }
+
+    public String[] getLines() {
+        return lines;
     }
 }
 

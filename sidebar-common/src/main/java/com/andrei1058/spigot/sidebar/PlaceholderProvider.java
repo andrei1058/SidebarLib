@@ -1,5 +1,6 @@
 package com.andrei1058.spigot.sidebar;
 
+import java.util.Objects;
 import java.util.concurrent.Callable;
 
 public class PlaceholderProvider {
@@ -10,7 +11,7 @@ public class PlaceholderProvider {
     /**
      * Create a placeholder provider.
      *
-     * @param placeholder placeholder with brackets. PAPI placeholders are automatically retrieved.
+     * @param placeholder placeholder with brackets.
      * @param replacement replacement.
      */
     public PlaceholderProvider(String placeholder, Callable<String> replacement) {
@@ -34,5 +35,18 @@ public class PlaceholderProvider {
         } catch (Exception e) {
             return "-";
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null) return false;
+        if (!(o instanceof PlaceholderProvider)) return false;
+        PlaceholderProvider that = (PlaceholderProvider) o;
+        return that.placeholder.equalsIgnoreCase(placeholder);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(placeholder, replacement);
     }
 }

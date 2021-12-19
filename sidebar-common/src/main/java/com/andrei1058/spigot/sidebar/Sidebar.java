@@ -2,9 +2,17 @@ package com.andrei1058.spigot.sidebar;
 
 import org.bukkit.entity.Player;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface Sidebar {
+
+    /**
+     * Add a new placeholder provider.
+     *
+     * @param placeholderProvider new placeholder.
+     */
+    void addPlaceholder(PlaceholderProvider placeholderProvider);
 
     /**
      * Add a new line to the scoreboard.
@@ -75,4 +83,64 @@ public interface Sidebar {
      * @param line position. 0 is bottom.
      */
     void removeLine(int line);
+
+    /**
+     * @return lines amount.
+     */
+    int linesAmount();
+
+    /**
+     * Remove a placeholder.
+     *
+     * @param placeholder placeholder to be removed.
+     */
+    void removePlaceholder(String placeholder);
+
+    /**
+     * Get placeholder providers list.
+     *
+     * @return placeholder providers list.
+     */
+    List<PlaceholderProvider> getPlaceholders();
+
+    /**
+     * This will create a new tab list team.
+     *
+     * @param player team name. Player.
+     */
+    default void playerListCreate(Player player, SidebarLine prefix, SidebarLine suffix) {
+        playerListCreate(player, prefix, suffix, true);
+    }
+
+    void playerListCreate(Player player, SidebarLine prefix, SidebarLine suffix, boolean disablePushing);
+
+    void playerListAddPlaceholders(Player player, PlaceholderProvider... placeholderProviders);
+
+    void playerListRemovePlaceholder(Player player, String placeholder);
+
+    void playerListRemove(String playerName);
+
+    void playerListClear();
+
+    void showPlayersHealth(SidebarLine displayName, boolean list);
+
+    void hidePlayersHealth();
+
+    void refreshHealthAnimation();
+
+    void refreshHealth(Player player, int health);
+
+    void playerListRefreshAnimation();
+
+    /**
+     * Hide the name tag on head of the player.
+     * Usually used when drinking invisibility potions.
+     */
+    void playerListHideNameTag(Player player);
+
+    /**
+     * Show the name tag on head of the player.
+     * Usually used when an invisibility potion has expired.
+     */
+    void playerListRestoreNameTag(Player player);
 }

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.andrei1058.spigot.sidebar</groupId>
+    <artifactId>sidebar-pom</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>sidebar-api</module>
+        <module>sidebar-common</module>
+        <module>sidebar-v1_8_R3</module>
+        <module>sidebar-v1_9_R2</module>
+        <module>sidebar-v1_10_R1</module>
+        <module>sidebar-v1_11_R1</module>
+        <module>sidebar-v1_13_R2</module>
+        <module>sidebar-v1_12_R1</module>
+        <module>sidebar-v1_14_R1</module>
+        <module>sidebar-v1_15_R1</module>
+        <module>sidebar-v1_16_R1</module>
+        <module>sidebar-v1_16_R2</module>
+    </modules>
+
+    <repositories>
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>1.15.2-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.jetbrains/annotations -->
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>13.0</version>
+        </dependency>
+    </dependencies>
+
+
+    <build>
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-ftp</artifactId>
+                <version>1.0-beta-6</version>
+            </extension>
+        </extensions>
+    </build>
+
+    <distributionManagement>
+        <repository>
+            <id>ftp-repo</id>
+            <url>ftp://andrei1058.com/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>ftp-repo</id>
+            <url>ftp://andrei1058.com/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+</project>
