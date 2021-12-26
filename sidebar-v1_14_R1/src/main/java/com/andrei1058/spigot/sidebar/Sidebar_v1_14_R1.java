@@ -14,14 +14,14 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class Sidebar_v1_14_R1 implements com.andrei1058.spigot.sidebar.Sidebar {
 
-    private LinkedList<ScoreLine> lines = new LinkedList<>();
+    private final LinkedList<ScoreLine> lines = new LinkedList<>();
     public LinkedList<PlayerConnection> players = new LinkedList<>();
-    private LinkedList<PlaceholderProvider> placeholderProviders = new LinkedList<>();
-    private LinkedList<String> availableColors = new LinkedList<>();
+    private final LinkedList<PlaceholderProvider> placeholderProviders = new LinkedList<>();
+    private final LinkedList<String> availableColors = new LinkedList<>();
     protected SidebarObjective healthObjective = null;
-    private ConcurrentHashMap<String, PlayerList_v1_14_R1> teamLists = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, PlayerList_v1_14_R1> teamLists = new ConcurrentHashMap<>();
 
-    private SidebarObjective sidebarObjective;
+    private final SidebarObjective sidebarObjective;
 
     public Sidebar_v1_14_R1(@NotNull SidebarLine title, @NotNull Collection<SidebarLine> lines, Collection<PlaceholderProvider> placeholderProvider) {
         for (ChatColor chatColor : ChatColor.values()) {
@@ -179,9 +179,7 @@ public class Sidebar_v1_14_R1 implements com.andrei1058.spigot.sidebar.Sidebar {
 
     @Override
     public void playerListCreate(Player player, SidebarLine prefix, SidebarLine suffix, boolean disablePushing) {
-        if (teamLists.containsKey(player.getName())) {
-            this.playerListRemove(player.getName());
-        }
+        this.playerListRemove(player.getName());
 
         PlayerList_v1_14_R1 team = new PlayerList_v1_14_R1(this, player, prefix, suffix, disablePushing);
         players.forEach(team::sendCreate);
@@ -208,10 +206,9 @@ public class Sidebar_v1_14_R1 implements com.andrei1058.spigot.sidebar.Sidebar {
 
     @Override
     public void playerListRemove(String teamName) {
-        PlayerList_v1_14_R1 list = teamLists.getOrDefault(teamName, null);
+        PlayerList_v1_14_R1 list = teamLists.remove(teamName);
         if (list != null) {
             players.forEach(list::sendRemove);
-            teamLists.remove(teamName);
         }
     }
 
@@ -283,13 +280,12 @@ public class Sidebar_v1_14_R1 implements com.andrei1058.spigot.sidebar.Sidebar {
         this.players.removeIf(p -> p.player.getUniqueID().equals(player));
         Player p = Bukkit.getPlayer(player);
         if (p != null) {
-            if (p.isOnline()) {
-                PlayerConnection playerConnection = ((CraftPlayer) p).getHandle().playerConnection;
-                this.sidebarObjective.sendRemove(playerConnection);
-                if (this.healthObjective != null) {
-                    this.healthObjective.sendRemove(playerConnection);
-                }
-                teamLists.forEach((b, c) -> c.sendRemove(playerConnection));
+            PlayerConnection playerConnection = ((CraftPlayer) p).getHandle().playerConnection;
+            teamLists.forEach((b, c) -> c.sendRemove(playerConnection));
+            lines.forEach(line -> line.sendRemove(playerConnection));
+            this.sidebarObjective.sendRemove(playerConnection);
+            if (this.healthObjective != null) {
+                this.healthObjective.sendRemove(playerConnection);
             }
         }
     }
@@ -309,7 +305,7 @@ public class Sidebar_v1_14_R1 implements com.andrei1058.spigot.sidebar.Sidebar {
     protected class SidebarObjective extends ScoreboardObjective {
 
         private SidebarLine displayName;
-        private int type;
+        private final int type;
 
         public SidebarObjective(String name, IScoreboardCriteria criteria, SidebarLine displayName, int type) {
             super(null, name, criteria, new ChatComponentText(name), IScoreboardCriteria.EnumScoreboardHealthDisplay.INTEGER);
@@ -446,6 +442,13 @@ public class Sidebar_v1_14_R1 implements com.andrei1058.spigot.sidebar.Sidebar {
             players.forEach(c -> c.sendPacket(packetPlayOutScoreboardTeam));
             PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(ScoreboardServer.Action.CHANGE, sidebarObjective.getName(), getPlayerName(), getScore());
             players.forEach(c -> c.sendPacket(packetPlayOutScoreboardScore));
+        }
+
+        private void sendRemove(PlayerConnection player) {
+            PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = new PacketPlayOutScoreboardTeam(team, 1);
+            PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(ScoreboardServer.Action.REMOVE, sidebarObjective.getName(), getPlayerName(), getScore());
+            player.sendPacket(packetPlayOutScoreboardTeam);
+            player.sendPacket(packetPlayOutScoreboardScore);
         }
 
         private void remove() {

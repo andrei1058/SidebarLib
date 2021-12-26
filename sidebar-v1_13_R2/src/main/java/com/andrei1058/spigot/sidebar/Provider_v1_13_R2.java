@@ -2,6 +2,7 @@ package com.andrei1058.spigot.sidebar;
 
 import java.util.Collection;
 
+@SuppressWarnings("unused")
 public class Provider_v1_13_R2 extends SidebarProvider {
 
     @Override

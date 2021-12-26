@@ -198,9 +198,7 @@ class Sidebar_v1_12_R1 implements com.andrei1058.spigot.sidebar.Sidebar {
 
     @Override
     public void playerListCreate(@NotNull Player player, SidebarLine prefix, SidebarLine suffix, boolean disablePushing) {
-        if (teamLists.containsKey(player.getName())) {
-            this.playerListRemove(player.getName());
-        }
+        this.playerListRemove(player.getName());
 
         PlayerList_v1_12_R1 team = new PlayerList_v1_12_R1(this, player, prefix, suffix, disablePushing);
         players.forEach(team::sendCreate);
@@ -227,10 +225,9 @@ class Sidebar_v1_12_R1 implements com.andrei1058.spigot.sidebar.Sidebar {
 
     @Override
     public void playerListRemove(String teamName) {
-        PlayerList_v1_12_R1 list = teamLists.getOrDefault(teamName, null);
+        PlayerList_v1_12_R1 list = teamLists.remove(teamName);
         if (list != null) {
             players.forEach(list::sendRemove);
-            teamLists.remove(teamName);
         }
     }
 
@@ -243,34 +240,6 @@ class Sidebar_v1_12_R1 implements com.andrei1058.spigot.sidebar.Sidebar {
         }
         teamLists.clear();
     }
-
-    /*@Override
-    public void teamListAddPlayer(String teamName, Player player) {
-        PlayerList_v1_12_R1 team = null;
-        for (PlayerList_v1_12_R1 t : teamLists){
-            if (t.getName().equals(teamName)){
-                team = t;
-                break;
-            }
-        }
-        if (team != null){
-            team.addPlayer(player.getName());
-        }
-    }*/
-
-    /*@Override
-    public void teamListRemovePlayer(String teamName, Player player) {
-        PlayerList_v1_12_R1 team = null;
-        for (PlayerList_v1_12_R1 t : teamLists){
-            if (t.getName().equals(teamName)){
-                team = t;
-                break;
-            }
-        }
-        if (team != null){
-            team.removePlayer(player.getName());
-        }
-    }*/
 
     @Override
     public void showPlayersHealth(SidebarLine displayName, boolean list) {
@@ -323,13 +292,12 @@ class Sidebar_v1_12_R1 implements com.andrei1058.spigot.sidebar.Sidebar {
         this.players.removeIf(p -> p.player.getUniqueID().equals(player));
         Player p = Bukkit.getPlayer(player);
         if (p != null) {
-            if (p.isOnline()) {
-                PlayerConnection playerConnection = ((CraftPlayer) p).getHandle().playerConnection;
-                this.sidebarObjective.sendRemove(playerConnection);
-                if (this.healthObjective != null) {
-                    this.healthObjective.sendRemove(playerConnection);
-                }
-                teamLists.forEach((b, c) -> c.sendRemove(playerConnection));
+            PlayerConnection playerConnection = ((CraftPlayer) p).getHandle().playerConnection;
+            teamLists.forEach((b, c) -> c.sendRemove(playerConnection));
+            lines.forEach(line -> line.sendRemove(playerConnection));
+            this.sidebarObjective.sendRemove(playerConnection);
+            if (this.healthObjective != null) {
+                this.healthObjective.sendRemove(playerConnection);
             }
         }
     }
@@ -489,16 +457,23 @@ class Sidebar_v1_12_R1 implements com.andrei1058.spigot.sidebar.Sidebar {
         private void sendCreate() {
             PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = new PacketPlayOutScoreboardTeam(team, 0);
             PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(this);
-            for (PlayerConnection player : players){
+            for (PlayerConnection player : players) {
                 player.sendPacket(packetPlayOutScoreboardTeam);
                 player.sendPacket(packetPlayOutScoreboardScore);
             }
         }
 
+        private void sendRemove(PlayerConnection player) {
+            PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = new PacketPlayOutScoreboardTeam(team, 1);
+            PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(getPlayerName(), sidebarObjective);
+            player.sendPacket(packetPlayOutScoreboardTeam);
+            player.sendPacket(packetPlayOutScoreboardScore);
+        }
+
         private void remove() {
             PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = new PacketPlayOutScoreboardTeam(team, 1);
             PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(getPlayerName(), sidebarObjective);
-            for (PlayerConnection player : players){
+            for (PlayerConnection player : players) {
                 player.sendPacket(packetPlayOutScoreboardTeam);
                 player.sendPacket(packetPlayOutScoreboardScore);
             }
@@ -539,7 +514,7 @@ class Sidebar_v1_12_R1 implements com.andrei1058.spigot.sidebar.Sidebar {
 
         private void sendUpdate() {
             PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = new PacketPlayOutScoreboardTeam(team, 2);
-            for (PlayerConnection player : players){
+            for (PlayerConnection player : players) {
                 player.sendPacket(packetPlayOutScoreboardTeam);
             }
         }
@@ -552,7 +527,7 @@ class Sidebar_v1_12_R1 implements com.andrei1058.spigot.sidebar.Sidebar {
         public void setScore(int score) {
             this.score = score;
             PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(this);
-            for (PlayerConnection player : players){
+            for (PlayerConnection player : players) {
                 player.sendPacket(packetPlayOutScoreboardScore);
             }
         }
