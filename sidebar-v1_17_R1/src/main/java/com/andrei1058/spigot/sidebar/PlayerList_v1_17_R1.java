@@ -10,7 +10,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.Collections;
 import java.util.LinkedList;
 
 public class PlayerList_v1_17_R1 extends ScoreboardTeam implements PlayerList {
@@ -183,7 +182,7 @@ public class PlayerList_v1_17_R1 extends ScoreboardTeam implements PlayerList {
     }
 
     public void sendRemove(@NotNull PlayerConnection playerConnection) {
-        PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(this, true);
+        PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(this);
         playerConnection.sendPacket(packetPlayOutScoreboardTeam);
     }
 }

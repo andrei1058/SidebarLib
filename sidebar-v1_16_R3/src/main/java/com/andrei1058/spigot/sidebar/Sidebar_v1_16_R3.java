@@ -183,9 +183,7 @@ public class Sidebar_v1_16_R3 implements com.andrei1058.spigot.sidebar.Sidebar {
 
     @Override
     public void playerListCreate(Player player, SidebarLine prefix, SidebarLine suffix, boolean disableCollisions) {
-        if (teamLists.containsKey(player.getName())) {
-            this.playerListRemove(player.getName());
-        }
+        this.playerListRemove(player.getName());
 
         PlayerList_v1_16_R3 team = new PlayerList_v1_16_R3(this, player, prefix, suffix, disableCollisions);
         for (PlayerConnection playerConnection : players) {
@@ -214,10 +212,9 @@ public class Sidebar_v1_16_R3 implements com.andrei1058.spigot.sidebar.Sidebar {
 
     @Override
     public void playerListRemove(String teamName) {
-        PlayerList_v1_16_R3 list = teamLists.getOrDefault(teamName, null);
+        PlayerList_v1_16_R3 list = teamLists.remove(teamName);
         if (list != null) {
             players.forEach(list::sendRemove);
-            teamLists.remove(teamName);
         }
     }
 
@@ -299,13 +296,12 @@ public class Sidebar_v1_16_R3 implements com.andrei1058.spigot.sidebar.Sidebar {
         this.players.removeIf(p -> p.player.getUniqueID().equals(player));
         Player p = Bukkit.getPlayer(player);
         if (p != null) {
-            if (p.isOnline()) {
-                PlayerConnection playerConnection = ((CraftPlayer) p).getHandle().playerConnection;
-                this.sidebarObjective.sendRemove(playerConnection);
-                if (this.healthObjective != null) {
-                    this.healthObjective.sendRemove(playerConnection);
-                }
-                teamLists.forEach((b, c) -> c.sendRemove(playerConnection));
+            PlayerConnection playerConnection = ((CraftPlayer) p).getHandle().playerConnection;
+            teamLists.forEach((b, c) -> c.sendRemove(playerConnection));
+            lines.forEach(line -> line.sendRemove(playerConnection));
+            this.sidebarObjective.sendRemove(playerConnection);
+            if (this.healthObjective != null) {
+                this.healthObjective.sendRemove(playerConnection);
             }
         }
     }
@@ -379,7 +375,7 @@ public class Sidebar_v1_16_R3 implements com.andrei1058.spigot.sidebar.Sidebar {
         // must be called when updating the name
         private void sendUpdate() {
             PacketPlayOutScoreboardObjective packetPlayOutScoreboardObjective = new PacketPlayOutScoreboardObjective(this, 2);
-            for (PlayerConnection playerConnection : players){
+            for (PlayerConnection playerConnection : players) {
                 playerConnection.sendPacket(packetPlayOutScoreboardObjective);
             }
         }
@@ -404,7 +400,7 @@ public class Sidebar_v1_16_R3 implements com.andrei1058.spigot.sidebar.Sidebar {
             this.team = new TeamLine(color);
 
             if (!text.isHasPlaceholders()) {
-                for (PlaceholderProvider provider : placeholderProviders){
+                for (PlaceholderProvider provider : placeholderProviders) {
                     if (text.getLine().contains(provider.getPlaceholder())) {
                         text.setHasPlaceholders(true);
                     }
@@ -465,22 +461,29 @@ public class Sidebar_v1_16_R3 implements com.andrei1058.spigot.sidebar.Sidebar {
 
         private void sendCreate() {
             PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = new PacketPlayOutScoreboardTeam(team, 0);
-            for (PlayerConnection playerConnection : players){
+            for (PlayerConnection playerConnection : players) {
                 playerConnection.sendPacket(packetPlayOutScoreboardTeam);
             }
             PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(ScoreboardServer.Action.CHANGE, sidebarObjective.getName(), getPlayerName(), getScore());
-            for (PlayerConnection playerConnection : players){
+            for (PlayerConnection playerConnection : players) {
                 playerConnection.sendPacket(packetPlayOutScoreboardScore);
             }
         }
 
+        private void sendRemove(PlayerConnection player) {
+            PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = new PacketPlayOutScoreboardTeam(team, 1);
+            PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(ScoreboardServer.Action.REMOVE, sidebarObjective.getName(), getPlayerName(), getScore());
+            player.sendPacket(packetPlayOutScoreboardTeam);
+            player.sendPacket(packetPlayOutScoreboardScore);
+        }
+
         private void remove() {
             PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = new PacketPlayOutScoreboardTeam(team, 1);
-            for (PlayerConnection playerConnection : players){
+            for (PlayerConnection playerConnection : players) {
                 playerConnection.sendPacket(packetPlayOutScoreboardTeam);
             }
             PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(ScoreboardServer.Action.REMOVE, sidebarObjective.getName(), getPlayerName(), getScore());
-            for (PlayerConnection playerConnection : players){
+            for (PlayerConnection playerConnection : players) {
                 playerConnection.sendPacket(packetPlayOutScoreboardScore);
             }
             availableColors.add(getColor());
@@ -520,7 +523,7 @@ public class Sidebar_v1_16_R3 implements com.andrei1058.spigot.sidebar.Sidebar {
 
         private void sendUpdate() {
             PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = new PacketPlayOutScoreboardTeam(team, 2);
-            for (PlayerConnection playerConnection : players){
+            for (PlayerConnection playerConnection : players) {
                 playerConnection.sendPacket(packetPlayOutScoreboardTeam);
             }
         }
@@ -533,7 +536,7 @@ public class Sidebar_v1_16_R3 implements com.andrei1058.spigot.sidebar.Sidebar {
         public void setScore(int score) {
             this.score = score;
             PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(ScoreboardServer.Action.CHANGE, sidebarObjective.getName(), getPlayerName(), score);
-            for (PlayerConnection playerConnection : players){
+            for (PlayerConnection playerConnection : players) {
                 playerConnection.sendPacket(packetPlayOutScoreboardScore);
             }
         }

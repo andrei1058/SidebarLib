@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class CustomScore_v1_9_R2 extends ScoreboardScore {
 
-    private int score;
+    private final int score;
 
     public CustomScore_v1_9_R2(ScoreboardObjective scoreboardObjective, String playerName, int score) {
         super(null, scoreboardObjective, playerName);

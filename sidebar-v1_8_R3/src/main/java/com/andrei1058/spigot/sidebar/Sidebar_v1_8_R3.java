@@ -15,14 +15,14 @@ import static net.minecraft.server.v1_8_R3.IScoreboardCriteria.EnumScoreboardHea
 
 class Sidebar_v1_8_R3 implements com.andrei1058.spigot.sidebar.Sidebar {
 
-    private LinkedList<ScoreLine> lines = new LinkedList<>();
+    private final LinkedList<ScoreLine> lines = new LinkedList<>();
     protected LinkedList<PlayerConnection> players = new LinkedList<>();
     protected LinkedList<PlaceholderProvider> placeholderProviders = new LinkedList<>();
-    private LinkedList<String> availableColors = new LinkedList<>();
+    private final LinkedList<String> availableColors = new LinkedList<>();
 
-    private SidebarObjective sidebarObjective;
+    private final SidebarObjective sidebarObjective;
     protected SidebarObjective healthObjective = null;
-    private ConcurrentHashMap<String, PlayerList_v1_8_R3> teamLists = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, PlayerList_v1_8_R3> teamLists = new ConcurrentHashMap<>();
 
     public Sidebar_v1_8_R3(@NotNull SidebarLine title, @NotNull Collection<SidebarLine> lines, Collection<PlaceholderProvider> placeholderProvider) {
         for (ChatColor chatColor : ChatColor.values()) {
@@ -179,9 +179,7 @@ class Sidebar_v1_8_R3 implements com.andrei1058.spigot.sidebar.Sidebar {
 
     @Override
     public void playerListCreate(@NotNull Player player, SidebarLine prefix, SidebarLine suffix, boolean disablePushing) {
-        if (teamLists.containsKey(player.getName())) {
-            this.playerListRemove(player.getName());
-        }
+        this.playerListRemove(player.getName());
 
         PlayerList_v1_8_R3 team = new PlayerList_v1_8_R3(this, player, prefix, suffix);
         players.forEach(team::sendCreate);
@@ -208,10 +206,9 @@ class Sidebar_v1_8_R3 implements com.andrei1058.spigot.sidebar.Sidebar {
 
     @Override
     public void playerListRemove(String teamName) {
-        PlayerList_v1_8_R3 list = teamLists.getOrDefault(teamName, null);
-        if (list != null) {
+        PlayerList_v1_8_R3 list = teamLists.remove(teamName);
+        if (null != list) {
             players.forEach(list::sendRemove);
-            teamLists.remove(teamName);
         }
     }
 
@@ -264,7 +261,7 @@ class Sidebar_v1_8_R3 implements com.andrei1058.spigot.sidebar.Sidebar {
     @Override
     public void playerListHideNameTag(@NotNull Player player) {
         PlayerList_v1_8_R3 listed = teamLists.get(player.getName());
-        if (listed != null){
+        if (listed != null) {
             listed.hideNameTag();
         }
     }
@@ -272,23 +269,22 @@ class Sidebar_v1_8_R3 implements com.andrei1058.spigot.sidebar.Sidebar {
     @Override
     public void playerListRestoreNameTag(@NotNull Player player) {
         PlayerList_v1_8_R3 listed = teamLists.get(player.getName());
-        if (listed != null){
+        if (listed != null) {
             listed.showNameTag();
         }
     }
 
     @Override
     public void remove(UUID player) {
-        this.players.removeIf(p -> p.player.getUniqueID().equals(player));
+        this.players.removeIf(pl -> pl.player.getUniqueID().equals(player));
         Player p = Bukkit.getPlayer(player);
         if (p != null) {
-            if (p.isOnline()) {
-                PlayerConnection playerConnection = ((CraftPlayer) p).getHandle().playerConnection;
-                this.sidebarObjective.sendRemove(playerConnection);
-                if (this.healthObjective != null) {
-                    this.healthObjective.sendRemove(playerConnection);
-                }
-                teamLists.forEach((b, c) -> c.sendRemove(playerConnection));
+            PlayerConnection playerConnection = ((CraftPlayer) p).getHandle().playerConnection;
+            teamLists.forEach((b, c) -> c.sendRemove(playerConnection));
+            lines.forEach(line -> line.sendRemove(playerConnection));
+            this.sidebarObjective.sendRemove(playerConnection);
+            if (this.healthObjective != null) {
+                this.healthObjective.sendRemove(playerConnection);
             }
         }
     }
@@ -307,8 +303,7 @@ class Sidebar_v1_8_R3 implements com.andrei1058.spigot.sidebar.Sidebar {
 
     private class SidebarObjective extends ScoreboardObjective {
 
-        private int type;
-        private IScoreboardCriteria.EnumScoreboardHealthDisplay health = INTEGER;
+        private final int type;
         private SidebarLine displayName;
 
         public SidebarObjective(String name, IScoreboardCriteria criteria, int type, SidebarLine displayName) {
@@ -355,7 +350,7 @@ class Sidebar_v1_8_R3 implements com.andrei1058.spigot.sidebar.Sidebar {
 
         @Override
         public IScoreboardCriteria.EnumScoreboardHealthDisplay e() {
-            return health;
+            return INTEGER;
         }
     }
 
@@ -454,6 +449,13 @@ class Sidebar_v1_8_R3 implements com.andrei1058.spigot.sidebar.Sidebar {
             this.team = null;
             this.prefix = null;
             this.suffix = null;
+        }
+
+        private void sendRemove(PlayerConnection player) {
+            PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = new PacketPlayOutScoreboardTeam(team, 1);
+            PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(getPlayerName(), sidebarObjective);
+            player.sendPacket(packetPlayOutScoreboardTeam);
+            player.sendPacket(packetPlayOutScoreboardScore);
         }
 
         @Contract(pure = true)

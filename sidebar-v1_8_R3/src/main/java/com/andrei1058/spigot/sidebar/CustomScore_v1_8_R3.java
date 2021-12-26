@@ -10,7 +10,7 @@ import java.util.List;
 
 public class CustomScore_v1_8_R3 extends ScoreboardScore {
 
-    private int score;
+    private final int score;
 
     public CustomScore_v1_8_R3(ScoreboardObjective scoreboardObjective, String playerName, int score) {
         super(null, scoreboardObjective, playerName);
