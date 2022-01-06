@@ -9,7 +9,7 @@
     <packaging>pom</packaging>
     <version>0.3.2-SNAPSHOT</version>
     <modules>
-        <module>sidebar-api</module>
+        <module>sidebar-api-old</module>
         <module>sidebar-common</module>
         <module>sidebar-v1_8_R3</module>
         <module>sidebar-v1_9_R2</module>
@@ -24,6 +24,8 @@
         <module>sidebar-v1_16_R3</module>
         <module>sidebar-v1_17_R1</module>
         <module>sidebar-v1_18_R1</module>
+        <module>sidebar-base</module>
+        <module>sidebar-narnia</module>
     </modules>
 
     <repositories>
