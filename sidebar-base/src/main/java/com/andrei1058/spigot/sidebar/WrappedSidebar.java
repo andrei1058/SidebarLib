@@ -1,6 +1,5 @@
 package com.andrei1058.spigot.sidebar;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +24,7 @@ class WrappedSidebar implements SidebarAPI {
             this.availableColors.add(chatColor.toString());
         }
 
-        this.sidebarObjective = SidebarManager.getInstance().createObjective("Sidebar", false, title, 1);
+        this.sidebarObjective = SidebarManager.getInstance().createObjective(this, "Sidebar", false, title, 1);
         this.placeholderProviders.addAll(placeholderProvider);
         for (SidebarLine line : lines) {
             this.addLine(line);
@@ -227,28 +226,47 @@ class WrappedSidebar implements SidebarAPI {
     @Override
     public void showPlayersHealth(SidebarLine displayName, boolean list) {
         if (healthObjective == null) {
-            healthObjective = SidebarManager.getInstance().createObjective(list ? "health" : "health2", true, displayName, 2);
+            healthObjective = SidebarManager.getInstance().createObjective(this, list ? "health" : "health2", true, displayName, 2);
             this.receivers.forEach(receiver -> healthObjective.sendCreate(receiver));
         } else {
             healthObjective.sendUpdate();
         }
     }
 
-    @Deprecated(since = "asta ar trebui sa fie pe clasa de tab")
+//    @Deprecated(since = "asta ar trebui sa fie pe clasa de tab")
+//    @Override
+//    public void playerListHideNameTag(@NotNull Player player) {
+//        PlayerTab listed = teamList.get(player.getName());
+//        if (listed != null) {
+//            listed.hideNameTag(player);
+//        }
+//    }
+
+//    @Override
+//    public void playerListRestoreNameTag(@NotNull Player player) {
+//        PlayerTab listed = teamList.get(player.getName());
+//        if (listed != null) {
+//            listed.showNameTag(player);
+//        }
+//    }
+
     @Override
-    public void playerListHideNameTag(@NotNull Player player) {
-        PlayerTab listed = teamList.get(player.getName());
-        if (listed != null) {
-            listed.hideNameTag(player);
-        }
+    public PlayerTab playerTabCreate(String identifier, Player player, SidebarLine prefix, SidebarLine suffix, boolean disablePushing) {
+        PlayerTab tab =  SidebarManager.getInstance().createPlayerTab(this, identifier, player, prefix, suffix, disablePushing);
+        tab.sendCreate(player);
+        teamList.put(tab.getIdentifier(), tab);
+        return tab;
     }
 
     @Override
-    public void playerListRestoreNameTag(@NotNull Player player) {
-        PlayerTab listed = teamList.get(player.getName());
-        if (listed != null) {
-            listed.showNameTag(player);
+    public void playerTabRefreshAnimation() {
+        for (Map.Entry<String, PlayerTab> entry : teamList.entrySet()) {
+            entry.getValue().sendUpdate();
         }
+    }
+
+    void restoreColor(String color){
+        this.availableColors.add(color);
     }
 
     public SidebarObjective getSidebarObjective() {

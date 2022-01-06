@@ -1,5 +1,6 @@
 package com.andrei1058.spigot.sidebar;
 
+import net.minecraft.EnumChatFormat;
 import net.minecraft.network.chat.ChatComponentText;
 import net.minecraft.network.chat.IChatBaseComponent;
 import net.minecraft.network.chat.IChatMutableComponent;
@@ -13,17 +14,17 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.LinkedList;
 
-//public class NarniaPlayerList extends ScoreboardTeam implements PlayerTab {
-public class NarniaPlayerList extends ScoreboardTeam {
+public class NarniaPlayerList extends ScoreboardTeam implements PlayerTab {
 
     private final boolean disablePushing;
     private SidebarLine prefix, suffix;
-    private final NarniaSidebar sidebar;
+    private final WrappedSidebar sidebar;
     private final LinkedList<PlaceholderProvider> placeholderProviders = new LinkedList<>();
     private final Player player;
+    private final String id;
     private EnumNameTagVisibility nameTagVisibility = EnumNameTagVisibility.a;
 
-    public NarniaPlayerList(@NotNull NarniaSidebar sidebar, @NotNull Player player, SidebarLine prefix, SidebarLine suffix, boolean disablePushing) {
+    public NarniaPlayerList(@NotNull WrappedSidebar sidebar, @NotNull Player player, SidebarLine prefix, SidebarLine suffix, boolean disablePushing) {
         super(null, player.getName());
         this.suffix = suffix;
         this.prefix = prefix;
@@ -31,6 +32,7 @@ public class NarniaPlayerList extends ScoreboardTeam {
         this.player = player;
         this.disablePushing = disablePushing;
         g().add(player.getName());
+        this.id = player.getName();
     }
 
     @Override
@@ -44,8 +46,7 @@ public class NarniaPlayerList extends ScoreboardTeam {
 
     @Override
     public IChatMutableComponent d(IChatBaseComponent var0) {
-        return new ChatComponentText(prefix.getLine()).a(player == null ? var0 :
-                new ChatComponentText(player.getDisplayName())).a(new ChatComponentText(suffix.getLine()));
+        return new ChatComponentText(prefix.getLine()+player.getDisplayName()+suffix.getLine());
     }
 
     @Override
@@ -150,19 +151,29 @@ public class NarniaPlayerList extends ScoreboardTeam {
         }
     }
 
-//    @Override
-    public void hideNameTag() {
+    @Override
+    public void hideNameTags() {
         a(EnumNameTagVisibility.b);
         sendUpdate();
     }
 
-//    @Override
-    public void showNameTag() {
+    @Override
+    public void showNameTags() {
         a(EnumNameTagVisibility.a);
         sendUpdate();
     }
 
-//    @Override
+    @Override
+    public void sendCreate(Player player) {
+        this.sendCreate(((CraftPlayer)player).getHandle().b);
+    }
+
+    @Override
+    public void sendRemove(Player player) {
+        this.sendRemove(((CraftPlayer)player).getHandle().b);
+    }
+
+    //    @Override
     public void removePlaceholderProvider(String identifier) {
         placeholderProviders.removeIf(p -> p.getPlaceholder().equalsIgnoreCase(identifier));
     }
@@ -180,5 +191,10 @@ public class NarniaPlayerList extends ScoreboardTeam {
     public void sendRemove(@NotNull PlayerConnection playerConnection) {
         PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(this);
         playerConnection.a(packetPlayOutScoreboardTeam);
+    }
+
+    @Override
+    public String getIdentifier() {
+        return id;
     }
 }

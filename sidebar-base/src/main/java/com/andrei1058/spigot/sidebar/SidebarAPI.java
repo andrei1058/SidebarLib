@@ -100,20 +100,22 @@ public interface SidebarAPI {
 
     void showPlayersHealth(SidebarLine displayName, boolean list);
 
-    /**
-     * Hide the name tag on head of the player.
-     * Usually used when drinking invisibility potions.
-     */
-    void playerListHideNameTag(Player player);
+//    /**
+//     * Hide the name tag on head of the player.
+//     * Usually used when drinking invisibility potions.
+//     */
+//    void playerListHideNameTag(Player player);
 
-    /**
-     * Show the name tag on head of the player.
-     * Usually used when an invisibility potion has expired.
-     */
-    void playerListRestoreNameTag(Player player);
+//    /**
+//     * Show the name tag on head of the player.
+//     * Usually used when an invisibility potion has expired.
+//     */
+//    void playerListRestoreNameTag(Player player);
 
-//    PlayerTab playerTabCreate(String identifier, Player player, SidebarLine prefix, SidebarLine suffix, boolean disablePushing);
-//
+    PlayerTab playerTabCreate(String identifier, Player player, SidebarLine prefix, SidebarLine suffix, boolean disablePushing);
+
+    void playerTabRefreshAnimation();
+
 //    PlayerTab playerTabCreate(String identifier, List<Player> player, SidebarLine prefix, SidebarLine suffix, boolean disablePushing);
 
 //    void clearTab(String identifier);

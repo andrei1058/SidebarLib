@@ -33,6 +33,10 @@ public class NarniaSidebar extends WrappedSidebar{
         return new NarniaSidebar.NarniaScoreLine(line, score, color);
     }
 
+    public SidebarObjective createObjective(String name, IScoreboardCriteria iScoreboardCriteria, SidebarLine title, int type) {
+        return new NarniaSidebarObjective(name, iScoreboardCriteria, title, type);
+    }
+
 //    @Override
 //    public void playerListCreate(Player player, SidebarLine prefix, SidebarLine suffix, boolean disableCollisions) {
 //        this.playerListRemove(player.getName());
@@ -89,14 +93,7 @@ public class NarniaSidebar extends WrappedSidebar{
 //        }
 //    }
 
-//    @Override
-//    public void playerListRefreshAnimation() {
-//        for (Map.Entry<String, NarniaPlayerList> entry : teamLists.entrySet()) {
-//            entry.getValue().sendUpdate();
-//        }
-//    }
-
-    protected static class NarniaSidebarObjective extends ScoreboardObjective implements SidebarObjective {
+    protected class NarniaSidebarObjective extends ScoreboardObjective implements SidebarObjective {
 
         private SidebarLine displayName;
         private final int type;
@@ -160,8 +157,7 @@ public class NarniaSidebar extends WrappedSidebar{
         // must be called when updating the name
         public void sendUpdate() {
             PacketPlayOutScoreboardObjective packetPlayOutScoreboardObjective = new PacketPlayOutScoreboardObjective(this, 2);
-            //todo
-//            getReceivers().forEach(player -> ((CraftPlayer)player).getHandle().b.a(packetPlayOutScoreboardObjective));
+            getReceivers().forEach(player -> ((CraftPlayer)player).getHandle().b.a(packetPlayOutScoreboardObjective));
         }
 
         public void sendRemove(@NotNull PlayerConnection playerConnection) {
@@ -306,7 +302,7 @@ public class NarniaSidebar extends WrappedSidebar{
                     ScoreboardServer.Action.b,  ((ScoreboardObjective)getSidebarObjective()).b(), e(), b()
             );
             getReceivers().forEach(p -> ((CraftPlayer)p).getHandle().b.a(packetPlayOutScoreboardScore));
-//            availableColors.add(getColor());
+            NarniaSidebar.this.restoreColor(getColor());
             this.text = null;
             this.team = null;
             this.prefix = null;
@@ -426,7 +422,7 @@ public class NarniaSidebar extends WrappedSidebar{
 
             @Override
             public IChatMutableComponent d(IChatBaseComponent var0) {
-                return new ChatComponentText(prefix).a(var0).a(new ChatComponentText(suffix));
+                return new ChatComponentText(prefix+var0+suffix);
             }
         }
     }

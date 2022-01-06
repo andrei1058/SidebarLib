@@ -23,4 +23,6 @@ interface ScoreLine extends Comparable<ScoreLine> {
     void remove();
 
     void sendRemove(Player player);
+
+    String getColor();
 }

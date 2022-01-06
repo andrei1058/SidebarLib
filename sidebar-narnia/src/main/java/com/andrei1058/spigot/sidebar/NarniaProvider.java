@@ -22,8 +22,8 @@ public class NarniaProvider extends SidebarProvider {
     }
 
     @Override
-    public SidebarObjective createObjective(String name, boolean health, SidebarLine title, int type) {
-        return new NarniaSidebar.NarniaSidebarObjective(name, health ? IScoreboardCriteria.f : IScoreboardCriteria.a, title, type);
+    public SidebarObjective createObjective(@NotNull WrappedSidebar sidebar,String name, boolean health, SidebarLine title, int type) {
+        return ((NarniaSidebar)sidebar).createObjective(name, health ? IScoreboardCriteria.f : IScoreboardCriteria.a, title, type);
     }
 
     @Override
@@ -40,6 +40,11 @@ public class NarniaProvider extends SidebarProvider {
             PlayerConnection playerConnection = ((CraftPlayer) player).getHandle().b;
             playerConnection.a(packetPlayOutScoreboardScore);
         }
+    }
+
+    @Override
+    public PlayerTab createPlayerTab(WrappedSidebar sidebar, String identifier, Player player, SidebarLine prefix, SidebarLine suffix, boolean disablePushing) {
+        return new NarniaPlayerList(sidebar, player, prefix, suffix, disablePushing);
     }
 
     public static SidebarProvider getInstance() {
