@@ -1,5 +1,7 @@
 package com.andrei1058.spigot.sidebar;
 
+import net.minecraft.network.chat.ChatComponentText;
+import net.minecraft.network.protocol.game.PacketPlayOutPlayerListHeaderFooter;
 import net.minecraft.network.protocol.game.PacketPlayOutScoreboardScore;
 import net.minecraft.server.ScoreboardServer;
 import net.minecraft.server.network.PlayerConnection;
@@ -45,6 +47,12 @@ public class NarniaProvider extends SidebarProvider {
     @Override
     public PlayerTab createPlayerTab(WrappedSidebar sidebar, String identifier, Player player, SidebarLine prefix, SidebarLine suffix, boolean disablePushing) {
         return new NarniaPlayerList(sidebar, player, prefix, suffix, disablePushing);
+    }
+
+    @Override
+    public void sendHeaderFooter(Player player, String header, String footer) {
+        PacketPlayOutPlayerListHeaderFooter packet = new PacketPlayOutPlayerListHeaderFooter(new ChatComponentText(header), new ChatComponentText(footer));
+        ((CraftPlayer)player).getHandle().b.a(packet);
     }
 
     public static SidebarProvider getInstance() {

@@ -12,7 +12,9 @@ public interface PlayerTab {
     // todo this must be private
     void sendCreate(Player player);
 
-    void sendRemove(Player player);
+    void sendUserRemove(Player player);
+
+    void sendUserCreate(Player player);
 
     String getIdentifier();
 

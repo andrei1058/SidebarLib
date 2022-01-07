@@ -37,62 +37,6 @@ public class NarniaSidebar extends WrappedSidebar{
         return new NarniaSidebarObjective(name, iScoreboardCriteria, title, type);
     }
 
-//    @Override
-//    public void playerListCreate(Player player, SidebarLine prefix, SidebarLine suffix, boolean disableCollisions) {
-//        this.playerListRemove(player.getName());
-//
-//        NarniaPlayerList team = new NarniaPlayerList(this, player, prefix, suffix, disableCollisions);
-//        for (PlayerConnection playerConnection : players) {
-//            team.sendCreate(playerConnection);
-//        }
-//        teamLists.put(player.getName(), team);
-//    }
-
-//    @Override
-//    public void playerListAddPlaceholders(Player player, PlaceholderProvider[] placeholderProviders) {
-//        NarniaPlayerList list = teamLists.getOrDefault(player.getName(), null);
-//        if (list == null) return;
-//        for (PlaceholderProvider placeholderProvider : placeholderProviders) {
-//            list.addPlaceholderProvider(placeholderProvider);
-//        }
-//        list.sendUpdate();
-//    }
-
-//    @Override
-//    public void playerListRemovePlaceholder(Player player, String placeholder) {
-//        NarniaPlayerList list = teamLists.getOrDefault(player.getName(), null);
-//        if (list == null) return;
-//        list.removePlaceholderProvider(placeholder);
-//        list.sendUpdate();
-//    }
-
-//    @Override
-//    public void playerListRemove(String teamName) {
-//        NarniaPlayerList list = teamLists.remove(teamName);
-//        if (list != null) {
-//            players.forEach(list::sendRemove);
-//        }
-//    }
-
-//    @Override
-//    public void playerListClear() {
-//        for (Map.Entry<String, NarniaPlayerList> entry : teamLists.entrySet()) {
-//            for (PlayerConnection player : players) {
-//                entry.getValue().sendRemove(player);
-//            }
-//        }
-//        teamLists.clear();
-//    }
-
-//    @Override
-//    public void refreshHealthAnimation() {
-//        if (healthObjective != null) {
-//            if (healthObjective.displayName instanceof SidebarLineAnimated) {
-//                healthObjective.sendUpdate();
-//            }
-//        }
-//    }
-
     protected class NarniaSidebarObjective extends ScoreboardObjective implements SidebarObjective {
 
         private SidebarLine displayName;
@@ -135,7 +79,6 @@ public class NarniaSidebar extends WrappedSidebar{
 
         @Override
         public IChatBaseComponent e() {
-            //return ChatComponentUtils.a(this.getDisplayName().h().a((var0) -> var0.setChatHoverable(new ChatHoverable(ChatHoverable.EnumHoverAction.SHOW_TEXT, new ChatComponentText(this.getName())))));
             return new ChatComponentText(this.d().a());
         }
 
@@ -170,7 +113,7 @@ public class NarniaSidebar extends WrappedSidebar{
 
         private int score;
         private String prefix = " ", suffix = "";
-        private TeamLine team;
+        private final TeamLine team;
         private SidebarLine text;
 
         public NarniaScoreLine(@NotNull SidebarLine text, int score, @NotNull String color) {
@@ -213,34 +156,6 @@ public class NarniaSidebar extends WrappedSidebar{
             }
         }
 
-        private void setText(@NotNull SidebarLine text) {
-            if (!text.isHasPlaceholders()) {
-                if (text instanceof SidebarLineAnimated) {
-                    for (String line : ((SidebarLineAnimated) text).getLines()) {
-                        if (SidebarManager.getPapiSupport().hasPlaceholders(line)) {
-                            text.setHasPlaceholders(true);
-                            break;
-                        }
-                    }
-                } else if (SidebarManager.getPapiSupport().hasPlaceholders(text.getLine())) {
-                    text.setHasPlaceholders(true);
-                }
-            }
-
-            this.text = text;
-            setContent(text.getLine());
-            sendUpdate();
-        }
-
-//        private void sendCreate(@NotNull PlayerConnection playerConnection) {
-//            PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(team, true);
-//            playerConnection.a(packetPlayOutScoreboardTeam);
-//            PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(
-//                    ScoreboardServer.Action.a, ((ScoreboardObjective)getSidebarObjective()).b(), e(), b()
-//            );
-//            playerConnection.a(packetPlayOutScoreboardScore);
-//        }
-
         @Override
         public SidebarLine getLine() {
             return text;
@@ -249,7 +164,6 @@ public class NarniaSidebar extends WrappedSidebar{
         @Override
         public void setLine(SidebarLine line) {
             this.text = line;
-            //todo send update?
         }
 
         @Override
@@ -260,10 +174,10 @@ public class NarniaSidebar extends WrappedSidebar{
         @Override
         public void setScore(int score) {
             this.score = score;
-            //todo send update?
         }
 
-        public void sendCreate() {
+        @Override
+        public void sendCreateToAllReceivers() {
             PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(team, true);
             getReceivers().forEach(p -> ((CraftPlayer)p).getHandle().b.a(packetPlayOutScoreboardTeam));
             PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(ScoreboardServer.Action.a, ((ScoreboardObjective)getSidebarObjective()).b(), e(), b());
@@ -288,25 +202,20 @@ public class NarniaSidebar extends WrappedSidebar{
             conn.a(packetPlayOutScoreboardScore);
         }
 
-        private void sendRemove(PlayerConnection player) {
-            PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(team, true);
-            PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(ScoreboardServer.Action.b, ((ScoreboardObjective)getSidebarObjective()).b(), e(), b());
-            player.a(packetPlayOutScoreboardTeam);
-            player.a(packetPlayOutScoreboardScore);
-        }
-
-        public void remove() {
+        public void sendRemoveToAllReceivers() {
             PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(team);
             getReceivers().forEach(p -> ((CraftPlayer)p).getHandle().b.a(packetPlayOutScoreboardTeam));
             PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(
                     ScoreboardServer.Action.b,  ((ScoreboardObjective)getSidebarObjective()).b(), e(), b()
             );
             getReceivers().forEach(p -> ((CraftPlayer)p).getHandle().b.a(packetPlayOutScoreboardScore));
-            NarniaSidebar.this.restoreColor(getColor());
-            this.text = null;
-            this.team = null;
-            this.prefix = null;
-            this.suffix = null;
+        }
+
+        public void sendUpdate(Player player) {
+            PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(
+                    ScoreboardServer.Action.b,  ((ScoreboardObjective)getSidebarObjective()).b(), e(), b()
+            );
+            ((CraftPlayer)player).getHandle().b.a(packetPlayOutScoreboardScore);
         }
 
         @Contract(pure = true)
@@ -337,9 +246,11 @@ public class NarniaSidebar extends WrappedSidebar{
             this.suffix = secondPart.length() > 16 ? secondPart.substring(0, 16) : secondPart;
         }
 
-        public void sendUpdate() {
-            PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(team, false);
-            getReceivers().forEach(r -> ((CraftPlayer)r).getHandle().b.a(packetPlayOutScoreboardTeam));
+        public void sendUpdateToAllReceivers() {
+            PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(
+                    ScoreboardServer.Action.b,  ((ScoreboardObjective)getSidebarObjective()).b(), e(), b()
+            );
+            getReceivers().forEach(r -> ((CraftPlayer)r).getHandle().b.a(packetPlayOutScoreboardScore));
         }
 
         public int compareTo(@NotNull ScoreLine o) {

@@ -18,7 +18,6 @@ class WrappedSidebar implements SidebarAPI {
     private SidebarObjective healthObjective;
     private final ConcurrentHashMap<String, PlayerTab> teamList = new ConcurrentHashMap<>();
 
-
     public WrappedSidebar(@NotNull SidebarLine title, @NotNull Collection<SidebarLine> lines, Collection<PlaceholderProvider> placeholderProvider) {
         for (ChatColor chatColor : ChatColor.values()) {
             this.availableColors.add(chatColor.toString());
@@ -70,6 +69,7 @@ class WrappedSidebar implements SidebarAPI {
     private static void scoreOffsetIncrease(@NotNull Collection<ScoreLine> lineCollections) {
         for (ScoreLine line : lineCollections) {
             line.setScore(line.getScore() + 1);
+            line.sendCreateToAllReceivers();
         }
     }
 
@@ -85,7 +85,7 @@ class WrappedSidebar implements SidebarAPI {
         String color = availableColors.get(0);
         availableColors.remove(0);
         ScoreLine s = SidebarManager.getInstance().createScoreLine(this, sidebarLine, score == 0 ? score : score - 1, color);
-        s.sendCreate();
+        s.sendCreateToAllReceivers();
         this.lines.add(s);
         order();
     }
@@ -127,7 +127,7 @@ class WrappedSidebar implements SidebarAPI {
                     }
                 }
                 line.setContent(content);
-                line.sendUpdate();
+                line.sendUpdateToAllReceivers();
             }
         }
     }
@@ -152,7 +152,7 @@ class WrappedSidebar implements SidebarAPI {
                 } else {
                     line.setContent(line.getLine().getLine());
                 }
-                line.sendUpdate();
+                line.sendUpdateToAllReceivers();
             }
         }
     }
@@ -167,8 +167,9 @@ class WrappedSidebar implements SidebarAPI {
     public void removeLine(int line) {
         if (line >= 0 && line < this.lines.size()) {
             ScoreLine scoreLine = this.lines.get(line);
-            scoreLine.remove();
             this.lines.remove(line);
+            scoreLine.sendRemoveToAllReceivers();
+            this.restoreColor(scoreLine.getColor());
             scoreOffsetDecrease(this.lines.subList(line, this.lines.size()));
         }
     }
@@ -191,7 +192,7 @@ class WrappedSidebar implements SidebarAPI {
     @Override
     public void remove(Player player) {
         this.receivers.remove(player);
-        teamList.forEach((b, c) -> c.sendRemove(player));
+        teamList.forEach((b, c) -> c.sendUserRemove(player));
         lines.forEach(line -> line.sendRemove(player));
         this.sidebarObjective.sendRemove(player);
         if (this.healthObjective != null) {
@@ -233,27 +234,11 @@ class WrappedSidebar implements SidebarAPI {
         }
     }
 
-//    @Deprecated(since = "asta ar trebui sa fie pe clasa de tab")
-//    @Override
-//    public void playerListHideNameTag(@NotNull Player player) {
-//        PlayerTab listed = teamList.get(player.getName());
-//        if (listed != null) {
-//            listed.hideNameTag(player);
-//        }
-//    }
-
-//    @Override
-//    public void playerListRestoreNameTag(@NotNull Player player) {
-//        PlayerTab listed = teamList.get(player.getName());
-//        if (listed != null) {
-//            listed.showNameTag(player);
-//        }
-//    }
-
     @Override
     public PlayerTab playerTabCreate(String identifier, Player player, SidebarLine prefix, SidebarLine suffix, boolean disablePushing) {
         PlayerTab tab =  SidebarManager.getInstance().createPlayerTab(this, identifier, player, prefix, suffix, disablePushing);
         tab.sendCreate(player);
+        tab.sendUserCreate(player);
         teamList.put(tab.getIdentifier(), tab);
         return tab;
     }

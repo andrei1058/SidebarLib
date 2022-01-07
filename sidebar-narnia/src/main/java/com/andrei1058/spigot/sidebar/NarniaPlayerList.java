@@ -1,6 +1,5 @@
 package com.andrei1058.spigot.sidebar;
 
-import net.minecraft.EnumChatFormat;
 import net.minecraft.network.chat.ChatComponentText;
 import net.minecraft.network.chat.IChatBaseComponent;
 import net.minecraft.network.chat.IChatMutableComponent;
@@ -31,7 +30,6 @@ public class NarniaPlayerList extends ScoreboardTeam implements PlayerTab {
         this.sidebar = sidebar;
         this.player = player;
         this.disablePushing = disablePushing;
-        g().add(player.getName());
         this.id = player.getName();
     }
 
@@ -115,19 +113,9 @@ public class NarniaPlayerList extends ScoreboardTeam implements PlayerTab {
 
 //    @Override
     public void addPlayer(Player player) {
-        g().add(player.getName());
         NarniaProvider.getInstance().sendScore(sidebar, player.getName(), 2);
         PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(
                 this, player.getName(), PacketPlayOutScoreboardTeam.a.a
-        );
-        sidebar.getReceivers().forEach(r -> ((CraftPlayer)r).getHandle().b.a(packetPlayOutScoreboardTeam));
-    }
-
-//    @Override
-    public void removePlayer(String name) {
-        g().remove(name);
-        PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(
-                this, name, PacketPlayOutScoreboardTeam.a.b
         );
         sidebar.getReceivers().forEach(r -> ((CraftPlayer)r).getHandle().b.a(packetPlayOutScoreboardTeam));
     }
@@ -168,9 +156,18 @@ public class NarniaPlayerList extends ScoreboardTeam implements PlayerTab {
         this.sendCreate(((CraftPlayer)player).getHandle().b);
     }
 
-    @Override
-    public void sendRemove(Player player) {
-        this.sendRemove(((CraftPlayer)player).getHandle().b);
+    public void sendUserRemove(Player player) {
+//        this.g().remove(player.getName());
+        // send 4: remove entities from team
+        PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(this, player.getName(), PacketPlayOutScoreboardTeam.a.b);
+        sidebar.getReceivers().forEach(r -> ((CraftPlayer)r).getHandle().b.a(packetPlayOutScoreboardTeam));
+    }
+
+    public void sendUserCreate(Player player) {
+//        this.g().remove(player.getName());
+        // send 3: add entities to team
+        PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(this, player.getName(), PacketPlayOutScoreboardTeam.a.a);
+        sidebar.getReceivers().forEach(r -> ((CraftPlayer)r).getHandle().b.a(packetPlayOutScoreboardTeam));
     }
 
     //    @Override
@@ -186,11 +183,6 @@ public class NarniaPlayerList extends ScoreboardTeam implements PlayerTab {
     public void sendUpdate() {
         PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(this, false);
         sidebar.getReceivers().forEach(r -> ((CraftPlayer)r).getHandle().b.a(packetPlayOutScoreboardTeam));
-    }
-
-    public void sendRemove(@NotNull PlayerConnection playerConnection) {
-        PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(this);
-        playerConnection.a(packetPlayOutScoreboardTeam);
     }
 
     @Override

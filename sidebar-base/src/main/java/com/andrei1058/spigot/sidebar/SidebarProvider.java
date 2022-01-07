@@ -4,6 +4,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.LinkedList;
 
 public abstract class SidebarProvider {
 
@@ -26,4 +27,7 @@ public abstract class SidebarProvider {
     public abstract void sendScore(@NotNull WrappedSidebar sidebar, String playerName, int score);
 
     public abstract PlayerTab createPlayerTab(WrappedSidebar sidebar, String identifier, Player player, SidebarLine prefix, SidebarLine suffix, boolean disablePushing);
+
+
+    public abstract void sendHeaderFooter(Player player, String header, String footer);
 }

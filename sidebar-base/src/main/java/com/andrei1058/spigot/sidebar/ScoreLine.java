@@ -12,15 +12,17 @@ interface ScoreLine extends Comparable<ScoreLine> {
 
     void setScore(int score);
 
-    void sendCreate();
+    void sendCreateToAllReceivers();
 
     void sendCreate(Player player);
 
     void setContent(String content);
 
-    void sendUpdate();
+    void sendUpdateToAllReceivers();
 
-    void remove();
+    void sendUpdate(Player player);
+
+    void sendRemoveToAllReceivers();
 
     void sendRemove(Player player);
 
