@@ -19,7 +19,7 @@ public interface PlayerTab {
     void remove(Player player);
 
     /**
-     * Hide name tags for current tab-group.
+     * Hide name tags for other teams.
      */
     @SuppressWarnings("unused")
     void hideNameTags();

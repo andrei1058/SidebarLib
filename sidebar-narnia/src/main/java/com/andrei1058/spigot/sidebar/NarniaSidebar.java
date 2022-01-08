@@ -196,7 +196,7 @@ class NarniaSidebar extends WrappedSidebar {
         @Override
         public void sendRemove(Player player) {
             PlayerConnection conn = ((CraftPlayer) player).getHandle().b;
-            PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(team, true);
+            PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(team);
             PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(ScoreboardServer.Action.b, ((ScoreboardObjective) getSidebarObjective()).b(), e(), b());
             conn.a(packetPlayOutScoreboardTeam);
             conn.a(packetPlayOutScoreboardScore);

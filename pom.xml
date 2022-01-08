@@ -12,6 +12,7 @@
         <module>sidebar-base</module>
         <module>sidebar-narnia</module>
         <module>sidebar-rome</module>
+        <module>sidebar-bucharest</module>
     </modules>
 
     <repositories>
