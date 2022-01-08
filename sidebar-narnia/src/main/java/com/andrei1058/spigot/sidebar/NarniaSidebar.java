@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-class NarniaSidebar extends WrappedSidebar{
+class NarniaSidebar extends WrappedSidebar {
 
     public NarniaSidebar(@NotNull SidebarLine title, @NotNull Collection<SidebarLine> lines, Collection<PlaceholderProvider> placeholderProvider) {
         super(title, lines, placeholderProvider);
@@ -56,12 +56,12 @@ class NarniaSidebar extends WrappedSidebar{
 
         @Override
         public void sendCreate(Player player) {
-            this.sendCreate(((CraftPlayer)player).getHandle().b);
+            this.sendCreate(((CraftPlayer) player).getHandle().b);
         }
 
         @Override
         public void sendRemove(Player player) {
-            this.sendRemove(((CraftPlayer)player).getHandle().b);
+            this.sendRemove(((CraftPlayer) player).getHandle().b);
         }
 
         @Override
@@ -100,7 +100,7 @@ class NarniaSidebar extends WrappedSidebar{
         // must be called when updating the name
         public void sendUpdate() {
             PacketPlayOutScoreboardObjective packetPlayOutScoreboardObjective = new PacketPlayOutScoreboardObjective(this, 2);
-            getReceivers().forEach(player -> ((CraftPlayer)player).getHandle().b.a(packetPlayOutScoreboardObjective));
+            getReceivers().forEach(player -> ((CraftPlayer) player).getHandle().b.a(packetPlayOutScoreboardObjective));
         }
 
         public void sendRemove(@NotNull PlayerConnection playerConnection) {
@@ -179,43 +179,43 @@ class NarniaSidebar extends WrappedSidebar{
         @Override
         public void sendCreateToAllReceivers() {
             PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(team, true);
-            getReceivers().forEach(p -> ((CraftPlayer)p).getHandle().b.a(packetPlayOutScoreboardTeam));
-            PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(ScoreboardServer.Action.a, ((ScoreboardObjective)getSidebarObjective()).b(), e(), b());
-            getReceivers().forEach(p -> ((CraftPlayer)p).getHandle().b.a(packetPlayOutScoreboardScore));
+            getReceivers().forEach(p -> ((CraftPlayer) p).getHandle().b.a(packetPlayOutScoreboardTeam));
+            PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(ScoreboardServer.Action.a, ((ScoreboardObjective) getSidebarObjective()).b(), e(), b());
+            getReceivers().forEach(p -> ((CraftPlayer) p).getHandle().b.a(packetPlayOutScoreboardScore));
         }
 
         @Override
         public void sendCreate(Player player) {
-            PlayerConnection conn = ((CraftPlayer)player).getHandle().b;
+            PlayerConnection conn = ((CraftPlayer) player).getHandle().b;
             PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(team, true);
             conn.a(packetPlayOutScoreboardTeam);
-            PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(ScoreboardServer.Action.a, ((ScoreboardObjective)getSidebarObjective()).b(), e(), b());
+            PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(ScoreboardServer.Action.a, ((ScoreboardObjective) getSidebarObjective()).b(), e(), b());
             conn.a(packetPlayOutScoreboardScore);
         }
 
         @Override
         public void sendRemove(Player player) {
-            PlayerConnection conn = ((CraftPlayer)player).getHandle().b;
+            PlayerConnection conn = ((CraftPlayer) player).getHandle().b;
             PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(team, true);
-            PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(ScoreboardServer.Action.b, ((ScoreboardObjective)getSidebarObjective()).b(), e(), b());
+            PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(ScoreboardServer.Action.b, ((ScoreboardObjective) getSidebarObjective()).b(), e(), b());
             conn.a(packetPlayOutScoreboardTeam);
             conn.a(packetPlayOutScoreboardScore);
         }
 
         public void sendRemoveToAllReceivers() {
             PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(team);
-            getReceivers().forEach(p -> ((CraftPlayer)p).getHandle().b.a(packetPlayOutScoreboardTeam));
+            getReceivers().forEach(p -> ((CraftPlayer) p).getHandle().b.a(packetPlayOutScoreboardTeam));
             PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(
-                    ScoreboardServer.Action.b,  ((ScoreboardObjective)getSidebarObjective()).b(), e(), b()
+                    ScoreboardServer.Action.b, ((ScoreboardObjective) getSidebarObjective()).b(), e(), b()
             );
-            getReceivers().forEach(p -> ((CraftPlayer)p).getHandle().b.a(packetPlayOutScoreboardScore));
+            getReceivers().forEach(p -> ((CraftPlayer) p).getHandle().b.a(packetPlayOutScoreboardScore));
         }
 
         public void sendUpdate(Player player) {
             PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(
-                    ScoreboardServer.Action.b,  ((ScoreboardObjective)getSidebarObjective()).b(), e(), b()
+                    ScoreboardServer.Action.b, ((ScoreboardObjective) getSidebarObjective()).b(), e(), b()
             );
-            ((CraftPlayer)player).getHandle().b.a(packetPlayOutScoreboardScore);
+            ((CraftPlayer) player).getHandle().b.a(packetPlayOutScoreboardScore);
         }
 
         @Contract(pure = true)
@@ -248,9 +248,9 @@ class NarniaSidebar extends WrappedSidebar{
 
         public void sendUpdateToAllReceivers() {
             PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(
-                    ScoreboardServer.Action.b,  ((ScoreboardObjective)getSidebarObjective()).b(), e(), b()
+                    ScoreboardServer.Action.b, ((ScoreboardObjective) getSidebarObjective()).b(), e(), b()
             );
-            getReceivers().forEach(r -> ((CraftPlayer)r).getHandle().b.a(packetPlayOutScoreboardScore));
+            getReceivers().forEach(r -> ((CraftPlayer) r).getHandle().b.a(packetPlayOutScoreboardScore));
         }
 
         public int compareTo(@NotNull ScoreLine o) {
@@ -261,9 +261,9 @@ class NarniaSidebar extends WrappedSidebar{
         public void b(int score) {
             this.score = score;
             PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(
-                    ScoreboardServer.Action.a, ((ScoreboardObjective)getSidebarObjective()).b(), e(), score
+                    ScoreboardServer.Action.a, ((ScoreboardObjective) getSidebarObjective()).b(), e(), score
             );
-            getReceivers().forEach(r -> ((CraftPlayer)r).getHandle().b.a(packetPlayOutScoreboardScore));
+            getReceivers().forEach(r -> ((CraftPlayer) r).getHandle().b.a(packetPlayOutScoreboardScore));
         }
 
         @Override
@@ -333,7 +333,7 @@ class NarniaSidebar extends WrappedSidebar{
 
             @Override
             public IChatMutableComponent d(IChatBaseComponent var0) {
-                return new ChatComponentText(prefix+var0+suffix);
+                return new ChatComponentText(prefix + var0 + suffix);
             }
         }
     }
