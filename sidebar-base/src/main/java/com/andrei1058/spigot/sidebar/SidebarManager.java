@@ -13,7 +13,7 @@ public class SidebarManager {
 
     private static SidebarManager instance;
 
-    private SidebarProvider sidebarProvider;
+    private final SidebarProvider sidebarProvider;
     private PAPISupport papiSupport = new PAPISupport() {
         @Override
         public String replacePlaceholders(Player p, String s) {
@@ -39,15 +39,24 @@ public class SidebarManager {
         // load server version support
         String serverVersion = Bukkit.getServer().getClass().getName().split("\\.")[3];
 
+
+        String className = null;
+
         // latest unmapped version
         if (serverVersion.equalsIgnoreCase("v1_18_R1")) {
-            try {
-                Class<?> c = Class.forName("com.andrei1058.spigot.sidebar.NarniaProvider");
-                sidebarProvider = (SidebarProvider) c.getConstructor().newInstance();
-            } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException |
-                    InstantiationException | IllegalAccessException ignored) {
-                throw new InstantiationException();
-            }
+            className = "com.andrei1058.spigot.sidebar.NarniaProvider";
+        } else if (serverVersion.equalsIgnoreCase("v1_17_R1")){
+            className = "com.andrei1058.spigot.sidebar.RomeProvider";
+        }
+        if (null == className){
+            throw new InstantiationException();
+        }
+        try {
+            Class<?> c = Class.forName(className);
+            sidebarProvider = (SidebarProvider) c.getDeclaredConstructor().newInstance();
+        } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException |
+                InstantiationException | IllegalAccessException ignored) {
+            throw new InstantiationException();
         }
     }
 

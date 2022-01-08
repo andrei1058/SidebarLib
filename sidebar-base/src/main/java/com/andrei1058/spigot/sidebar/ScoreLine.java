@@ -8,9 +8,9 @@ interface ScoreLine extends Comparable<ScoreLine> {
 
     void setLine(SidebarLine line);
 
-    int getScore();
+    int getScoreAmount();
 
-    void setScore(int score);
+    void setScoreAmount(int score);
 
     void sendCreateToAllReceivers();
 

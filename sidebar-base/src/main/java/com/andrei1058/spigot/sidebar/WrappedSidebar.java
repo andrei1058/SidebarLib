@@ -76,14 +76,14 @@ class WrappedSidebar implements Sidebar {
     private int getAvailableScore() {
         if (this.lines.isEmpty()) return 0;
         if (this.lines.size() == 16) return -1;
-        return this.lines.getFirst().getScore();
+        return this.lines.getFirst().getScoreAmount();
     }
 
     // sends score update packet
     // used when adding a line
     private static void scoreOffsetIncrease(@NotNull Collection<ScoreLine> lineCollections) {
         for (ScoreLine line : lineCollections) {
-            line.setScore(line.getScore() + 1);
+            line.setScoreAmount(line.getScoreAmount() + 1);
             line.sendCreateToAllReceivers();
         }
     }
@@ -175,7 +175,7 @@ class WrappedSidebar implements Sidebar {
     // sends score update
     // used when removing a line
     private static void scoreOffsetDecrease(@NotNull Collection<ScoreLine> lineCollections) {
-        lineCollections.forEach(c -> c.setScore(c.getScore() - 1));
+        lineCollections.forEach(c -> c.setScoreAmount(c.getScoreAmount() - 1));
     }
 
     @Override

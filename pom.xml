@@ -11,6 +11,7 @@
     <modules>
         <module>sidebar-base</module>
         <module>sidebar-narnia</module>
+        <module>sidebar-rome</module>
     </modules>
 
     <repositories>
