@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class NarniaSidebar extends WrappedSidebar{
+class NarniaSidebar extends WrappedSidebar{
 
     public NarniaSidebar(@NotNull SidebarLine title, @NotNull Collection<SidebarLine> lines, Collection<PlaceholderProvider> placeholderProvider) {
         super(title, lines, placeholderProvider);

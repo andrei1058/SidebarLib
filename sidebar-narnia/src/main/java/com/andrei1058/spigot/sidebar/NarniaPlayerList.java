@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
-public class NarniaPlayerList extends ScoreboardTeam implements VersionedTabGroup {
+class NarniaPlayerList extends ScoreboardTeam implements VersionedTabGroup {
 
     private final boolean disablePushing;
     private final SidebarLine prefix;

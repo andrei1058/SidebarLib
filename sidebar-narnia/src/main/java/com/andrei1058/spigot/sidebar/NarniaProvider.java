@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 
 @SuppressWarnings("unused")
-public class NarniaProvider extends SidebarProvider {
+class NarniaProvider extends SidebarProvider {
 
     private static SidebarProvider instance;
 
