@@ -20,6 +20,7 @@ interface ScoreLine extends Comparable<ScoreLine> {
 
     void sendUpdateToAllReceivers();
 
+    @SuppressWarnings("unused")
     void sendUpdate(Player player);
 
     void sendRemoveToAllReceivers();

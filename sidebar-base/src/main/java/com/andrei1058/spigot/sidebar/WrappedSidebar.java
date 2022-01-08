@@ -3,27 +3,42 @@ package com.andrei1058.spigot.sidebar;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
-class WrappedSidebar implements SidebarAPI {
+class WrappedSidebar implements Sidebar {
 
+    // sidebar lines
     private final LinkedList<ScoreLine> lines = new LinkedList<>();
-    public final LinkedList<Player> receivers = new LinkedList<>();
+    // who is receiving this sidebar
+    private final LinkedList<Player> receivers = new LinkedList<>();
+    // placeholders for sidebar lines
     private final LinkedList<PlaceholderProvider> placeholderProviders = new LinkedList<>();
-    // indexing
+    // chat colors used for line indexing -
     private final LinkedList<String> availableColors = new LinkedList<>();
+    // sidebar lines objective
     private final SidebarObjective sidebarObjective;
+    // bellow player name health objective (will show numbers in tab as well)
     private SidebarObjective healthObjective;
-    private final ConcurrentHashMap<String, PlayerTab> teamList = new ConcurrentHashMap<>();
+    // player tab formatting
+    private final LinkedList<VersionedTabGroup> tabView = new LinkedList<>();
 
+    /**
+     * Create a new versioned sidebar.
+     *
+     * @param title               sidebar title.
+     * @param lines               sidebar content.
+     * @param placeholderProvider a list of your placeholders.
+     */
     public WrappedSidebar(@NotNull SidebarLine title, @NotNull Collection<SidebarLine> lines, Collection<PlaceholderProvider> placeholderProvider) {
         for (ChatColor chatColor : ChatColor.values()) {
             this.availableColors.add(chatColor.toString());
         }
 
-        this.sidebarObjective = SidebarManager.getInstance().createObjective(this, "Sidebar", false, title, 1);
+        this.sidebarObjective = SidebarManager.getInstance().getSidebarProvider().createObjective(
+                this, "Sidebar", false, title, 1
+        );
         this.placeholderProviders.addAll(placeholderProvider);
         for (SidebarLine line : lines) {
             this.addLine(line);
@@ -84,7 +99,9 @@ class WrappedSidebar implements SidebarAPI {
         scoreOffsetIncrease(this.lines);
         String color = availableColors.get(0);
         availableColors.remove(0);
-        ScoreLine s = SidebarManager.getInstance().createScoreLine(this, sidebarLine, score == 0 ? score : score - 1, color);
+        ScoreLine s = SidebarManager.getInstance().getSidebarProvider().createScoreLine(
+                this, sidebarLine, score == 0 ? score : score - 1, color
+        );
         s.sendCreateToAllReceivers();
         this.lines.add(s);
         order();
@@ -109,9 +126,7 @@ class WrappedSidebar implements SidebarAPI {
         this.lines.forEach(line -> line.sendCreate(player));
         if (healthObjective != null) {
             healthObjective.sendCreate(player);
-            for (Map.Entry<String, PlayerTab> entry : teamList.entrySet()) {
-                entry.getValue().sendCreate(player);
-            }
+            this.tabView.forEach(tab -> tab.sendCreateToPlayer(player));
         }
         this.receivers.add(player);
     }
@@ -192,20 +207,28 @@ class WrappedSidebar implements SidebarAPI {
     @Override
     public void remove(Player player) {
         this.receivers.remove(player);
-        teamList.forEach((b, c) -> c.sendUserRemove(player));
+        tabView.forEach(tab -> tab.remove(player));
         lines.forEach(line -> line.sendRemove(player));
         this.sidebarObjective.sendRemove(player);
         if (this.healthObjective != null) {
             this.healthObjective.sendRemove(player);
         }
+
+        // clear player from any cached context
+        this.tabView.forEach(tab -> {
+            tab.remove(player);
+            if (Objects.equals(tab.getSubject(), player)) {
+                tab.setSubject(null);
+            }
+        });
     }
 
     @Override
-    public void refreshHealth(Player player, int health) {
+    public void setPlayerHealth(Player player, int health) {
         if (health < 0) {
             health = 0;
         }
-        SidebarManager.getInstance().sendScore(this, player.getName(), health);
+        SidebarManager.getInstance().getSidebarProvider().sendScore(this, player.getName(), health);
     }
 
     public SidebarObjective getHealthObjective() {
@@ -227,7 +250,9 @@ class WrappedSidebar implements SidebarAPI {
     @Override
     public void showPlayersHealth(SidebarLine displayName, boolean list) {
         if (healthObjective == null) {
-            healthObjective = SidebarManager.getInstance().createObjective(this, list ? "health" : "health2", true, displayName, 2);
+            healthObjective = SidebarManager.getInstance().getSidebarProvider().createObjective(
+                    this, list ? "health" : "health2", true, displayName, 2
+            );
             this.receivers.forEach(receiver -> healthObjective.sendCreate(receiver));
         } else {
             healthObjective.sendUpdate();
@@ -235,22 +260,42 @@ class WrappedSidebar implements SidebarAPI {
     }
 
     @Override
-    public PlayerTab playerTabCreate(String identifier, Player player, SidebarLine prefix, SidebarLine suffix, boolean disablePushing) {
-        PlayerTab tab =  SidebarManager.getInstance().createPlayerTab(this, identifier, player, prefix, suffix, disablePushing);
-        tab.sendCreate(player);
-        tab.sendUserCreate(player);
-        teamList.put(tab.getIdentifier(), tab);
+    public PlayerTab playerTabCreate(String identifier, @Nullable Player player, SidebarLine prefix, SidebarLine suffix, boolean disablePushing) {
+        VersionedTabGroup tab = SidebarManager.getInstance().getSidebarProvider().createPlayerTab(
+                this, identifier, prefix, suffix, disablePushing
+        );
+        if (null != player){
+            tab.sendCreateToPlayer(player);
+            tab.sendUserCreateToReceivers(player);
+        }
+        tabView.add(tab);
         return tab;
     }
 
     @Override
-    public void playerTabRefreshAnimation() {
-        for (Map.Entry<String, PlayerTab> entry : teamList.entrySet()) {
-            entry.getValue().sendUpdate();
+    public void removeTab(String identifier) {
+        Optional<VersionedTabGroup> playerTab = tabView.stream().filter(tab -> tab.getIdentifier().equals(identifier)).findFirst();
+        if (playerTab.isPresent()){
+            VersionedTabGroup tab = playerTab.get();
+            tabView.remove(tab);
+            tab.sendRemoveToReceivers();
         }
     }
 
-    void restoreColor(String color){
+    @Override
+    public void playerTabRefreshAnimation() {
+        this.tabView.forEach(VersionedTabGroup::sendUpdateToReceivers);
+    }
+
+    @Override
+    public void playerHealthRefreshAnimation() {
+        if (null == healthObjective) {
+            return;
+        }
+        healthObjective.sendUpdate();
+    }
+
+    void restoreColor(String color) {
         this.availableColors.add(color);
     }
 

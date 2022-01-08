@@ -132,12 +132,12 @@ public class NarniaSidebar extends WrappedSidebar{
                 if (!text.isHasPlaceholders()) {
                     if (text instanceof SidebarLineAnimated) {
                         for (String line : ((SidebarLineAnimated) text).getLines()) {
-                            if (SidebarManager.getPapiSupport().hasPlaceholders(line)) {
+                            if (SidebarManager.getInstance().getPapiSupport().hasPlaceholders(line)) {
                                 text.setHasPlaceholders(true);
                                 break;
                             }
                         }
-                    } else if (SidebarManager.getPapiSupport().hasPlaceholders(text.getLine())) {
+                    } else if (SidebarManager.getInstance().getPapiSupport().hasPlaceholders(text.getLine())) {
                         text.setHasPlaceholders(true);
                     }
                 }
@@ -221,7 +221,7 @@ public class NarniaSidebar extends WrappedSidebar{
         @Contract(pure = true)
         public void setContent(@NotNull String content) {
             if (!getReceivers().isEmpty()) {
-                content = SidebarManager.getPapiSupport().replacePlaceholders(getReceivers().get(0), content);
+                content = SidebarManager.getInstance().getPapiSupport().replacePlaceholders(getReceivers().get(0), content);
             }
             if (content.length() > 16) {
                 this.prefix = content.substring(0, 16);

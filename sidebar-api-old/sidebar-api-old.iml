@@ -21,7 +21,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="sidebar-common" />
     <orderEntry type="module" module-name="sidebar-v1_8_R3" />
     <orderEntry type="module" module-name="sidebar-v1_9_R2" />
     <orderEntry type="module" module-name="sidebar-v1_10_R1" />

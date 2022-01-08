@@ -4,7 +4,7 @@ import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class PAPIAdapter implements PAPISupport {
+class PAPIAdapter implements PAPISupport {
     @Override
     public String replacePlaceholders(Player p, String s) {
         return PlaceholderAPI.setPlaceholders(p, s);
@@ -18,10 +18,5 @@ public class PAPIAdapter implements PAPISupport {
             }
         }
         return false;
-    }
-
-    @Override
-    public boolean isSupported() {
-        return true;
     }
 }

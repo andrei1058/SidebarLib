@@ -10,9 +10,11 @@ import java.util.Collection;
 
 public class SidebarManager {
 
-    private static SidebarProvider sidebarProvider;
 
-    private static PAPISupport papiSupport = new PAPISupport() {
+    private static SidebarManager instance;
+
+    private SidebarProvider sidebarProvider;
+    private PAPISupport papiSupport = new PAPISupport() {
         @Override
         public String replacePlaceholders(Player p, String s) {
             return s;
@@ -22,23 +24,10 @@ public class SidebarManager {
         public boolean hasPlaceholders(String s) {
             return false;
         }
-
-        @Override
-        public boolean isSupported() {
-            return false;
-        }
     };
 
-    /**
-     * Initialize sidebar manager.
-     * This will detect your server version.
-     */
-    @Nullable
-    public static SidebarProvider init() {
-
-        if (null != sidebarProvider){
-            return sidebarProvider;
-        }
+    public SidebarManager() throws InstantiationException {
+        instance = this;
 
         // PAPI hook
         try {
@@ -54,14 +43,33 @@ public class SidebarManager {
         if (serverVersion.equalsIgnoreCase("v1_18_R1")) {
             try {
                 Class<?> c = Class.forName("com.andrei1058.spigot.sidebar.NarniaProvider");
-                return sidebarProvider = (SidebarProvider) c.getConstructor().newInstance();
-            } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException ignored) {
-                ignored.printStackTrace();
-                return null;
+                sidebarProvider = (SidebarProvider) c.getConstructor().newInstance();
+            } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException |
+                    InstantiationException | IllegalAccessException ignored) {
+                throw new InstantiationException();
             }
         }
+    }
 
-        return null;
+    /**
+     * Initialize sidebar manager.
+     * This will detect your server version.
+     */
+    @SuppressWarnings("unused")
+    @Nullable
+    public static SidebarManager init() {
+
+        if (null != instance) {
+            return instance;
+        }
+
+        try {
+            instance = new SidebarManager();
+        } catch (InstantiationException e) {
+            return null;
+        }
+
+        return instance;
     }
 
     /**
@@ -72,7 +80,9 @@ public class SidebarManager {
      * @param placeholderProviders placeholders.
      * @return sb instance.
      */
-    public SidebarAPI createSidebar(SidebarLine title, @NotNull Collection<SidebarLine> lines, Collection<PlaceholderProvider> placeholderProviders) {
+    @SuppressWarnings("unused")
+    public Sidebar createSidebar(SidebarLine title, @NotNull Collection<SidebarLine> lines,
+                                 Collection<PlaceholderProvider> placeholderProviders) {
         lines.forEach(c -> placeholderProviders.forEach(c2 -> {
             if (c.getLine().contains(c2.getPlaceholder())) {
                 c.setHasPlaceholders(true);
@@ -81,11 +91,26 @@ public class SidebarManager {
         return sidebarProvider.createSidebar(title, lines, placeholderProviders);
     }
 
-    protected static PAPISupport getPapiSupport() {
+    /**
+     * Set a user header and footer in TAB.
+     * @param player receiver.
+     * @param header header text.
+     * @param footer footer text.
+     */
+    @SuppressWarnings("unused")
+    public void sendHeaderFooter(Player player, String header, String footer) {
+        this.sidebarProvider.sendHeaderFooter(player, header, footer);
+    }
+
+    PAPISupport getPapiSupport() {
         return papiSupport;
     }
 
-    protected static SidebarProvider getInstance() {
+    SidebarProvider getSidebarProvider() {
         return sidebarProvider;
+    }
+
+    public static SidebarManager getInstance() {
+        return instance;
     }
 }

@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class SidebarLineAnimated extends SidebarLine {
 
-    private String[] lines;
+    private final String[] lines;
     private int pos = -1;
 
     /**

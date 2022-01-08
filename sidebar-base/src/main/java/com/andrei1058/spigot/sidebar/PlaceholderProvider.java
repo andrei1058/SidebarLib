@@ -5,7 +5,7 @@ import java.util.concurrent.Callable;
 
 public class PlaceholderProvider {
 
-    private String placeholder;
+    private final String placeholder;
     private final Callable<String> replacement;
 
     /**

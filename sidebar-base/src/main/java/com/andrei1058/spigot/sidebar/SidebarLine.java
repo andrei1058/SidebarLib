@@ -15,7 +15,7 @@ public abstract class SidebarLine {
     /**
      * Toggle placeholders verification.
      *
-     * @param value true if has placeholders.
+     * @param value true if it has placeholders.
      */
     public void setHasPlaceholders(boolean value) {
         this.hasPlaceholders = value;

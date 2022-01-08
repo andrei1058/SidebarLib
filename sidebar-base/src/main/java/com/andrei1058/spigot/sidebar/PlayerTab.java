@@ -1,22 +1,45 @@
 package com.andrei1058.spigot.sidebar;
 
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 public interface PlayerTab {
 
-    void addPlayer(Player player);
+    /**
+     * Add a player to tab-list formatting.
+     * @param player to be formatted.
+     */
+    @SuppressWarnings("unused")
+    void add(Player player);
 
+    /**
+     * Remove the given player from tab-list formatting.
+     * @param player to be removed.
+     */
+    void remove(Player player);
+
+    /**
+     * Hide name tags for current tab-group.
+     */
+    @SuppressWarnings("unused")
     void hideNameTags();
+
+    /**
+     * Restore name tags visibility for current tab-group.
+     */
+    @SuppressWarnings("unused")
     void showNameTags();
 
-    // todo this must be private
-    void sendCreate(Player player);
+    /**
+     * PAPI subject.
+     * @param player papi target for placeholders.
+     */
+    void setSubject(@Nullable Player player);
 
-    void sendUserRemove(Player player);
-
-    void sendUserCreate(Player player);
-
-    String getIdentifier();
-
-    void sendUpdate();
+    /**
+     * Get PAPI user used for placeholder replacements.
+     * @return papi subject.
+     */
+    @Nullable
+    Player getSubject();
 }

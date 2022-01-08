@@ -4,7 +4,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
-import java.util.LinkedList;
 
 public abstract class SidebarProvider {
 
@@ -16,18 +15,18 @@ public abstract class SidebarProvider {
      * @param placeholderProviders placeholders.
      * @return sb instance.
      */
-    public abstract SidebarAPI createSidebar(SidebarLine title, Collection<SidebarLine> lines, Collection<PlaceholderProvider> placeholderProviders);
+    abstract Sidebar createSidebar(SidebarLine title, Collection<SidebarLine> lines, Collection<PlaceholderProvider> placeholderProviders);
 
 
-    public abstract SidebarObjective createObjective(@NotNull WrappedSidebar sidebar, String name, boolean health, SidebarLine title, int type);
+    abstract SidebarObjective createObjective(@NotNull WrappedSidebar sidebar, String name, boolean health, SidebarLine title, int type);
 
-    public abstract ScoreLine createScoreLine(WrappedSidebar sidebar, SidebarLine line, int score, String color);
-
-
-    public abstract void sendScore(@NotNull WrappedSidebar sidebar, String playerName, int score);
-
-    public abstract PlayerTab createPlayerTab(WrappedSidebar sidebar, String identifier, Player player, SidebarLine prefix, SidebarLine suffix, boolean disablePushing);
+    abstract ScoreLine createScoreLine(WrappedSidebar sidebar, SidebarLine line, int score, String color);
 
 
-    public abstract void sendHeaderFooter(Player player, String header, String footer);
+    abstract void sendScore(@NotNull WrappedSidebar sidebar, String playerName, int score);
+
+    abstract VersionedTabGroup createPlayerTab(WrappedSidebar sidebar, String identifier, SidebarLine prefix, SidebarLine suffix, boolean disablePushing);
+
+
+    abstract void sendHeaderFooter(Player player, String header, String footer);
 }

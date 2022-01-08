@@ -19,7 +19,7 @@ public class NarniaProvider extends SidebarProvider {
     private static SidebarProvider instance;
 
     @Override
-    public SidebarAPI createSidebar(SidebarLine title, Collection<SidebarLine> lines, Collection<PlaceholderProvider> placeholderProviders) {
+    public Sidebar createSidebar(SidebarLine title, Collection<SidebarLine> lines, Collection<PlaceholderProvider> placeholderProviders) {
         return new NarniaSidebar(title, lines, placeholderProviders);
     }
 
@@ -45,8 +45,8 @@ public class NarniaProvider extends SidebarProvider {
     }
 
     @Override
-    public PlayerTab createPlayerTab(WrappedSidebar sidebar, String identifier, Player player, SidebarLine prefix, SidebarLine suffix, boolean disablePushing) {
-        return new NarniaPlayerList(sidebar, player, prefix, suffix, disablePushing);
+    public VersionedTabGroup createPlayerTab(WrappedSidebar sidebar, String identifier, SidebarLine prefix, SidebarLine suffix, boolean disablePushing) {
+        return new NarniaPlayerList(sidebar, identifier, prefix, suffix, disablePushing);
     }
 
     @Override
