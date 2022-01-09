@@ -165,13 +165,7 @@ class WrappedSidebar implements Sidebar {
         for (ScoreLine line : lines) {
             if (line.getLine() instanceof SidebarLineAnimated) {
                 if (line.getLine().isHasPlaceholders()) {
-                    String content = line.getLine().getLine();
-                    for (PlaceholderProvider pp : this.placeholderProviders) {
-                        if (content.contains(pp.getPlaceholder())) {
-                            content = content.replace(pp.getPlaceholder(), pp.getReplacement());
-                        }
-                    }
-                    line.setContent(content);
+                    refreshLinePlaceholders(line);
                 } else {
                     line.setContent(line.getLine().getLine());
                 }
