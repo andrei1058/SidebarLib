@@ -17,7 +17,6 @@ public abstract class SidebarProvider {
      */
     abstract Sidebar createSidebar(SidebarLine title, Collection<SidebarLine> lines, Collection<PlaceholderProvider> placeholderProviders);
 
-
     abstract SidebarObjective createObjective(@NotNull WrappedSidebar sidebar, String name, boolean health, SidebarLine title, int type);
 
     abstract ScoreLine createScoreLine(WrappedSidebar sidebar, SidebarLine line, int score, String color);
@@ -25,7 +24,8 @@ public abstract class SidebarProvider {
 
     abstract void sendScore(@NotNull WrappedSidebar sidebar, String playerName, int score);
 
-    abstract VersionedTabGroup createPlayerTab(WrappedSidebar sidebar, String identifier, SidebarLine prefix, SidebarLine suffix, boolean disablePushing);
+    abstract VersionedTabGroup createPlayerTab(WrappedSidebar sidebar, String identifier, SidebarLine prefix, SidebarLine suffix,
+                                               PlayerTab.PushingRule pushingRule, PlayerTab.NameTagVisibility nameTagVisibility);
 
 
     abstract void sendHeaderFooter(Player player, String header, String footer);

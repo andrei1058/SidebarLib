@@ -11,4 +11,6 @@ interface SidebarObjective {
      void sendUpdate();
 
      void sendRemove(Player player);
+
+     String getName();
 }

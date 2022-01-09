@@ -123,7 +123,10 @@ class WrappedSidebar implements Sidebar {
     @Override
     public void add(Player player) {
         sidebarObjective.sendCreate(player);
-        this.lines.forEach(line -> line.sendCreate(player));
+        this.lines.forEach(line -> {
+            this.refreshLinePlaceholders(line);
+            line.sendCreate(player);
+        });
         if (healthObjective != null) {
             healthObjective.sendCreate(player);
             this.tabView.forEach(tab -> tab.sendCreateToPlayer(player));
@@ -135,16 +138,21 @@ class WrappedSidebar implements Sidebar {
     public void refreshPlaceholders() {
         for (ScoreLine line : this.lines) {
             if (line.getLine().isHasPlaceholders()) {
-                String content = line.getLine().getLine();
-                for (PlaceholderProvider pp : this.placeholderProviders) {
-                    if (content.contains(pp.getPlaceholder())) {
-                        content = content.replace(pp.getPlaceholder(), pp.getReplacement());
-                    }
-                }
-                line.setContent(content);
+                refreshLinePlaceholders(line);
                 line.sendUpdateToAllReceivers();
             }
         }
+    }
+
+    // refresh placeholders for the given line before sending it
+    private void refreshLinePlaceholders(@NotNull ScoreLine line){
+        String content = line.getLine().getLine();
+        for (PlaceholderProvider pp : this.placeholderProviders) {
+            if (content.contains(pp.getPlaceholder())) {
+                content = content.replace(pp.getPlaceholder(), pp.getReplacement());
+            }
+        }
+        line.setContent(content);
     }
 
     @Override
@@ -260,9 +268,10 @@ class WrappedSidebar implements Sidebar {
     }
 
     @Override
-    public PlayerTab playerTabCreate(String identifier, @Nullable Player player, SidebarLine prefix, SidebarLine suffix, boolean disablePushing) {
+    public PlayerTab playerTabCreate(String identifier, @Nullable Player player, SidebarLine prefix, SidebarLine suffix,
+                                     PlayerTab.PushingRule pushingRule) {
         VersionedTabGroup tab = SidebarManager.getInstance().getSidebarProvider().createPlayerTab(
-                this, identifier, prefix, suffix, disablePushing
+                this, identifier, prefix, suffix, pushingRule, PlayerTab.NameTagVisibility.ALWAYS
         );
         if (null != player){
             tab.sendCreateToPlayer(player);

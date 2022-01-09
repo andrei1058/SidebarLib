@@ -126,11 +126,11 @@ public interface Sidebar {
      * @param player initial member.
      * @param prefix prefix text or animation.
      * @param suffix suffix text or animation.
-     * @param disablePushing disable player-pushing for members in this group.
+     * @param pushingRule how to manage pushing.
      * @return tab group instance.
      */
     @SuppressWarnings("unused")
-    PlayerTab playerTabCreate(String identifier, @Nullable Player player, SidebarLine prefix, SidebarLine suffix, boolean disablePushing);
+    PlayerTab playerTabCreate(String identifier, @Nullable Player player, SidebarLine prefix, SidebarLine suffix, PlayerTab.PushingRule pushingRule);
 
     /**
      * Remove tab group form tab list by identifier.

@@ -10,9 +10,11 @@
     <version>0.3.2-SNAPSHOT</version>
     <modules>
         <module>sidebar-base</module>
-        <module>sidebar-narnia</module>
-        <module>sidebar-rome</module>
-        <module>sidebar-bucharest</module>
+        <module>sidebar-eighteen</module>
+        <module>sidebar-seventeen</module>
+        <module>sidebar-sixteen</module>
+        <module>sidebar-twelve</module>
+        <module>sidebar-eight</module>
     </modules>
 
     <repositories>

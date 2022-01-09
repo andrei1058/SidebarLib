@@ -19,18 +19,6 @@ public interface PlayerTab {
     void remove(Player player);
 
     /**
-     * Hide name tags for other teams.
-     */
-    @SuppressWarnings("unused")
-    void hideNameTags();
-
-    /**
-     * Restore name tags visibility for current tab-group.
-     */
-    @SuppressWarnings("unused")
-    void showNameTags();
-
-    /**
      * PAPI subject.
      * @param player papi target for placeholders.
      */
@@ -42,4 +30,25 @@ public interface PlayerTab {
      */
     @Nullable
     Player getSubject();
+
+    /**
+     * Set pushing rule for current team.
+     */
+    @SuppressWarnings("unused")
+    void setPushingRule(PushingRule rule);
+
+    /**
+     * Set name-tag visibility for current team.
+     */
+    @SuppressWarnings("unused")
+    void setNameTagVisibility(NameTagVisibility nameTagVisibility);
+
+    @SuppressWarnings("unused")
+    enum PushingRule {
+        ALWAYS, NEVER, PUSH_OTHER_TEAMS, PUSH_OWN_TEAM
+    }
+
+    enum NameTagVisibility {
+        ALWAYS, NEVER, HIDE_FOR_OTHER_TEAMS, HIDE_FOR_OWN_TEAM
+    }
 }

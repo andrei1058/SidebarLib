@@ -1,5 +1,4 @@
 /.idea/
-/Sidebar.iml
-/sidebar-api/dependency-reduced-pom.xml
 /*/target
 target
+/*/*.iml
