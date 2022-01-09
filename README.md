@@ -199,6 +199,35 @@ public class MyPlugin extends JavaPlugin implements Listener {
 }
 ```
 
+### Maven repository
+
+```xml
+<repositories>
+    <repository>
+        <id>code-mc-snapshots</id>
+        <url>https://repo.codemc.io/repository/maven-snapshots/</url>
+    </repository>
+    <repository>
+        <id>code-mc-releases</id>
+        <url>https://repo.codemc.io/repository/maven-releases/</url>
+    </repository>
+</repositories>
+```
+
+```xml
+<dependencies>
+    <dependency>
+        <groupId>com.andrei1058.spigot.sidebar</groupId>
+        <artifactId>sidebar-base</artifactId>
+        <version>0.4-SNAPSHOT</version>
+        <scope>compile</scope>
+    </dependency>
+    
+    <!-- And based on which versions you want to support compile 
+    the listed modules above -->
+</dependencies>
+```
+
 ### License
 **LGPL-3.0**  
 Created with <3 by Andrei Dascălu (andrei1058)
