@@ -47,6 +47,8 @@ public class SidebarManager {
             className = "com.andrei1058.spigot.sidebar.NarniaProvider";
         } else if (serverVersion.equalsIgnoreCase("v1_17_R1")){
             className = "com.andrei1058.spigot.sidebar.RomeProvider";
+        } else if (serverVersion.equalsIgnoreCase("v1_16_R3")){
+            className = "com.andrei1058.spigot.sidebar.BucharestProvider";
         }
         if (null == className){
             throw new InstantiationException();
