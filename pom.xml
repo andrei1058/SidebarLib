@@ -35,9 +35,7 @@
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>20.1.0</version>
-            <optional>true</optional>
-            <scope>provided</scope>
+            <version>23.0.0</version>
         </dependency>
     </dependencies>
 
