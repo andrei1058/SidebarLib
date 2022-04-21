@@ -33,7 +33,7 @@ jobs:
           mvn clean deploy -s ci_settings.xml
           mvn javadoc:javadoc
           sudo apt install -y -qq lftp
-          lftp -c "set ftp:ssl-allow no; open -u $J_DOCS_USER,$J_DOCS_PASS javadocs.andrei1058.dev; mirror -Rev sidebar-api/target/site/apidocs ./SidebarLib  --ignore-time --parallel=10 --exclude-glob .git* --exclude .git/"
+          lftp -c "set ftp:ssl-allow no; open -u $J_DOCS_USER,$J_DOCS_PASS javadocs.andrei1058.dev; mirror -Rev sidebar-base/target/site/apidocs ./SidebarLib  --ignore-time --parallel=10 --exclude-glob .git* --exclude .git/"
           curl -X PUT https://api.andrei1058.dev/v1/resources/4/versioning/commit -H "Accept: application/json" -H "Authorization: Bearer ${{ secrets.ANDEV_API_TOKEN }}" -H "Content-Type: application/json" --data '{"confirmation": true}' >> version.json
           echo "UPDATE_VERSION=$UPDATE_VERSION" >> $GITHUB_ENV
       - name: Create Tag
