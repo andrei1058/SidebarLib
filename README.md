@@ -9,7 +9,7 @@ This project is divided in several modules:
 - `sidebar-twelve` provides support for 1.12.2
 - `sidebar-sixteen` provides support for 1.16.4 (R2)
 - `sidebar-seventeen` provides support for 1.17.1
-- `sidebar-eighteen` provides support for 1.18.1
+- `sidebar-eighteen` provides support for 1.18.1 (R2)
 
 ### IMPORTANT
 It is really important to call Sidebar#remove(player) when a player leaves the server to avoid memory leaks.
@@ -204,12 +204,12 @@ public class MyPlugin extends JavaPlugin implements Listener {
 ```xml
 <repositories>
     <repository>
-        <id>code-mc-snapshots</id>
-        <url>https://repo.codemc.io/repository/maven-snapshots/</url>
+        <id>andrei1058-snapshots</id>
+        <url>https://repo.andrei1058.dev/snapshots/</url>
     </repository>
     <repository>
-        <id>code-mc-releases</id>
-        <url>https://repo.codemc.io/repository/maven-releases/</url>
+        <id>andrei1058-releases</id>
+        <url>https://repo.andrei1058.dev/releases/</url>
     </repository>
 </repositories>
 ```
@@ -219,7 +219,7 @@ public class MyPlugin extends JavaPlugin implements Listener {
     <dependency>
         <groupId>com.andrei1058.spigot.sidebar</groupId>
         <artifactId>sidebar-base</artifactId>
-        <version>0.4-SNAPSHOT</version>
+        <version>version-here</version>
         <scope>compile</scope>
     </dependency>
     
