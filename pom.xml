@@ -45,7 +45,7 @@
             <extension>
                 <groupId>org.apache.maven.wagon</groupId>
                 <artifactId>wagon-ftp</artifactId>
-                <version>1.0-beta-6</version>
+                <version>3.5.1</version>
             </extension>
         </extensions>
     </build>
