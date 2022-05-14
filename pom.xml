@@ -7,7 +7,7 @@
     <groupId>com.andrei1058.spigot.sidebar</groupId>
     <artifactId>sidebar-pom</artifactId>
     <packaging>pom</packaging>
-    <version>0.4-SNAPSHOT</version>
+    <version>${jgitver.calcuated_version}</version>
     <modules>
         <module>sidebar-base</module>
         <module>sidebar-eighteen</module>
@@ -41,23 +41,56 @@
 
 
     <build>
-        <extensions>
-            <extension>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-ftp</artifactId>
-                <version>3.5.1</version>
-            </extension>
-        </extensions>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>9</source>
+                    <target>9</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.5.1</version>
+                <executions>
+                    <execution>
+                        <id>default-deploy</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>deploy</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <serverId>kwadratowa-games-repository</serverId>
+                    <nexusUrl>https://nexus.kwadratowa.games</nexusUrl>
+                    <skipStaging>true</skipStaging>
+                </configuration>
+            </plugin>
+        </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
     </build>
+
 
     <distributionManagement>
         <repository>
-            <id>ftp-repo</id>
-            <url>ftp://andrei1058.dev/releases</url>
+            <id>kwadratowa-games-repository</id>
+            <url>https://nexus.kwadratowa.games/repository/kwadratowa-games/</url>
         </repository>
-        <snapshotRepository>
-            <id>ftp-repo</id>
-            <url>ftp://andrei1058.dev/snapshots</url>
-        </snapshotRepository>
     </distributionManagement>
 </project>
