@@ -1,6 +1,6 @@
 package com.andrei1058.spigot.sidebar;
 
-import net.minecraft.network.chat.ChatComponentText;
+import net.minecraft.network.chat.IChatBaseComponent;
 import net.minecraft.network.protocol.game.PacketPlayOutPlayerListHeaderFooter;
 import net.minecraft.network.protocol.game.PacketPlayOutScoreboardScore;
 import net.minecraft.server.ScoreboardServer;
@@ -52,7 +52,7 @@ class NineteenProvider extends SidebarProvider {
 
     @Override
     public void sendHeaderFooter(Player player, String header, String footer) {
-        PacketPlayOutPlayerListHeaderFooter packet = new PacketPlayOutPlayerListHeaderFooter(new ChatComponentText(header), new ChatComponentText(footer));
+        PacketPlayOutPlayerListHeaderFooter packet = new PacketPlayOutPlayerListHeaderFooter(IChatBaseComponent.b(header), IChatBaseComponent.b(footer));
         ((CraftPlayer)player).getHandle().b.a(packet);
     }
 

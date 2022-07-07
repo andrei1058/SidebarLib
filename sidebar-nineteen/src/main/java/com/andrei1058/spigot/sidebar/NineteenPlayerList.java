@@ -1,6 +1,5 @@
 package com.andrei1058.spigot.sidebar;
 
-import net.minecraft.network.chat.ChatComponentText;
 import net.minecraft.network.chat.IChatBaseComponent;
 import net.minecraft.network.chat.IChatMutableComponent;
 import net.minecraft.network.protocol.game.PacketPlayOutScoreboardTeam;
@@ -43,12 +42,12 @@ class NineteenPlayerList extends ScoreboardTeam implements VersionedTabGroup {
 
     @Override
     public IChatMutableComponent d() {
-        return new ChatComponentText(id);
+        return IChatBaseComponent.b(id);
     }
 
     @Override
     public IChatMutableComponent d(IChatBaseComponent var0) {
-        return new ChatComponentText(prefix.getLine() + var0 + suffix.getLine());
+        return IChatBaseComponent.b(prefix.getLine() + var0 + suffix.getLine());
     }
 
     public String b() {
@@ -70,7 +69,7 @@ class NineteenPlayerList extends ScoreboardTeam implements VersionedTabGroup {
         if (t.length() > 32) {
             t = t.substring(0, 32);
         }
-        return new ChatComponentText(t);
+        return IChatBaseComponent.b(t);
     }
 
     @Override
@@ -93,7 +92,7 @@ class NineteenPlayerList extends ScoreboardTeam implements VersionedTabGroup {
         if (t.length() > 32) {
             t = t.substring(0, 32);
         }
-        return new ChatComponentText(t);
+        return IChatBaseComponent.b(t);
     }
 
     @Override

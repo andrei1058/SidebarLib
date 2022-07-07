@@ -1,7 +1,6 @@
 package com.andrei1058.spigot.sidebar;
 
 import net.minecraft.EnumChatFormat;
-import net.minecraft.network.chat.ChatComponentText;
 import net.minecraft.network.chat.IChatBaseComponent;
 import net.minecraft.network.chat.IChatMutableComponent;
 import net.minecraft.network.protocol.game.PacketPlayOutScoreboardDisplayObjective;
@@ -21,7 +20,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collection;
 
 class NineteenSidebar extends WrappedSidebar {
 
@@ -43,7 +42,7 @@ class NineteenSidebar extends WrappedSidebar {
         private final int type;
 
         public NarniaSidebarObjective(String name, IScoreboardCriteria criteria, SidebarLine displayName, int type) {
-            super(null, name, criteria, new ChatComponentText(name), IScoreboardCriteria.EnumScoreboardHealthDisplay.a);
+            super(null, name, criteria, IChatBaseComponent.b(name), IScoreboardCriteria.EnumScoreboardHealthDisplay.a);
             this.displayName = displayName;
             this.type = type;
         }
@@ -75,7 +74,7 @@ class NineteenSidebar extends WrappedSidebar {
             if (t.length() > 32) {
                 t = t.substring(0, 32);
             }
-            return new ChatComponentText(t);
+            return IChatBaseComponent.b(t);
         }
 
         @Override
@@ -84,7 +83,8 @@ class NineteenSidebar extends WrappedSidebar {
 
         @Override
         public IChatBaseComponent e() {
-            return new ChatComponentText(this.d().a());
+            return IChatBaseComponent.b((this.d().toString()));
+
         }
 
         @Override
@@ -300,7 +300,7 @@ class NineteenSidebar extends WrappedSidebar {
 
             @Override
             public IChatBaseComponent e() {
-                return new ChatComponentText(prefix);
+                return IChatBaseComponent.b(prefix);
             }
 
             @Override
@@ -313,7 +313,7 @@ class NineteenSidebar extends WrappedSidebar {
 
             @Override
             public IChatBaseComponent f() {
-                return new ChatComponentText(suffix);
+                return IChatBaseComponent.b(suffix);
             }
 
             @Override
@@ -338,7 +338,7 @@ class NineteenSidebar extends WrappedSidebar {
 
             @Override
             public IChatMutableComponent d(IChatBaseComponent var0) {
-                return new ChatComponentText(prefix + var0 + suffix);
+                return IChatBaseComponent.b(prefix + var0 + suffix);
             }
         }
     }
