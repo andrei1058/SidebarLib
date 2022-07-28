@@ -10,7 +10,7 @@ This project is divided in several modules:
 - `sidebar-sixteen` provides support for 1.16.5 (R3)
 - `sidebar-seventeen` provides support for 1.17.1
 - `sidebar-eighteen` provides support for 1.18.2 (R2)
-- `sidebar-nineteen` provides support for 1.19 (R1)
+- `sidebar-nineteen` provides support for 1.19.1 (R1)
 
 ### IMPORTANT
 It is really important to call Sidebar#remove(player) when a player leaves the server to avoid memory leaks.
