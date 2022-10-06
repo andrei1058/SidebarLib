@@ -43,7 +43,7 @@ public class SidebarManager {
         String className = null;
 
         // latest unmapped version
-        if (serverVersion.equalsIgnoreCase("v1_18_R1")) {
+        if (serverVersion.equalsIgnoreCase("v1_18_R2")) {
             className = "com.andrei1058.spigot.sidebar.EighteenProvider";
         } else if (serverVersion.equalsIgnoreCase("v1_17_R1")){
             className = "com.andrei1058.spigot.sidebar.SeventeenProvider";
@@ -51,7 +51,7 @@ public class SidebarManager {
             className = "com.andrei1058.spigot.sidebar.SixteenProvider";
         } else if (serverVersion.equals("v1_12_R1")) {
             className = "com.andrei1058.spigot.sidebar.TwelveProvider";
-        } else if (serverVersion.equals("v1_8_R4")) {
+        } else if (serverVersion.equals("v1_8_R3")) {
             className = "com.andrei1058.spigot.sidebar.EightProvider";
         }
         if (null == className){
