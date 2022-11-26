@@ -199,13 +199,13 @@ public class TwelveSidebar extends WrappedSidebar {
             if (!getReceivers().isEmpty()) {
                 content = SidebarManager.getInstance().getPapiSupport().replacePlaceholders(getReceivers().get(0), content);
             }
-            if (content.length() > 32) {
-                this.prefix = content.substring(0, 32);
-                if (this.prefix.charAt(31) == ChatColor.COLOR_CHAR) {
-                    this.prefix = content.substring(0, 31);
-                    setSuffix(content.substring(31));
+            if (content.length() > 16) {
+                this.prefix = content.substring(0, 16);
+                if (this.prefix.charAt(15) == ChatColor.COLOR_CHAR) {
+                    this.prefix = content.substring(0, 15);
+                    setSuffix(content.substring(15));
                 } else {
-                    setSuffix(content.substring(32));
+                    setSuffix(content.substring(16));
                 }
             } else {
                 this.prefix = content;
