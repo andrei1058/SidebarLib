@@ -185,13 +185,15 @@ public class TwelveSidebar extends WrappedSidebar {
         public void sendRemoveToAllReceivers() {
             PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = new PacketPlayOutScoreboardTeam(team, 1);
             getReceivers().forEach(p -> ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packetPlayOutScoreboardTeam));
-            PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(getPlayerName(), (ScoreboardObjective) getSidebarObjective());
+            PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(
+                    getPlayerName(), (ScoreboardObjective) getSidebarObjective()
+            );
             getReceivers().forEach(p -> ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packetPlayOutScoreboardScore));
         }
 
         public void sendUpdate(Player player) {
-            PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(this);
-            ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packetPlayOutScoreboardScore);
+            PacketPlayOutScoreboardTeam packetTeamUpdate = new PacketPlayOutScoreboardTeam(team, 2);
+            ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packetTeamUpdate);
         }
 
         @Contract(pure = true)
@@ -223,8 +225,8 @@ public class TwelveSidebar extends WrappedSidebar {
         }
 
         public void sendUpdateToAllReceivers() {
-            PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(this);
-            getReceivers().forEach(r -> ((CraftPlayer) r).getHandle().playerConnection.sendPacket(packetPlayOutScoreboardScore));
+            PacketPlayOutScoreboardTeam packetTeamUpdate = new PacketPlayOutScoreboardTeam(team, 2);
+            getReceivers().forEach(r -> ((CraftPlayer) r).getHandle().playerConnection.sendPacket(packetTeamUpdate));
         }
 
         public int compareTo(@NotNull ScoreLine o) {
