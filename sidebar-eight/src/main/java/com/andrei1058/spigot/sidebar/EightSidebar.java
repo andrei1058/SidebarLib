@@ -72,8 +72,8 @@ public class EightSidebar extends WrappedSidebar {
         @Override
         public String getDisplayName() {
             String t = displayName.getLine();
-            if (t.length() > 32) {
-                t = t.substring(0, 32);
+            if (t.length() > 16) {
+                t = t.substring(0, 16);
             }
             return t;
         }
@@ -190,8 +190,8 @@ public class EightSidebar extends WrappedSidebar {
         }
 
         public void sendUpdate(Player player) {
-            PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(this);
-            ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packetPlayOutScoreboardScore);
+            PacketPlayOutScoreboardTeam packetTeamUpdate = new PacketPlayOutScoreboardTeam(team, 2);
+            ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packetTeamUpdate);
         }
 
         @Contract(pure = true)
@@ -223,8 +223,8 @@ public class EightSidebar extends WrappedSidebar {
         }
 
         public void sendUpdateToAllReceivers() {
-            PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(this);
-            getReceivers().forEach(r -> ((CraftPlayer) r).getHandle().playerConnection.sendPacket(packetPlayOutScoreboardScore));
+            PacketPlayOutScoreboardTeam packetTeamUpdate = new PacketPlayOutScoreboardTeam(team, 2);
+            getReceivers().forEach(r -> ((CraftPlayer) r).getHandle().playerConnection.sendPacket(packetTeamUpdate));
         }
 
         public int compareTo(@NotNull ScoreLine o) {

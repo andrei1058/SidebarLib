@@ -214,10 +214,8 @@ public class SeventeenSidebar extends WrappedSidebar {
         }
 
         public void sendUpdate(Player player) {
-            PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(
-                    ScoreboardServer.Action.b, ((ScoreboardObjective) getSidebarObjective()).getName(), getPlayerName(), getScoreAmount()
-            );
-            ((CraftPlayer) player).getHandle().b.sendPacket(packetPlayOutScoreboardScore);
+            PacketPlayOutScoreboardTeam packetTeamUpdate = PacketPlayOutScoreboardTeam.a(team, false);
+            ((CraftPlayer) player).getHandle().b.sendPacket(packetTeamUpdate);
         }
 
         @Contract(pure = true)
@@ -249,10 +247,8 @@ public class SeventeenSidebar extends WrappedSidebar {
         }
 
         public void sendUpdateToAllReceivers() {
-            PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(
-                    ScoreboardServer.Action.b, ((ScoreboardObjective) getSidebarObjective()).getName(), getPlayerName(), getScoreAmount()
-            );
-            getReceivers().forEach(r -> ((CraftPlayer) r).getHandle().b.sendPacket(packetPlayOutScoreboardScore));
+            PacketPlayOutScoreboardTeam packetTeamUpdate = PacketPlayOutScoreboardTeam.a(team, false);
+            getReceivers().forEach(r -> ((CraftPlayer) r).getHandle().b.sendPacket(packetTeamUpdate));
         }
 
         public int compareTo(@NotNull ScoreLine o) {
