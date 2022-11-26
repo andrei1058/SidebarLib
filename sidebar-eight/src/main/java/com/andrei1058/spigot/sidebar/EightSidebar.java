@@ -72,8 +72,8 @@ public class EightSidebar extends WrappedSidebar {
         @Override
         public String getDisplayName() {
             String t = displayName.getLine();
-            if (t.length() > 32) {
-                t = t.substring(0, 32);
+            if (t.length() > 16) {
+                t = t.substring(0, 16);
             }
             return t;
         }

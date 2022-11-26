@@ -72,8 +72,8 @@ public class TwelveSidebar extends WrappedSidebar {
         @Override
         public String getDisplayName() {
             String t = displayName.getLine();
-            if (t.length() > 32) {
-                t = t.substring(0, 32);
+            if (t.length() > 16) {
+                t = t.substring(0, 16);
             }
             return t;
         }
@@ -219,7 +219,7 @@ public class TwelveSidebar extends WrappedSidebar {
                 return;
             }
             secondPart = ChatColor.getLastColors(this.prefix) + secondPart;
-            this.suffix = secondPart.length() > 32 ? secondPart.substring(0, 32) : secondPart;
+            this.suffix = secondPart.length() > 16 ? secondPart.substring(0, 16) : secondPart;
         }
 
         public void sendUpdateToAllReceivers() {
