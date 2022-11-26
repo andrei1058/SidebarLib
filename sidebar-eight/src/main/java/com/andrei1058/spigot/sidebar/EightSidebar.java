@@ -203,7 +203,7 @@ public class EightSidebar extends WrappedSidebar {
                 this.prefix = content.substring(0, 16);
                 if (this.prefix.charAt(15) == ChatColor.COLOR_CHAR) {
                     this.prefix = content.substring(0, 15);
-                    setSuffix(content.substring(16));
+                    setSuffix(content.substring(15));
                 } else {
                     setSuffix(content.substring(16));
                 }

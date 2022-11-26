@@ -201,7 +201,7 @@ public class TwelveSidebar extends WrappedSidebar {
             }
             if (content.length() > 32) {
                 this.prefix = content.substring(0, 32);
-                if (this.prefix.charAt(15) == ChatColor.COLOR_CHAR) {
+                if (this.prefix.charAt(31) == ChatColor.COLOR_CHAR) {
                     this.prefix = content.substring(0, 31);
                     setSuffix(content.substring(31));
                 } else {

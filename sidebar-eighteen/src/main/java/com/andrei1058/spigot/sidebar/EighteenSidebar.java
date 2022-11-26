@@ -228,13 +228,13 @@ class EighteenSidebar extends WrappedSidebar {
             if (!getReceivers().isEmpty()) {
                 content = SidebarManager.getInstance().getPapiSupport().replacePlaceholders(getReceivers().get(0), content);
             }
-            if (content.length() > 16) {
-                this.prefix = content.substring(0, 16);
-                if (this.prefix.charAt(15) == ChatColor.COLOR_CHAR) {
-                    this.prefix = content.substring(0, 15);
-                    setSuffix(content.substring(15));
+            if (content.length() > 64) {
+                this.prefix = content.substring(0, 64);
+                if (this.prefix.charAt(63) == ChatColor.COLOR_CHAR) {
+                    this.prefix = content.substring(0, 63);
+                    setSuffix(content.substring(63));
                 } else {
-                    setSuffix(content.substring(16));
+                    setSuffix(content.substring(64));
                 }
             } else {
                 this.prefix = content;
@@ -248,7 +248,7 @@ class EighteenSidebar extends WrappedSidebar {
                 return;
             }
             secondPart = ChatColor.getLastColors(this.prefix) + secondPart;
-            this.suffix = secondPart.length() > 16 ? secondPart.substring(0, 16) : secondPart;
+            this.suffix = secondPart.length() > 64 ? secondPart.substring(0, 64) : secondPart;
         }
 
         public void sendUpdateToAllReceivers() {
