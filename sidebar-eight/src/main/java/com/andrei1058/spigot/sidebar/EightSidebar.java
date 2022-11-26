@@ -199,13 +199,13 @@ public class EightSidebar extends WrappedSidebar {
             if (!getReceivers().isEmpty()) {
                 content = SidebarManager.getInstance().getPapiSupport().replacePlaceholders(getReceivers().get(0), content);
             }
-            if (content.length() > 32) {
-                this.prefix = content.substring(0, 32);
+            if (content.length() > 16) {
+                this.prefix = content.substring(0, 16);
                 if (this.prefix.charAt(15) == ChatColor.COLOR_CHAR) {
-                    this.prefix = content.substring(0, 31);
-                    setSuffix(content.substring(31));
+                    this.prefix = content.substring(0, 15);
+                    setSuffix(content.substring(16));
                 } else {
-                    setSuffix(content.substring(32));
+                    setSuffix(content.substring(16));
                 }
             } else {
                 this.prefix = content;
@@ -219,7 +219,7 @@ public class EightSidebar extends WrappedSidebar {
                 return;
             }
             secondPart = ChatColor.getLastColors(this.prefix) + secondPart;
-            this.suffix = secondPart.length() > 32 ? secondPart.substring(0, 32) : secondPart;
+            this.suffix = secondPart.length() > 16 ? secondPart.substring(0, 16) : secondPart;
         }
 
         public void sendUpdateToAllReceivers() {
