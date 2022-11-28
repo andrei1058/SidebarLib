@@ -201,11 +201,8 @@ public class SixteenSidebar extends WrappedSidebar {
         }
 
         public void sendUpdate(Player player) {
-            PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(
-                    ScoreboardServer.Action.CHANGE, ((ScoreboardObjective) getSidebarObjective()).getName(),
-                    getPlayerName(), getScoreAmount()
-            );
-            ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packetPlayOutScoreboardScore);
+            PacketPlayOutScoreboardTeam packetTeamUpdate = new PacketPlayOutScoreboardTeam(team, 2);
+            ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packetTeamUpdate);
         }
 
         @Contract(pure = true)
@@ -215,7 +212,7 @@ public class SixteenSidebar extends WrappedSidebar {
             }
             if (content.length() > 32) {
                 this.prefix = content.substring(0, 32);
-                if (this.prefix.charAt(15) == ChatColor.COLOR_CHAR) {
+                if (this.prefix.charAt(31) == ChatColor.COLOR_CHAR) {
                     this.prefix = content.substring(0, 31);
                     setSuffix(content.substring(31));
                 } else {
@@ -237,11 +234,8 @@ public class SixteenSidebar extends WrappedSidebar {
         }
 
         public void sendUpdateToAllReceivers() {
-            PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(
-                    ScoreboardServer.Action.CHANGE, ((ScoreboardObjective) getSidebarObjective()).getName(),
-                    getPlayerName(), getScoreAmount()
-            );
-            getReceivers().forEach(r -> ((CraftPlayer) r).getHandle().playerConnection.sendPacket(packetPlayOutScoreboardScore));
+            PacketPlayOutScoreboardTeam packetTeamUpdate = new PacketPlayOutScoreboardTeam(team, 2);
+            getReceivers().forEach(r -> ((CraftPlayer) r).getHandle().playerConnection.sendPacket(packetTeamUpdate));
         }
 
         public int compareTo(@NotNull ScoreLine o) {
