@@ -84,6 +84,8 @@ public interface Sidebar {
     @SuppressWarnings("unused")
     void removeLine(int line);
 
+    void clearLines();
+
     /**
      * @return lines amount.
      */

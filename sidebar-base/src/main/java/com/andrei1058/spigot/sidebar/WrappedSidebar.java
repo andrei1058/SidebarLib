@@ -84,7 +84,7 @@ class WrappedSidebar implements Sidebar {
     private static void scoreOffsetIncrease(@NotNull Collection<ScoreLine> lineCollections) {
         for (ScoreLine line : lineCollections) {
             line.setScoreAmount(line.getScoreAmount() + 1);
-            line.sendCreateToAllReceivers();
+            line.sendUpdateToAllReceivers();
         }
     }
 
@@ -96,9 +96,9 @@ class WrappedSidebar implements Sidebar {
     public void addLine(SidebarLine sidebarLine) {
         int score = getAvailableScore();
         if (score == -1) return;
+        if (availableColors.isEmpty()) return;
         scoreOffsetIncrease(this.lines);
-        String color = availableColors.get(0);
-        availableColors.remove(0);
+        String color = availableColors.removeFirst();
         ScoreLine s = SidebarManager.getInstance().getSidebarProvider().createScoreLine(
                 this, sidebarLine, score == 0 ? score : score - 1, color
         );
@@ -137,22 +137,21 @@ class WrappedSidebar implements Sidebar {
     @Override
     public void refreshPlaceholders() {
         for (ScoreLine line : this.lines) {
-            if (line.getLine().isHasPlaceholders()) {
-                refreshLinePlaceholders(line);
+            if (line.getLine().isHasPlaceholders() && refreshLinePlaceholders(line)) {
                 line.sendUpdateToAllReceivers();
             }
         }
     }
 
     // refresh placeholders for the given line before sending it
-    private void refreshLinePlaceholders(@NotNull ScoreLine line){
+    private boolean refreshLinePlaceholders(@NotNull ScoreLine line) {
         String content = line.getLine().getLine();
         for (PlaceholderProvider pp : this.placeholderProviders) {
             if (content.contains(pp.getPlaceholder())) {
                 content = content.replace(pp.getPlaceholder(), pp.getReplacement());
             }
         }
-        line.setContent(content);
+        return line.setContent(content);
     }
 
     @Override
@@ -165,11 +164,14 @@ class WrappedSidebar implements Sidebar {
         for (ScoreLine line : lines) {
             if (line.getLine() instanceof SidebarLineAnimated) {
                 if (line.getLine().isHasPlaceholders()) {
-                    refreshLinePlaceholders(line);
+                    if (refreshLinePlaceholders(line)) {
+                        line.sendUpdateToAllReceivers();
+                    }
                 } else {
-                    line.setContent(line.getLine().getLine());
+                    if (line.setContent(line.getLine().getLine())) {
+                        line.sendUpdateToAllReceivers();
+                    }
                 }
-                line.sendUpdateToAllReceivers();
             }
         }
     }
@@ -192,6 +194,16 @@ class WrappedSidebar implements Sidebar {
     }
 
     @Override
+    public void clearLines() {
+        this.lines.forEach(line -> {
+            line.sendRemoveToAllReceivers();
+            this.restoreColor(line.getColor());
+        });
+        scoreOffsetDecrease(Collections.emptyList());
+        this.lines.clear();
+    }
+
+    @Override
     public int lineCount() {
         return lines.size();
     }
@@ -208,13 +220,13 @@ class WrappedSidebar implements Sidebar {
 
     @Override
     public void remove(Player player) {
-        this.receivers.remove(player);
         tabView.forEach(tab -> tab.remove(player));
         lines.forEach(line -> line.sendRemove(player));
         this.sidebarObjective.sendRemove(player);
         if (this.healthObjective != null) {
             this.healthObjective.sendRemove(player);
         }
+        this.receivers.remove(player);
 
         // clear player from any cached context
         this.tabView.forEach(tab -> {
@@ -269,7 +281,7 @@ class WrappedSidebar implements Sidebar {
         );
         // send tab create to sidebar receivers
         getReceivers().forEach(tab::sendCreateToPlayer);
-        if (null != player){
+        if (null != player) {
             // add entity to tab team
             tab.sendUserCreateToReceivers(player);
         }
@@ -280,7 +292,7 @@ class WrappedSidebar implements Sidebar {
     @Override
     public void removeTab(String identifier) {
         Optional<VersionedTabGroup> playerTab = tabView.stream().filter(tab -> tab.getIdentifier().equals(identifier)).findFirst();
-        if (playerTab.isPresent()){
+        if (playerTab.isPresent()) {
             VersionedTabGroup tab = playerTab.get();
             tabView.remove(tab);
             tab.sendRemoveToReceivers();

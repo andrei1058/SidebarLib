@@ -130,8 +130,10 @@ public class EightSidebar extends WrappedSidebar {
                         content = content.replace(pp.getPlaceholder(), pp.getReplacement());
                     }
                 }
+                //noinspection ResultOfMethodCallIgnored
                 setContent(content);
             } else {
+                //noinspection ResultOfMethodCallIgnored
                 setContent(text.getLine());
             }
         }
@@ -153,7 +155,7 @@ public class EightSidebar extends WrappedSidebar {
 
         @Override
         public void setScoreAmount(int score) {
-            this.score = score;
+            this.setScore(score);
         }
 
         @Override
@@ -191,14 +193,18 @@ public class EightSidebar extends WrappedSidebar {
 
         public void sendUpdate(Player player) {
             PacketPlayOutScoreboardTeam packetTeamUpdate = new PacketPlayOutScoreboardTeam(team, 2);
+            PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(getPlayerName(), (ScoreboardObjective) getSidebarObjective());
             ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packetTeamUpdate);
+            ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packetPlayOutScoreboardScore);
         }
 
         @Contract(pure = true)
-        public void setContent(@NotNull String content) {
+        public boolean setContent(@NotNull String content) {
             if (!getReceivers().isEmpty()) {
                 content = SidebarManager.getInstance().getPapiSupport().replacePlaceholders(getReceivers().get(0), content);
             }
+            String oldPrefix = this.prefix;
+            String oldSuffix = this.suffix;
             if (content.length() > 16) {
                 this.prefix = content.substring(0, 16);
                 if (this.prefix.charAt(15) == ChatColor.COLOR_CHAR) {
@@ -211,6 +217,7 @@ public class EightSidebar extends WrappedSidebar {
                 this.prefix = content;
                 this.suffix = "";
             }
+            return !oldPrefix.equals(this.prefix) || !oldSuffix.equals(this.suffix);
         }
 
         public void setSuffix(@NotNull String secondPart) {
@@ -224,7 +231,11 @@ public class EightSidebar extends WrappedSidebar {
 
         public void sendUpdateToAllReceivers() {
             PacketPlayOutScoreboardTeam packetTeamUpdate = new PacketPlayOutScoreboardTeam(team, 2);
-            getReceivers().forEach(r -> ((CraftPlayer) r).getHandle().playerConnection.sendPacket(packetTeamUpdate));
+            PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(this);
+            getReceivers().forEach(r -> {
+                ((CraftPlayer) r).getHandle().playerConnection.sendPacket(packetTeamUpdate);
+                ((CraftPlayer) r).getHandle().playerConnection.sendPacket(packetPlayOutScoreboardScore);
+            });
         }
 
         public int compareTo(@NotNull ScoreLine o) {

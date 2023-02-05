@@ -16,7 +16,10 @@ interface ScoreLine extends Comparable<ScoreLine> {
 
     void sendCreate(Player player);
 
-    void setContent(String content);
+    /**
+     * @return if content has been changed
+     */
+    boolean setContent(String content);
 
     void sendUpdateToAllReceivers();
 
