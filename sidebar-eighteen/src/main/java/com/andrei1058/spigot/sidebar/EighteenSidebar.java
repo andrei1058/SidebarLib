@@ -155,8 +155,10 @@ class EighteenSidebar extends WrappedSidebar {
                         content = content.replace(pp.getPlaceholder(), pp.getReplacement());
                     }
                 }
+                //noinspection ResultOfMethodCallIgnored
                 setContent(content);
             } else {
+                //noinspection ResultOfMethodCallIgnored
                 setContent(text.getLine());
             }
         }
@@ -228,10 +230,12 @@ class EighteenSidebar extends WrappedSidebar {
         }
 
         @Contract(pure = true)
-        public void setContent(@NotNull String content) {
+        public boolean setContent(@NotNull String content) {
             if (!getReceivers().isEmpty()) {
                 content = SidebarManager.getInstance().getPapiSupport().replacePlaceholders(getReceivers().get(0), content);
             }
+            var oldPrefix = this.prefix;
+            var oldSuffix = this.suffix;
             if (content.length() > 64) {
                 this.prefix = content.substring(0, 64);
                 if (this.prefix.charAt(63) == ChatColor.COLOR_CHAR) {
@@ -244,6 +248,7 @@ class EighteenSidebar extends WrappedSidebar {
                 this.prefix = content;
                 this.suffix = "";
             }
+            return !oldPrefix.equals(this.prefix) || !oldSuffix.equals(this.suffix);
         }
 
         public void setSuffix(@NotNull String secondPart) {

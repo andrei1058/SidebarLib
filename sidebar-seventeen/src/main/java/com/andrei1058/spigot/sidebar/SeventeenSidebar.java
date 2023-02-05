@@ -146,8 +146,10 @@ public class SeventeenSidebar extends WrappedSidebar {
                         content = content.replace(pp.getPlaceholder(), pp.getReplacement());
                     }
                 }
+                //noinspection ResultOfMethodCallIgnored
                 setContent(content);
             } else {
+                //noinspection ResultOfMethodCallIgnored
                 setContent(text.getLine());
             }
         }
@@ -219,10 +221,13 @@ public class SeventeenSidebar extends WrappedSidebar {
         }
 
         @Contract(pure = true)
-        public void setContent(@NotNull String content) {
+        public boolean setContent(@NotNull String content) {
             if (!getReceivers().isEmpty()) {
                 content = SidebarManager.getInstance().getPapiSupport().replacePlaceholders(getReceivers().get(0), content);
             }
+            var oldPrefix = this.prefix;
+            var oldSuffix = this.suffix;
+
             if (content.length() > 32) {
                 this.prefix = content.substring(0, 32);
                 if (this.prefix.charAt(31) == ChatColor.COLOR_CHAR) {
@@ -235,6 +240,7 @@ public class SeventeenSidebar extends WrappedSidebar {
                 this.prefix = content;
                 this.suffix = "";
             }
+            return !oldPrefix.equals(this.prefix) || !oldSuffix.equals(this.suffix);
         }
 
         public void setSuffix(@NotNull String secondPart) {
