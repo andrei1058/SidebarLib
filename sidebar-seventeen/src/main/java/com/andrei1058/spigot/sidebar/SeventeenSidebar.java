@@ -169,7 +169,7 @@ public class SeventeenSidebar extends WrappedSidebar {
 
         @Override
         public void setScoreAmount(int score) {
-            this.score = score;
+            this.setScore(score);
         }
 
         @Override

@@ -153,7 +153,7 @@ public class TwelveSidebar extends WrappedSidebar {
 
         @Override
         public void setScoreAmount(int score) {
-            this.score = score;
+            this.setScore(score);
         }
 
         @Override
@@ -179,17 +179,18 @@ public class TwelveSidebar extends WrappedSidebar {
             PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = new PacketPlayOutScoreboardTeam(team, 1);
             conn.sendPacket(packetPlayOutScoreboardTeam);
 
-//            PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(getPlayerName(), (ScoreboardObjective) getSidebarObjective());
-//            conn.sendPacket(packetPlayOutScoreboardScore);
+            PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(getPlayerName(), (ScoreboardObjective) getSidebarObjective());
+            conn.sendPacket(packetPlayOutScoreboardScore);
         }
 
         public void sendRemoveToAllReceivers() {
             PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = new PacketPlayOutScoreboardTeam(team, 1);
             getReceivers().forEach(p -> ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packetPlayOutScoreboardTeam));
-//            PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(
-//                    getPlayerName(), (ScoreboardObjective) getSidebarObjective()
-//            );
-//            getReceivers().forEach(p -> ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packetPlayOutScoreboardScore));
+
+            PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(
+                    getPlayerName(), (ScoreboardObjective) getSidebarObjective()
+            );
+            getReceivers().forEach(p -> ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packetPlayOutScoreboardScore));
         }
 
         public void sendUpdate(Player player) {

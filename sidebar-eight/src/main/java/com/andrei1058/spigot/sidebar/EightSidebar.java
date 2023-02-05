@@ -153,7 +153,7 @@ public class EightSidebar extends WrappedSidebar {
 
         @Override
         public void setScoreAmount(int score) {
-            this.score = score;
+            this.setScore(score);
         }
 
         @Override
@@ -191,7 +191,9 @@ public class EightSidebar extends WrappedSidebar {
 
         public void sendUpdate(Player player) {
             PacketPlayOutScoreboardTeam packetTeamUpdate = new PacketPlayOutScoreboardTeam(team, 2);
+            PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(getPlayerName(), (ScoreboardObjective) getSidebarObjective());
             ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packetTeamUpdate);
+            ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packetPlayOutScoreboardScore);
         }
 
         @Contract(pure = true)
@@ -224,7 +226,11 @@ public class EightSidebar extends WrappedSidebar {
 
         public void sendUpdateToAllReceivers() {
             PacketPlayOutScoreboardTeam packetTeamUpdate = new PacketPlayOutScoreboardTeam(team, 2);
-            getReceivers().forEach(r -> ((CraftPlayer) r).getHandle().playerConnection.sendPacket(packetTeamUpdate));
+            PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(this);
+            getReceivers().forEach(r -> {
+                ((CraftPlayer) r).getHandle().playerConnection.sendPacket(packetTeamUpdate);
+                ((CraftPlayer) r).getHandle().playerConnection.sendPacket(packetPlayOutScoreboardScore);
+            });
         }
 
         public int compareTo(@NotNull ScoreLine o) {

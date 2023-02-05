@@ -84,7 +84,7 @@ class WrappedSidebar implements Sidebar {
     private static void scoreOffsetIncrease(@NotNull Collection<ScoreLine> lineCollections) {
         for (ScoreLine line : lineCollections) {
             line.setScoreAmount(line.getScoreAmount() + 1);
-            line.sendCreateToAllReceivers();
+            line.sendUpdateToAllReceivers();
         }
     }
 
@@ -96,9 +96,9 @@ class WrappedSidebar implements Sidebar {
     public void addLine(SidebarLine sidebarLine) {
         int score = getAvailableScore();
         if (score == -1) return;
+        if (availableColors.isEmpty()) return;
         scoreOffsetIncrease(this.lines);
-        String color = availableColors.get(0);
-        availableColors.remove(0);
+        String color = availableColors.removeFirst();
         ScoreLine s = SidebarManager.getInstance().getSidebarProvider().createScoreLine(
                 this, sidebarLine, score == 0 ? score : score - 1, color
         );
@@ -218,13 +218,13 @@ class WrappedSidebar implements Sidebar {
 
     @Override
     public void remove(Player player) {
-        this.receivers.remove(player);
         tabView.forEach(tab -> tab.remove(player));
         lines.forEach(line -> line.sendRemove(player));
         this.sidebarObjective.sendRemove(player);
         if (this.healthObjective != null) {
             this.healthObjective.sendRemove(player);
         }
+        this.receivers.remove(player);
 
         // clear player from any cached context
         this.tabView.forEach(tab -> {
