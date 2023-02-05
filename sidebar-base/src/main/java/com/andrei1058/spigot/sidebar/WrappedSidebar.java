@@ -267,8 +267,10 @@ class WrappedSidebar implements Sidebar {
         VersionedTabGroup tab = SidebarManager.getInstance().getSidebarProvider().createPlayerTab(
                 this, identifier, prefix, suffix, pushingRule, PlayerTab.NameTagVisibility.ALWAYS
         );
+        // send tab create to sidebar receivers
+        getReceivers().forEach(tab::sendCreateToPlayer);
         if (null != player){
-            tab.sendCreateToPlayer(player);
+            // add entity to tab team
             tab.sendUserCreateToReceivers(player);
         }
         tabView.add(tab);
