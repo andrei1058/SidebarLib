@@ -177,18 +177,19 @@ public class TwelveSidebar extends WrappedSidebar {
         public void sendRemove(Player player) {
             PlayerConnection conn = ((CraftPlayer) player).getHandle().playerConnection;
             PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = new PacketPlayOutScoreboardTeam(team, 1);
-            PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(getPlayerName(), (ScoreboardObjective) getSidebarObjective());
             conn.sendPacket(packetPlayOutScoreboardTeam);
-            conn.sendPacket(packetPlayOutScoreboardScore);
+
+//            PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(getPlayerName(), (ScoreboardObjective) getSidebarObjective());
+//            conn.sendPacket(packetPlayOutScoreboardScore);
         }
 
         public void sendRemoveToAllReceivers() {
             PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = new PacketPlayOutScoreboardTeam(team, 1);
             getReceivers().forEach(p -> ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packetPlayOutScoreboardTeam));
-            PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(
-                    getPlayerName(), (ScoreboardObjective) getSidebarObjective()
-            );
-            getReceivers().forEach(p -> ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packetPlayOutScoreboardScore));
+//            PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(
+//                    getPlayerName(), (ScoreboardObjective) getSidebarObjective()
+//            );
+//            getReceivers().forEach(p -> ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packetPlayOutScoreboardScore));
         }
 
         public void sendUpdate(Player player) {
