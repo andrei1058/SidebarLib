@@ -192,6 +192,16 @@ class WrappedSidebar implements Sidebar {
     }
 
     @Override
+    public void clearLines() {
+        this.lines.forEach(line -> {
+            line.sendRemoveToAllReceivers();
+            this.restoreColor(line.getColor());
+        });
+        scoreOffsetDecrease(Collections.emptyList());
+        this.lines.clear();
+    }
+
+    @Override
     public int lineCount() {
         return lines.size();
     }
