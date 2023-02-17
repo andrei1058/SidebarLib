@@ -59,8 +59,8 @@ public class TwelvePlayerList extends ScoreboardTeam implements VersionedTabGrou
             t = SidebarManager.getInstance().getPapiSupport().replacePlaceholders(getSubject(), t);
         }
 
-        if (t.length() > 32) {
-            t = t.substring(0, 32);
+        if (t.length() > 16) {
+            t = t.substring(0, 16);
         }
         return t;
     }
@@ -78,8 +78,8 @@ public class TwelvePlayerList extends ScoreboardTeam implements VersionedTabGrou
             t = SidebarManager.getInstance().getPapiSupport().replacePlaceholders(getSubject(), t);
         }
 
-        if (t.length() > 32) {
-            t = t.substring(0, 32);
+        if (t.length() > 16) {
+            t = t.substring(0, 16);
         }
         return t;
     }
@@ -95,7 +95,7 @@ public class TwelvePlayerList extends ScoreboardTeam implements VersionedTabGrou
     }
 
     @Override
-    public void add(Player player) {
+    public void add(@NotNull Player player) {
         PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = new PacketPlayOutScoreboardTeam(
                 this, Collections.singleton(player.getName()), 3
         );
@@ -108,7 +108,7 @@ public class TwelvePlayerList extends ScoreboardTeam implements VersionedTabGrou
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packetPlayOutScoreboardTeam);
     }
 
-    public void remove(Player player) {
+    public void remove(@NotNull Player player) {
         // send 4: remove entities from team
         PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = new PacketPlayOutScoreboardTeam(
                 this, Collections.singleton(player.getName()), 4
@@ -117,7 +117,7 @@ public class TwelvePlayerList extends ScoreboardTeam implements VersionedTabGrou
     }
 
     @Override
-    public void sendUserCreateToReceivers(Player player) {
+    public void sendUserCreateToReceivers(@NotNull Player player) {
         // send 3: add entities to team
         PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = new PacketPlayOutScoreboardTeam(
                 this, Collections.singleton(player.getName()), 3
@@ -152,7 +152,7 @@ public class TwelvePlayerList extends ScoreboardTeam implements VersionedTabGrou
     }
 
     @Override
-    public void setPushingRule(PushingRule rule) {
+    public void setPushingRule(@NotNull PushingRule rule) {
         switch (rule) {
             case NEVER:
                 this.pushingRule = EnumTeamPush.NEVER;

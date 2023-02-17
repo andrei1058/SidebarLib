@@ -115,7 +115,7 @@ class EighteenPlayerList extends ScoreboardTeam implements VersionedTabGroup {
     }
 
     @Override
-    public void add(Player player) {
+    public void add(@NotNull Player player) {
         PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(
                 this, player.getName(), PacketPlayOutScoreboardTeam.a.a
         );
