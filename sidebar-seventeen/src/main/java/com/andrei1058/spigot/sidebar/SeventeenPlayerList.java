@@ -63,8 +63,8 @@ public class SeventeenPlayerList extends ScoreboardTeam implements VersionedTabG
             t = SidebarManager.getInstance().getPapiSupport().replacePlaceholders(getSubject(), t);
         }
 
-        if (t.length() > 32) {
-            t = t.substring(0, 32);
+        if (t.length() > 16) {
+            t = t.substring(0, 16);
         }
         return new ChatComponentText(t);
     }
@@ -82,8 +82,8 @@ public class SeventeenPlayerList extends ScoreboardTeam implements VersionedTabG
             t = SidebarManager.getInstance().getPapiSupport().replacePlaceholders(getSubject(), t);
         }
 
-        if (t.length() > 32) {
-            t = t.substring(0, 32);
+        if (t.length() > 16) {
+            t = t.substring(0, 16);
         }
         return new ChatComponentText(t);
     }
