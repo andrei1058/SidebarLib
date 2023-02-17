@@ -180,7 +180,7 @@ class NineteenSidebar extends WrappedSidebar {
 
         @Override
         public void setScoreAmount(int score) {
-            this.score = score;
+            this.b(score);
         }
 
         @Override

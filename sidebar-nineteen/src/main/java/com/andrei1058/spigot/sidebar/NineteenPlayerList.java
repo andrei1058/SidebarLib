@@ -114,7 +114,7 @@ class NineteenPlayerList extends ScoreboardTeam implements VersionedTabGroup {
     }
 
     @Override
-    public void add(Player player) {
+    public void add(@NotNull Player player) {
         PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(
                 this, player.getName(), PacketPlayOutScoreboardTeam.a.a
         );
@@ -127,7 +127,7 @@ class NineteenPlayerList extends ScoreboardTeam implements VersionedTabGroup {
         ((CraftPlayer) player).getHandle().b.a(packetPlayOutScoreboardTeam);
     }
 
-    public void remove(Player player) {
+    public void remove(@NotNull Player player) {
         // send 4: remove entities from team
         PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(
                 this, player.getName(), PacketPlayOutScoreboardTeam.a.b
