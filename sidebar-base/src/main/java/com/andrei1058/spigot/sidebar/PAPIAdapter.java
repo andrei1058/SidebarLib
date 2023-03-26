@@ -15,7 +15,7 @@ class PAPIAdapter implements PAPISupport {
 
     @Override
     public boolean hasPlaceholders(@NotNull String s) {
-        Pattern pattern =  Pattern.compile("[%]([^%]+)[%]");
+        Pattern pattern =  Pattern.compile("%([^%]+)%");
         Matcher matcher = pattern.matcher(s);
         return matcher.find();
     }

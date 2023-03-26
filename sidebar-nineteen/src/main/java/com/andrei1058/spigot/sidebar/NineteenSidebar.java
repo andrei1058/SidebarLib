@@ -127,28 +127,7 @@ class NineteenSidebar extends WrappedSidebar {
             this.text = text;
             this.team = new TeamLine(color);
 
-            if (!text.isHasPlaceholders()) {
-                for (PlaceholderProvider provider : getPlaceholders()) {
-                    if (text.getLine().contains(provider.getPlaceholder())) {
-                        text.setHasPlaceholders(true);
-                    }
-                }
-
-                if (!text.isHasPlaceholders()) {
-                    if (text instanceof SidebarLineAnimated) {
-                        for (String line : ((SidebarLineAnimated) text).getLines()) {
-                            if (SidebarManager.getInstance().getPapiSupport().hasPlaceholders(line)) {
-                                text.setHasPlaceholders(true);
-                                break;
-                            }
-                        }
-                    } else if (SidebarManager.getInstance().getPapiSupport().hasPlaceholders(text.getLine())) {
-                        text.setHasPlaceholders(true);
-                    }
-                }
-            }
-
-            if (text.isHasPlaceholders()) {
+            if (checkHasPlaceholders(text)) {
                 String content = text.getLine();
                 for (PlaceholderProvider pp : getPlaceholders()) {
                     if (content.contains(pp.getPlaceholder())) {
