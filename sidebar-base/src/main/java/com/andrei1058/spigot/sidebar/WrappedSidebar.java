@@ -111,13 +111,33 @@ class WrappedSidebar implements Sidebar {
     public void setLine(SidebarLine sidebarLine, int line) {
         if (line >= 0 && line < this.lines.size()) {
             ScoreLine s = this.lines.get(line);
-            for (PlaceholderProvider placeholder : placeholderProviders) {
-                if (sidebarLine.getLine().contains(placeholder.getPlaceholder())) {
-                    sidebarLine.setHasPlaceholders(true);
-                }
-            }
+            checkHasPlaceholders(sidebarLine);
             s.setLine(sidebarLine);
         }
+    }
+
+    protected boolean checkHasPlaceholders(@NotNull SidebarLine text) {
+        if (!text.isHasPlaceholders()) {
+            for (PlaceholderProvider provider : getPlaceholders()) {
+                if (text.getLine().contains(provider.getPlaceholder())) {
+                    text.setHasPlaceholders(true);
+                }
+            }
+
+            if (!text.isHasPlaceholders()) {
+                if (text instanceof SidebarLineAnimated) {
+                    for (String line : ((SidebarLineAnimated) text).getLines()) {
+                        if (SidebarManager.getInstance().getPapiSupport().hasPlaceholders(line)) {
+                            text.setHasPlaceholders(true);
+                            break;
+                        }
+                    }
+                } else if (SidebarManager.getInstance().getPapiSupport().hasPlaceholders(text.getLine())) {
+                    text.setHasPlaceholders(true);
+                }
+            }
+        }
+        return text.isHasPlaceholders();
     }
 
     @Override
