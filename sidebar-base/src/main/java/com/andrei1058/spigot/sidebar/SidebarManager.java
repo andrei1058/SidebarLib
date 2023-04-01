@@ -43,7 +43,7 @@ public class SidebarManager {
         String className = null;
 
         // latest unmapped version
-        if (serverVersion.equalsIgnoreCase("v1_19_R2")) {
+        if (serverVersion.equalsIgnoreCase("v1_19_R3")) {
             className = "com.andrei1058.spigot.sidebar.NineteenProvider";
         } else if (serverVersion.equalsIgnoreCase("v1_18_R2")) {
             className = "com.andrei1058.spigot.sidebar.EighteenProvider";
