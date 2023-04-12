@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-class WrappedSidebar implements Sidebar {
+public class WrappedSidebar implements Sidebar {
 
     // sidebar lines
     private final LinkedList<ScoreLine> lines = new LinkedList<>();

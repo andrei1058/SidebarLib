@@ -2,7 +2,7 @@ package com.andrei1058.spigot.sidebar;
 
 import org.bukkit.entity.Player;
 
-interface VersionedTabGroup extends PlayerTab {
+public interface VersionedTabGroup extends PlayerTab {
 
 
     // private
