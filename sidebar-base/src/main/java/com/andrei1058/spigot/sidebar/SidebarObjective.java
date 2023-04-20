@@ -2,7 +2,7 @@ package com.andrei1058.spigot.sidebar;
 
 import org.bukkit.entity.Player;
 
-interface SidebarObjective {
+public interface SidebarObjective {
 
      void setTitle(SidebarLine title);
 
