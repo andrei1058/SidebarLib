@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-class SidebarImpl extends WrappedSidebar {
+public class SidebarImpl extends WrappedSidebar {
 
     public SidebarImpl(@NotNull SidebarLine title, @NotNull Collection<SidebarLine> lines, Collection<PlaceholderProvider> placeholderProvider) {
         super(title, lines, placeholderProvider);

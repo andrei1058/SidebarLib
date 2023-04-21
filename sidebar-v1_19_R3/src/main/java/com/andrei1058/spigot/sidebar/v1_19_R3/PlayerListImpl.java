@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
-class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup {
+public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup {
 
     private EnumTeamPush pushingRule;
     private final SidebarLine prefix;
