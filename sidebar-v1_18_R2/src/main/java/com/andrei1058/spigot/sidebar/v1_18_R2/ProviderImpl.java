@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 
 @SuppressWarnings("unused")
-class ProviderImpl extends SidebarProvider {
+public class ProviderImpl extends SidebarProvider {
 
     private static SidebarProvider instance;
 
