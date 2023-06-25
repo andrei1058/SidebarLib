@@ -2,7 +2,7 @@ package com.andrei1058.spigot.sidebar;
 
 import org.bukkit.entity.Player;
 
-interface ScoreLine extends Comparable<ScoreLine> {
+public interface ScoreLine extends Comparable<ScoreLine> {
 
     SidebarLine getLine();
 

@@ -39,31 +39,12 @@ public class SidebarManager {
         // load server version support
         String serverVersion = Bukkit.getServer().getClass().getName().split("\\.")[3];
 
-
-        String className = null;
-
-        // latest unmapped version
-        if (serverVersion.equalsIgnoreCase("v1_19_R2")) {
-            className = "com.andrei1058.spigot.sidebar.NineteenProvider";
-        } else if (serverVersion.equalsIgnoreCase("v1_18_R2")) {
-            className = "com.andrei1058.spigot.sidebar.EighteenProvider";
-        } else if (serverVersion.equalsIgnoreCase("v1_17_R1")){
-            className = "com.andrei1058.spigot.sidebar.SeventeenProvider";
-        } else if (serverVersion.equalsIgnoreCase("v1_16_R3")){
-            className = "com.andrei1058.spigot.sidebar.SixteenProvider";
-        } else if (serverVersion.equals("v1_12_R1")) {
-            className = "com.andrei1058.spigot.sidebar.TwelveProvider";
-        } else if (serverVersion.equals("v1_8_R3")) {
-            className = "com.andrei1058.spigot.sidebar.EightProvider";
-        }
-        if (null == className){
-            throw new InstantiationException();
-        }
+        String className = "com.andrei1058.spigot.sidebar." + serverVersion + ".ProviderImpl";
         try {
             Class<?> c = Class.forName(className);
             sidebarProvider = (SidebarProvider) c.getDeclaredConstructor().newInstance();
         } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException |
-                InstantiationException | IllegalAccessException ignored) {
+                 InstantiationException | IllegalAccessException ignored) {
             throw new InstantiationException();
         }
     }
@@ -110,6 +91,7 @@ public class SidebarManager {
 
     /**
      * Set a user header and footer in TAB.
+     *
      * @param player receiver.
      * @param header header text.
      * @param footer footer text.
@@ -119,11 +101,11 @@ public class SidebarManager {
         this.sidebarProvider.sendHeaderFooter(player, header, footer);
     }
 
-    PAPISupport getPapiSupport() {
+    public PAPISupport getPapiSupport() {
         return papiSupport;
     }
 
-    SidebarProvider getSidebarProvider() {
+    public SidebarProvider getSidebarProvider() {
         return sidebarProvider;
     }
 
