@@ -12,6 +12,7 @@ This project is divided in several modules:
 - `sidebar-v_1_18_R1` provides support for 1.18.2 (R2)
 - `sidebar-v_1_19_R2` provides support for 1.19.2 (R2)
 - `sidebar-v_1_19_R3` provides support for 1.19.4 (R3)
+- `sidebar-v_1_20_R1` provides support for 1.20 (R1)
 
 ### IMPORTANT
 It is really important to call Sidebar#remove(player) when a player leaves the server to avoid memory leaks.

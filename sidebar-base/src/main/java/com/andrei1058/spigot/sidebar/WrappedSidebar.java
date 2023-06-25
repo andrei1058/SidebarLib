@@ -293,9 +293,15 @@ public class WrappedSidebar implements Sidebar {
         }
     }
 
+    /**
+     * @param identifier char limit is 16.
+     */
     @Override
-    public PlayerTab playerTabCreate(String identifier, @Nullable Player player, SidebarLine prefix, SidebarLine suffix,
+    public PlayerTab playerTabCreate(@NotNull String identifier, @Nullable Player player, SidebarLine prefix, SidebarLine suffix,
                                      PlayerTab.PushingRule pushingRule) {
+        if (identifier.length() > 16) {
+            throw new RuntimeException("Char limit exceeded");
+        }
         VersionedTabGroup tab = SidebarManager.getInstance().getSidebarProvider().createPlayerTab(
                 this, identifier, prefix, suffix, pushingRule, PlayerTab.NameTagVisibility.ALWAYS
         );
