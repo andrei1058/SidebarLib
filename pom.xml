@@ -10,6 +10,7 @@
     <version>0.4-SNAPSHOT</version>
     <modules>
         <module>sidebar-base</module>
+        <module>sidebar-v1_20_R1</module>
         <module>sidebar-v1_19_R3</module>
         <module>sidebar-v1_19_R2</module>
         <module>sidebar-v1_18_R2</module>
@@ -37,7 +38,7 @@
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>23.0.0</version>
+            <version>24.0.1</version>
         </dependency>
     </dependencies>
 
@@ -47,7 +48,7 @@
             <extension>
                 <groupId>org.apache.maven.wagon</groupId>
                 <artifactId>wagon-ftp</artifactId>
-                <version>3.5.2</version>
+                <version>3.5.3</version>
             </extension>
         </extensions>
     </build>
