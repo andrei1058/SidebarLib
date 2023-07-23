@@ -1,12 +1,15 @@
 package com.andrei1058.spigot.sidebar;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
+import java.util.List;
 
 public class SidebarManager {
 
@@ -79,13 +82,11 @@ public class SidebarManager {
      * @return sb instance.
      */
     @SuppressWarnings("unused")
-    public Sidebar createSidebar(SidebarLine title, @NotNull Collection<SidebarLine> lines,
-                                 Collection<PlaceholderProvider> placeholderProviders) {
-        lines.forEach(c -> placeholderProviders.forEach(c2 -> {
-            if (c.getLine().contains(c2.getPlaceholder())) {
-                c.setHasPlaceholders(true);
-            }
-        }));
+    public Sidebar createSidebar(
+            SidebarLine title,
+            @NotNull Collection<SidebarLine> lines,
+            List<PlaceholderProvider> placeholderProviders) {
+        lines.forEach(sidebarLine -> SidebarLine.markHasPlaceholders(sidebarLine, placeholderProviders));
         return sidebarProvider.createSidebar(title, lines, placeholderProviders);
     }
 
@@ -99,6 +100,37 @@ public class SidebarManager {
     @SuppressWarnings("unused")
     public void sendHeaderFooter(Player player, String header, String footer) {
         this.sidebarProvider.sendHeaderFooter(player, header, footer);
+    }
+
+    @SuppressWarnings("unused")
+    public void sendHeaderFooter(Player player, TabHeaderFooter headerFooter) {
+        this.sendHeaderFooter(
+                player,
+                buildTabContent(player, headerFooter.getHeader(), headerFooter),
+                buildTabContent(player, headerFooter.getFooter(), headerFooter)
+        );
+    }
+
+
+    @Contract(pure = true)
+    private String buildTabContent(Player player, @NotNull List<SidebarLine> lines, TabHeaderFooter headerFooter) {
+        String[] data = new String[lines.size()];
+
+        for (int i = 0; i < data.length; i++) {
+            SidebarLine line = lines.get(i);
+            String currentLine = line.getLine();
+            if (line.isInternalPlaceholders()) {
+                for (PlaceholderProvider placeholderProvider : headerFooter.getPlaceholders()) {
+                    currentLine = currentLine.replace(placeholderProvider.getPlaceholder(), placeholderProvider.getReplacement());
+                }
+            }
+            if (line.isPapiPlaceholders()) {
+                currentLine = SidebarManager.getInstance().getPapiSupport().replacePlaceholders(player, currentLine);
+            }
+            data[i] = currentLine;
+        }
+
+        return StringUtils.join(data, "\n");
     }
 
     public PAPISupport getPapiSupport() {

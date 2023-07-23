@@ -1,5 +1,6 @@
 package com.andrei1058.spigot.sidebar;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -54,19 +55,11 @@ public class WrappedSidebar implements Sidebar {
     public void addPlaceholder(PlaceholderProvider placeholderProvider) {
         placeholderProviders.remove(placeholderProvider);
         placeholderProviders.add(placeholderProvider);
+
+        List<PlaceholderProvider> placeholder = List.of(placeholderProvider);
+
         for (ScoreLine line : lines) {
-            if (!line.getLine().isHasPlaceholders()) {
-                if (line.getLine() instanceof SidebarLineAnimated) {
-                    for (String string : ((SidebarLineAnimated) line.getLine()).getLines()) {
-                        if (string.contains(placeholderProvider.getPlaceholder())) {
-                            line.getLine().setHasPlaceholders(true);
-                            break;
-                        }
-                    }
-                } else if (line.getLine().getLine().contains(placeholderProvider.getPlaceholder())) {
-                    line.getLine().setHasPlaceholders(true);
-                }
-            }
+            SidebarLine.markHasPlaceholders(line.getLine(), placeholder);
         }
     }
 
@@ -111,42 +104,15 @@ public class WrappedSidebar implements Sidebar {
     public void setLine(SidebarLine sidebarLine, int line) {
         if (line >= 0 && line < this.lines.size()) {
             ScoreLine s = this.lines.get(line);
-            checkHasPlaceholders(sidebarLine);
+            SidebarLine.markHasPlaceholders(s.getLine(), getPlaceholders());
             s.setLine(sidebarLine);
         }
-    }
-
-    protected boolean checkHasPlaceholders(@NotNull SidebarLine text) {
-        if (!text.isHasPlaceholders()) {
-            for (PlaceholderProvider provider : getPlaceholders()) {
-                if (text.getLine().contains(provider.getPlaceholder())) {
-                    text.setHasPlaceholders(true);
-                }
-            }
-
-            if (!text.isHasPlaceholders()) {
-                if (text instanceof SidebarLineAnimated) {
-                    for (String line : ((SidebarLineAnimated) text).getLines()) {
-                        if (SidebarManager.getInstance().getPapiSupport().hasPlaceholders(line)) {
-                            text.setHasPlaceholders(true);
-                            break;
-                        }
-                    }
-                } else if (SidebarManager.getInstance().getPapiSupport().hasPlaceholders(text.getLine())) {
-                    text.setHasPlaceholders(true);
-                }
-            }
-        }
-        return text.isHasPlaceholders();
     }
 
     @Override
     public void add(Player player) {
         sidebarObjective.sendCreate(player);
-        this.lines.forEach(line -> {
-            this.refreshLinePlaceholders(line);
-            line.sendCreate(player);
-        });
+        this.lines.forEach(line -> applyPlaceholders(line).sendCreate(player));
         if (healthObjective != null) {
             healthObjective.sendCreate(player);
             this.tabView.forEach(tab -> tab.sendCreateToPlayer(player));
@@ -157,21 +123,49 @@ public class WrappedSidebar implements Sidebar {
     @Override
     public void refreshPlaceholders() {
         for (ScoreLine line : this.lines) {
-            if (line.getLine().isHasPlaceholders() && refreshLinePlaceholders(line)) {
-                line.sendUpdateToAllReceivers();
-            }
+            applyPlaceholders(line).sendUpdateToAllReceivers();
         }
     }
 
     // refresh placeholders for the given line before sending it
-    private boolean refreshLinePlaceholders(@NotNull ScoreLine line) {
-        String content = line.getLine().getLine();
+    private String applyLinePlaceholders(@NotNull SidebarLine line) {
+        String content = line.getLine();
         for (PlaceholderProvider pp : this.placeholderProviders) {
-            if (content.contains(pp.getPlaceholder())) {
-                content = content.replace(pp.getPlaceholder(), pp.getReplacement());
-            }
+            content = content.replace(pp.getPlaceholder(), pp.getReplacement());
         }
-        return line.setContent(content);
+        return content;
+    }
+
+    public ScoreLine applyPlaceholders(@NotNull ScoreLine line) {
+        String content = line.getLine().getLine();
+        if (line.getLine().isInternalPlaceholders()) {
+            content = applyLinePlaceholders(line.getLine());
+        }
+        if (line.getLine().isPapiPlaceholders()) {
+            Bukkit.broadcastMessage("Applying PAPI replacement");
+            Bukkit.broadcastMessage(content);
+            content = SidebarManager.getInstance().getPapiSupport().replacePlaceholders(
+                    getReceivers().size() > 1 ? null : getReceivers().getFirst(), content
+            );
+            Bukkit.broadcastMessage(content);
+        }
+        line.setContent(content);
+
+        return line;
+    }
+
+    public String parsePlaceholders(@NotNull SidebarLine line) {
+        String content = line.getLine();
+        if (line.isInternalPlaceholders()) {
+            content = applyLinePlaceholders(line);
+        }
+        if (line.isPapiPlaceholders()) {
+            content = SidebarManager.getInstance().getPapiSupport().replacePlaceholders(
+                    getReceivers().size() > 1 ? null : getReceivers().getFirst(), content
+            );
+        }
+
+        return content;
     }
 
     @Override
@@ -183,15 +177,7 @@ public class WrappedSidebar implements Sidebar {
     public void refreshAnimatedLines() {
         for (ScoreLine line : lines) {
             if (line.getLine() instanceof SidebarLineAnimated) {
-                if (line.getLine().isHasPlaceholders()) {
-                    if (refreshLinePlaceholders(line)) {
-                        line.sendUpdateToAllReceivers();
-                    }
-                } else {
-                    if (line.setContent(line.getLine().getLine())) {
-                        line.sendUpdateToAllReceivers();
-                    }
-                }
+                applyPlaceholders(line).sendUpdateToAllReceivers();
             }
         }
     }

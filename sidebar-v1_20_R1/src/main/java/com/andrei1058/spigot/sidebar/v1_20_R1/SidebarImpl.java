@@ -128,19 +128,10 @@ public class SidebarImpl extends WrappedSidebar {
             this.text = text;
             this.team = new TeamLine(color);
 
-            if (checkHasPlaceholders(text)) {
-                String content = text.getLine();
-                for (PlaceholderProvider pp : getPlaceholders()) {
-                    if (content.contains(pp.getPlaceholder())) {
-                        content = content.replace(pp.getPlaceholder(), pp.getReplacement());
-                    }
-                }
-                //noinspection ResultOfMethodCallIgnored
-                setContent(content);
-            } else {
-                //noinspection ResultOfMethodCallIgnored
-                setContent(text.getLine());
-            }
+            SidebarLine.markHasPlaceholders(text, getPlaceholders());
+
+            //noinspection ResultOfMethodCallIgnored
+            setContent(parsePlaceholders(text));
         }
 
         @Override
@@ -211,9 +202,6 @@ public class SidebarImpl extends WrappedSidebar {
 
         @Contract(pure = true)
         public boolean setContent(@NotNull String content) {
-            if (!getReceivers().isEmpty()) {
-                content = SidebarManager.getInstance().getPapiSupport().replacePlaceholders(getReceivers().get(0), content);
-            }
             var oldPrefix = this.prefix;
             var oldSuffix = this.suffix;
 

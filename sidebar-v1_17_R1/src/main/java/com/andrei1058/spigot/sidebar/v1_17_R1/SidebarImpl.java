@@ -119,19 +119,11 @@ public class SidebarImpl extends WrappedSidebar {
             this.text = text;
             this.team = new TeamLine(color);
 
-            if (checkHasPlaceholders(text)) {
-                String content = text.getLine();
-                for (PlaceholderProvider pp : getPlaceholders()) {
-                    if (content.contains(pp.getPlaceholder())) {
-                        content = content.replace(pp.getPlaceholder(), pp.getReplacement());
-                    }
-                }
-                //noinspection ResultOfMethodCallIgnored
-                setContent(content);
-            } else {
-                //noinspection ResultOfMethodCallIgnored
-                setContent(text.getLine());
-            }
+
+            SidebarLine.markHasPlaceholders(text, getPlaceholders());
+
+            //noinspection ResultOfMethodCallIgnored
+            setContent(parsePlaceholders(text));
         }
 
         @Override
