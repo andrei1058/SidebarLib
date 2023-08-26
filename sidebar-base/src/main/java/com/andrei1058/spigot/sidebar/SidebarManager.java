@@ -1,5 +1,6 @@
 package com.andrei1058.spigot.sidebar;
 
+import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -125,7 +126,9 @@ public class SidebarManager {
                 }
             }
             if (line.isPapiPlaceholders()) {
-                currentLine = SidebarManager.getInstance().getPapiSupport().replacePlaceholders(player, currentLine);
+                currentLine = ChatColor.translateAlternateColorCodes(
+                        '&', SidebarManager.getInstance().getPapiSupport().replacePlaceholders(player, currentLine)
+                );
             }
             data[i] = currentLine;
         }

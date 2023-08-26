@@ -14,7 +14,7 @@ import net.minecraft.world.scores.ScoreboardObjective;
 import net.minecraft.world.scores.ScoreboardScore;
 import net.minecraft.world.scores.ScoreboardTeam;
 import net.minecraft.world.scores.criteria.IScoreboardCriteria;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
@@ -229,7 +229,7 @@ public class SidebarImpl extends WrappedSidebar {
                 this.suffix = "";
                 return;
             }
-            secondPart = ChatColor.getLastColors(this.prefix) + secondPart;
+            secondPart = org.bukkit.ChatColor.getLastColors(this.prefix) + secondPart;
             this.suffix = secondPart.length() > 16 ? secondPart.substring(0, 16) : secondPart;
         }
 

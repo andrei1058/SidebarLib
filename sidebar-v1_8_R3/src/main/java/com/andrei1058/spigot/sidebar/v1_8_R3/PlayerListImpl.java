@@ -1,9 +1,9 @@
 package com.andrei1058.spigot.sidebar.v1_8_R3;
 
 import com.andrei1058.spigot.sidebar.*;
+import net.md_5.bungee.api.ChatColor;
 import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardTeam;
 import net.minecraft.server.v1_8_R3.ScoreboardTeam;
-import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;

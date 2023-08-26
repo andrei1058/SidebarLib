@@ -2,7 +2,7 @@ package com.andrei1058.spigot.sidebar.v1_16_R1;
 
 import com.andrei1058.spigot.sidebar.*;
 import net.minecraft.server.v1_16_R3.*;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;

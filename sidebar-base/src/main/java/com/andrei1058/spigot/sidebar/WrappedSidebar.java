@@ -1,7 +1,7 @@
 package com.andrei1058.spigot.sidebar;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

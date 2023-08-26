@@ -7,7 +7,7 @@ import net.minecraft.network.chat.IChatMutableComponent;
 import net.minecraft.network.protocol.game.PacketPlayOutScoreboardTeam;
 import net.minecraft.world.scores.ScoreboardTeam;
 import net.minecraft.world.scores.ScoreboardTeamBase;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;

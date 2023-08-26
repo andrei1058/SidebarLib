@@ -2,7 +2,7 @@ package com.andrei1058.spigot.sidebar.v1_8_R3;
 
 import com.andrei1058.spigot.sidebar.*;
 import net.minecraft.server.v1_8_R3.*;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
@@ -197,7 +197,7 @@ public class SidebarImpl extends WrappedSidebar {
                 this.suffix = "";
                 return;
             }
-            secondPart = ChatColor.getLastColors(this.prefix) + secondPart;
+            secondPart = org.bukkit.ChatColor.getLastColors(this.prefix) + secondPart;
             this.suffix = secondPart.length() > 16 ? secondPart.substring(0, 16) : secondPart;
         }
 
