@@ -283,18 +283,28 @@ public class WrappedSidebar implements Sidebar {
      * @param identifier char limit is 16.
      */
     @Override
-    public PlayerTab playerTabCreate(@NotNull String identifier, @Nullable Player player, SidebarLine prefix, SidebarLine suffix,
-                                     PlayerTab.PushingRule pushingRule) {
+    public PlayerTab playerTabCreate(
+            @NotNull String identifier,
+            @Nullable Player player,
+            SidebarLine prefix,
+            SidebarLine suffix,
+            PlayerTab.PushingRule pushingRule,
+            @Nullable LinkedList<PlaceholderProvider> placeholders
+    ) {
+
         if (identifier.length() > 16) {
             throw new RuntimeException("Char limit exceeded");
         }
         VersionedTabGroup tab = SidebarManager.getInstance().getSidebarProvider().createPlayerTab(
-                this, identifier, prefix, suffix, pushingRule, PlayerTab.NameTagVisibility.ALWAYS
+                this, identifier, prefix, suffix, pushingRule, PlayerTab.NameTagVisibility.ALWAYS,
+                placeholders
         );
         // send tab create to sidebar receivers
         getReceivers().forEach(tab::sendCreateToPlayer);
         if (null != player) {
             // add entity to tab team
+            tab.setSubject(player);
+            tab.add(player);
             tab.sendUserCreateToReceivers(player);
         }
         tabView.add(tab);
@@ -309,6 +319,12 @@ public class WrappedSidebar implements Sidebar {
             tabView.remove(tab);
             tab.sendRemoveToReceivers();
         }
+    }
+
+    @Override
+    public void removeTabs() {
+        tabView.forEach(VersionedTabGroup::sendRemoveToReceivers);
+        tabView.clear();
     }
 
     @Override

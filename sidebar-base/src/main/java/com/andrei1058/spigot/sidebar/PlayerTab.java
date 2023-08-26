@@ -43,6 +43,11 @@ public interface PlayerTab {
     @SuppressWarnings("unused")
     void setNameTagVisibility(NameTagVisibility nameTagVisibility);
 
+    /**
+     * Unique identifier.
+     */
+    String getIdentifier();
+
     @SuppressWarnings("unused")
     enum PushingRule {
         ALWAYS, NEVER, PUSH_OTHER_TEAMS, PUSH_OWN_TEAM

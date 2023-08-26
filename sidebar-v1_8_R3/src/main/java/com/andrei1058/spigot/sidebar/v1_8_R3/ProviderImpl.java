@@ -5,9 +5,11 @@ import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
+import java.util.LinkedList;
 
 @SuppressWarnings("unused")
 public class ProviderImpl extends SidebarProvider {
@@ -69,8 +71,9 @@ public class ProviderImpl extends SidebarProvider {
 
     @Override
     public VersionedTabGroup createPlayerTab(WrappedSidebar sidebar, String identifier, SidebarLine prefix, SidebarLine suffix,
-                                             PlayerTab.PushingRule pushingRule, PlayerTab.NameTagVisibility nameTagVisibility) {
-        return new PlayerListImpl(sidebar, identifier, prefix, suffix, pushingRule, nameTagVisibility);
+                                             PlayerTab.PushingRule pushingRule, PlayerTab.NameTagVisibility nameTagVisibility,
+                                             @Nullable LinkedList<PlaceholderProvider> placeholders) {
+        return new PlayerListImpl(sidebar, identifier, prefix, suffix, pushingRule, nameTagVisibility, placeholders);
     }
 
     @Override

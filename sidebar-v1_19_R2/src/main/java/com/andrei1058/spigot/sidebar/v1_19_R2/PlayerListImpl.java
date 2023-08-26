@@ -5,11 +5,13 @@ import net.minecraft.network.chat.IChatBaseComponent;
 import net.minecraft.network.chat.IChatMutableComponent;
 import net.minecraft.network.protocol.game.PacketPlayOutScoreboardTeam;
 import net.minecraft.world.scores.ScoreboardTeam;
+import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.util.LinkedList;
 
 public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup {
 
@@ -20,9 +22,10 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
     private final String id;
     private EnumNameTagVisibility nameTagVisibility = EnumNameTagVisibility.a;
     private Player papiSubject = null;
-
+    private final LinkedList<PlaceholderProvider> placeholders;
     public PlayerListImpl(@NotNull WrappedSidebar sidebar, String identifier, SidebarLine prefix, SidebarLine suffix,
-                          PushingRule pushingRule, NameTagVisibility nameTagVisibility) {
+                          PushingRule pushingRule, NameTagVisibility nameTagVisibility,
+                          @org.jetbrains.annotations.Nullable LinkedList<PlaceholderProvider> placeholders) {
         super(null, identifier);
         this.suffix = suffix;
         this.prefix = prefix;
@@ -30,6 +33,7 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
         this.setPushingRule(pushingRule);
         this.setNameTagVisibility(nameTagVisibility);
         this.id = identifier;
+        this.placeholders = placeholders;
     }
 
     @Override
@@ -58,13 +62,17 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
     @Override
     public IChatBaseComponent e() {
         String t = prefix.getLine();
-        for (PlaceholderProvider placeholderProvider : sidebar.getPlaceholders()) {
-            if (t.contains(placeholderProvider.getPlaceholder())) {
-                t = t.replace(placeholderProvider.getPlaceholder(), placeholderProvider.getReplacement());
+        if (null != this.placeholders) {
+            for (PlaceholderProvider placeholderProvider : this.placeholders) {
+                if (t.contains(placeholderProvider.getPlaceholder())) {
+                    t = t.replace(placeholderProvider.getPlaceholder(), placeholderProvider.getReplacement());
+                }
             }
         }
         if (null != getSubject()) {
-            t = SidebarManager.getInstance().getPapiSupport().replacePlaceholders(getSubject(), t);
+            t = ChatColor.translateAlternateColorCodes('&',
+                    SidebarManager.getInstance().getPapiSupport().replacePlaceholders(getSubject(), t)
+            );
         }
 
         if (t.length() > 32) {
@@ -80,14 +88,18 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
     @Override
     public IChatBaseComponent f() {
         String t = suffix.getLine();
-        for (PlaceholderProvider placeholderProvider : sidebar.getPlaceholders()) {
-            if (t.contains(placeholderProvider.getPlaceholder())) {
-                t = t.replace(placeholderProvider.getPlaceholder(), placeholderProvider.getReplacement());
+        if (null != this.placeholders) {
+            for (PlaceholderProvider placeholderProvider : this.placeholders) {
+                if (t.contains(placeholderProvider.getPlaceholder())) {
+                    t = t.replace(placeholderProvider.getPlaceholder(), placeholderProvider.getReplacement());
+                }
             }
         }
 
         if (null != getSubject()) {
-            t = SidebarManager.getInstance().getPapiSupport().replacePlaceholders(getSubject(), t);
+            t = ChatColor.translateAlternateColorCodes('&',
+                    SidebarManager.getInstance().getPapiSupport().replacePlaceholders(getSubject(), t)
+            );
         }
 
         if (t.length() > 32) {

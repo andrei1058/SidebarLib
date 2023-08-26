@@ -72,8 +72,8 @@ public class SidebarImpl extends WrappedSidebar {
         @Override
         public IChatBaseComponent d() {
             String t = displayName.getLine();
-            if (t.length() > 32) {
-                t = t.substring(0, 32);
+            if (t.length() > 256) {
+                t = t.substring(0, 256);
             }
             return IChatBaseComponent.b(t);
         }
@@ -205,13 +205,13 @@ public class SidebarImpl extends WrappedSidebar {
             var oldPrefix = this.prefix;
             var oldSuffix = this.suffix;
 
-            if (content.length() > 16) {
-                this.prefix = content.substring(0, 16);
-                if (this.prefix.charAt(15) == ChatColor.COLOR_CHAR) {
-                    this.prefix = content.substring(0, 15);
-                    setSuffix(content.substring(15));
+            if (content.length() > 256) {
+                this.prefix = content.substring(0, 256);
+                if (this.prefix.charAt(255) == ChatColor.COLOR_CHAR) {
+                    this.prefix = content.substring(0, 255);
+                    setSuffix(content.substring(255));
                 } else {
-                    setSuffix(content.substring(16));
+                    setSuffix(content.substring(256));
                 }
             } else {
                 this.prefix = content;
@@ -226,7 +226,7 @@ public class SidebarImpl extends WrappedSidebar {
                 return;
             }
             secondPart = ChatColor.getLastColors(this.prefix) + secondPart;
-            this.suffix = secondPart.length() > 16 ? secondPart.substring(0, 16) : secondPart;
+            this.suffix = secondPart.length() > 256 ? secondPart.substring(0, 256) : secondPart;
         }
 
         public void sendUpdateToAllReceivers() {

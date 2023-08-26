@@ -11,8 +11,6 @@ public interface VersionedTabGroup extends PlayerTab {
     // private
     void sendUserCreateToReceivers(Player player);
 
-    String getIdentifier();
-
     // private
     void sendUpdateToReceivers();
 
