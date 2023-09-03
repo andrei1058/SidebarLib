@@ -1,6 +1,5 @@
 package com.andrei1058.spigot.sidebar;
 
-import org.bukkit.Bukkit;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -142,12 +141,9 @@ public class WrappedSidebar implements Sidebar {
             content = applyLinePlaceholders(line.getLine());
         }
         if (line.getLine().isPapiPlaceholders()) {
-            Bukkit.broadcastMessage("Applying PAPI replacement");
-            Bukkit.broadcastMessage(content);
             content = SidebarManager.getInstance().getPapiSupport().replacePlaceholders(
                     getReceivers().size() > 1 ? null : getReceivers().getFirst(), content
             );
-            Bukkit.broadcastMessage(content);
         }
         line.setContent(content);
 
