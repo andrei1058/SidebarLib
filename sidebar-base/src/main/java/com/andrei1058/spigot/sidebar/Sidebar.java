@@ -3,6 +3,7 @@ package com.andrei1058.spigot.sidebar;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public interface Sidebar {
@@ -84,6 +85,7 @@ public interface Sidebar {
     @SuppressWarnings("unused")
     void removeLine(int line);
 
+    @SuppressWarnings("unused")
     void clearLines();
 
     /**
@@ -125,14 +127,41 @@ public interface Sidebar {
      * Create a new tab list layout group.
      * Players added to this group will have the same prefix-suffix.
      * @param identifier group identifier.
-     * @param player initial member.
+     * @param player initial member. PAPI subject.
      * @param prefix prefix text or animation.
      * @param suffix suffix text or animation.
      * @param pushingRule how to manage pushing.
      * @return tab group instance.
      */
     @SuppressWarnings("unused")
-    PlayerTab playerTabCreate(String identifier, @Nullable Player player, SidebarLine prefix, SidebarLine suffix, PlayerTab.PushingRule pushingRule);
+    default PlayerTab playerTabCreate(
+            String identifier,
+            @Nullable Player player,
+            SidebarLine prefix,
+            SidebarLine suffix,
+            PlayerTab.PushingRule pushingRule
+    ) {
+        return playerTabCreate(identifier, player, prefix, suffix, pushingRule, null);
+    }
+    /**
+     * Create a new tab list layout group.
+     * Players added to this group will have the same prefix-suffix.
+     * @param identifier group identifier.
+     * @param player initial member. PAPI subject.
+     * @param prefix prefix text or animation.
+     * @param suffix suffix text or animation.
+     * @param pushingRule how to manage pushing.
+     * @param placeholders placeholders.
+     * @return tab group instance.
+     */
+    PlayerTab playerTabCreate(
+            String identifier,
+            @Nullable Player player,
+            SidebarLine prefix,
+            SidebarLine suffix,
+            PlayerTab.PushingRule pushingRule,
+            @Nullable LinkedList<PlaceholderProvider> placeholders
+    );
 
     /**
      * Remove tab group form tab list by identifier.
@@ -140,6 +169,12 @@ public interface Sidebar {
      */
     @SuppressWarnings("unused")
     void removeTab(String identifier);
+
+    /**
+     * Remove all tab lists.
+     */
+    @SuppressWarnings("unused")
+    void removeTabs();
 
     /**
      * Refresh tab-list animations (if making use of {@link SidebarLineAnimated}).

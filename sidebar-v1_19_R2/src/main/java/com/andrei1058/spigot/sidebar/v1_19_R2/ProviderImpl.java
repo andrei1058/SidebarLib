@@ -11,8 +11,10 @@ import net.minecraft.world.scores.criteria.IScoreboardCriteria;
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.LinkedList;
 
 @SuppressWarnings("unused")
 public class ProviderImpl extends SidebarProvider {
@@ -47,8 +49,9 @@ public class ProviderImpl extends SidebarProvider {
 
     @Override
     public VersionedTabGroup createPlayerTab(WrappedSidebar sidebar, String identifier, SidebarLine prefix, SidebarLine suffix,
-                                             PlayerTab.PushingRule pushingRule, PlayerTab.NameTagVisibility tagVisibility) {
-        return new PlayerListImpl(sidebar, identifier, prefix, suffix, pushingRule, tagVisibility);
+                                             PlayerTab.PushingRule pushingRule, PlayerTab.NameTagVisibility tagVisibility,
+                                             @Nullable LinkedList<PlaceholderProvider> placeholders) {
+        return new PlayerListImpl(sidebar, identifier, prefix, suffix, pushingRule, tagVisibility, placeholders);
     }
 
     @Override

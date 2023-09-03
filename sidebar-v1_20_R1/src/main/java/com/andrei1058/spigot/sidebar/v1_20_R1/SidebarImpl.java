@@ -14,7 +14,7 @@ import net.minecraft.world.scores.ScoreboardObjective;
 import net.minecraft.world.scores.ScoreboardScore;
 import net.minecraft.world.scores.ScoreboardTeam;
 import net.minecraft.world.scores.criteria.IScoreboardCriteria;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
@@ -72,8 +72,8 @@ public class SidebarImpl extends WrappedSidebar {
         @Override
         public IChatBaseComponent d() {
             String t = displayName.getLine();
-            if (t.length() > 32) {
-                t = t.substring(0, 32);
+            if (t.length() > 256) {
+                t = t.substring(0, 256);
             }
             return IChatBaseComponent.b(t);
         }
@@ -128,19 +128,10 @@ public class SidebarImpl extends WrappedSidebar {
             this.text = text;
             this.team = new TeamLine(color);
 
-            if (checkHasPlaceholders(text)) {
-                String content = text.getLine();
-                for (PlaceholderProvider pp : getPlaceholders()) {
-                    if (content.contains(pp.getPlaceholder())) {
-                        content = content.replace(pp.getPlaceholder(), pp.getReplacement());
-                    }
-                }
-                //noinspection ResultOfMethodCallIgnored
-                setContent(content);
-            } else {
-                //noinspection ResultOfMethodCallIgnored
-                setContent(text.getLine());
-            }
+            SidebarLine.markHasPlaceholders(text, getPlaceholders());
+
+            //noinspection ResultOfMethodCallIgnored
+            setContent(parsePlaceholders(text));
         }
 
         @Override
@@ -211,19 +202,16 @@ public class SidebarImpl extends WrappedSidebar {
 
         @Contract(pure = true)
         public boolean setContent(@NotNull String content) {
-            if (!getReceivers().isEmpty()) {
-                content = SidebarManager.getInstance().getPapiSupport().replacePlaceholders(getReceivers().get(0), content);
-            }
             var oldPrefix = this.prefix;
             var oldSuffix = this.suffix;
 
-            if (content.length() > 16) {
-                this.prefix = content.substring(0, 16);
-                if (this.prefix.charAt(15) == ChatColor.COLOR_CHAR) {
-                    this.prefix = content.substring(0, 15);
-                    setSuffix(content.substring(15));
+            if (content.length() > 256) {
+                this.prefix = content.substring(0, 256);
+                if (this.prefix.charAt(255) == ChatColor.COLOR_CHAR) {
+                    this.prefix = content.substring(0, 255);
+                    setSuffix(content.substring(255));
                 } else {
-                    setSuffix(content.substring(16));
+                    setSuffix(content.substring(256));
                 }
             } else {
                 this.prefix = content;
@@ -237,8 +225,8 @@ public class SidebarImpl extends WrappedSidebar {
                 this.suffix = "";
                 return;
             }
-            secondPart = ChatColor.getLastColors(this.prefix) + secondPart;
-            this.suffix = secondPart.length() > 16 ? secondPart.substring(0, 16) : secondPart;
+            secondPart = org.bukkit.ChatColor.getLastColors(this.prefix) + secondPart;
+            this.suffix = secondPart.length() > 256 ? secondPart.substring(0, 256) : secondPart;
         }
 
         public void sendUpdateToAllReceivers() {

@@ -15,7 +15,7 @@ import net.minecraft.world.scores.ScoreboardObjective;
 import net.minecraft.world.scores.ScoreboardScore;
 import net.minecraft.world.scores.ScoreboardTeam;
 import net.minecraft.world.scores.criteria.IScoreboardCriteria;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
@@ -119,19 +119,11 @@ public class SidebarImpl extends WrappedSidebar {
             this.text = text;
             this.team = new TeamLine(color);
 
-            if (checkHasPlaceholders(text)) {
-                String content = text.getLine();
-                for (PlaceholderProvider pp : getPlaceholders()) {
-                    if (content.contains(pp.getPlaceholder())) {
-                        content = content.replace(pp.getPlaceholder(), pp.getReplacement());
-                    }
-                }
-                //noinspection ResultOfMethodCallIgnored
-                setContent(content);
-            } else {
-                //noinspection ResultOfMethodCallIgnored
-                setContent(text.getLine());
-            }
+
+            SidebarLine.markHasPlaceholders(text, getPlaceholders());
+
+            //noinspection ResultOfMethodCallIgnored
+            setContent(parsePlaceholders(text));
         }
 
         @Override
@@ -228,7 +220,7 @@ public class SidebarImpl extends WrappedSidebar {
                 this.suffix = "";
                 return;
             }
-            secondPart = ChatColor.getLastColors(this.prefix) + secondPart;
+            secondPart = org.bukkit.ChatColor.getLastColors(this.prefix) + secondPart;
             this.suffix = secondPart.length() > 32 ? secondPart.substring(0, 32) : secondPart;
         }
 
