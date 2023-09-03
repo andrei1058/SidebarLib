@@ -26,7 +26,7 @@ public class ProviderImpl extends SidebarProvider {
 
     @Override
     public SidebarObjective createObjective(@NotNull WrappedSidebar sidebar, String name, boolean health, SidebarLine title, int type) {
-        return ((SidebarImpl)sidebar).createObjective(name, health ? IScoreboardCriteria.g : IScoreboardCriteria.b, title, type);
+        return ((SidebarImpl)sidebar).createObjective(name, health ? new ScoreboardBaseCriteria("health") : IScoreboardCriteria.b, title, type);
     }
 
     @Override
