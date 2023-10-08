@@ -37,6 +37,7 @@ public class SidebarImpl extends WrappedSidebar {
         public NarniaSidebarObjective(String name, IScoreboardCriteria criteria, SidebarLine displayName, int type) {
             super(null, name, criteria);
             this.displayName = displayName;
+            SidebarLine.markHasPlaceholders(this.displayName, getPlaceholders());
             this.type = type;
         }
 
@@ -48,6 +49,7 @@ public class SidebarImpl extends WrappedSidebar {
         @Override
         public void setTitle(SidebarLine title) {
             this.displayName = title;
+            SidebarLine.markHasPlaceholders(this.displayName, getPlaceholders());
             this.sendUpdate();
         }
 
@@ -72,18 +74,7 @@ public class SidebarImpl extends WrappedSidebar {
 
         @Override
         public String getDisplayName() {
-            String t = displayName.getLine();
-
-            if (null != getPlaceholders()) {
-                for (PlaceholderProvider placeholderProvider : getPlaceholders()) {
-                    if (t.contains(placeholderProvider.getPlaceholder())) {
-                        t = t.replace(placeholderProvider.getPlaceholder(), placeholderProvider.getReplacement());
-                    }
-                }
-            }
-            t = ChatColor.translateAlternateColorCodes('&',
-                    SidebarManager.getInstance().getPapiSupport().replacePlaceholders(null, t)
-            );
+            String t = parsePlaceholders(displayName);
 
             if (t.length() > 16) {
                 t = t.substring(0, 16);
