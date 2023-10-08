@@ -73,6 +73,18 @@ public class SidebarImpl extends WrappedSidebar {
         @Override
         public IChatBaseComponent d() {
             String t = displayName.getLine();
+
+            if (null != getPlaceholders()) {
+                for (PlaceholderProvider placeholderProvider : getPlaceholders()) {
+                    if (t.contains(placeholderProvider.getPlaceholder())) {
+                        t = t.replace(placeholderProvider.getPlaceholder(), placeholderProvider.getReplacement());
+                    }
+                }
+            }
+            t = ChatColor.translateAlternateColorCodes('&',
+                    SidebarManager.getInstance().getPapiSupport().replacePlaceholders(null, t)
+            );
+
             if (t.length() > 32) {
                 t = t.substring(0, 32);
             }
