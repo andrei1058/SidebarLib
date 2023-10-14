@@ -60,6 +60,9 @@ public class WrappedSidebar implements Sidebar {
         for (ScoreLine line : lines) {
             SidebarLine.markHasPlaceholders(line.getLine(), placeholder);
         }
+        if (null != this.sidebarObjective) {
+            SidebarLine.markHasPlaceholders(this.sidebarObjective.getTitle(), getPlaceholders());
+        }
     }
 
     /**
@@ -136,9 +139,12 @@ public class WrappedSidebar implements Sidebar {
     }
 
     public ScoreLine applyPlaceholders(@NotNull ScoreLine line) {
-        String content = line.getLine().getLine();
+        String content = null;
         if (line.getLine().isInternalPlaceholders()) {
             content = applyLinePlaceholders(line.getLine());
+        }
+        if (null == content) {
+            content = line.getLine().getLine();
         }
         if (line.getLine().isPapiPlaceholders()) {
             content = SidebarManager.getInstance().getPapiSupport().replacePlaceholders(
