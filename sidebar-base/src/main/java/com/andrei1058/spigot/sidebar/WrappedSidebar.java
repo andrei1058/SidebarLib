@@ -36,10 +36,10 @@ public class WrappedSidebar implements Sidebar {
             this.availableColors.add(chatColor.toString());
         }
 
+        this.placeholderProviders.addAll(placeholderProvider);
         this.sidebarObjective = SidebarManager.getInstance().getSidebarProvider().createObjective(
                 this, "Sidebar", false, title, 1
         );
-        this.placeholderProviders.addAll(placeholderProvider);
         for (SidebarLine line : lines) {
             this.addLine(line);
         }
@@ -59,6 +59,9 @@ public class WrappedSidebar implements Sidebar {
 
         for (ScoreLine line : lines) {
             SidebarLine.markHasPlaceholders(line.getLine(), placeholder);
+        }
+        if (null != this.sidebarObjective) {
+            SidebarLine.markHasPlaceholders(this.sidebarObjective.getTitle(), getPlaceholders());
         }
     }
 
@@ -136,9 +139,12 @@ public class WrappedSidebar implements Sidebar {
     }
 
     public ScoreLine applyPlaceholders(@NotNull ScoreLine line) {
-        String content = line.getLine().getLine();
+        String content = null;
         if (line.getLine().isInternalPlaceholders()) {
             content = applyLinePlaceholders(line.getLine());
+        }
+        if (null == content) {
+            content = line.getLine().getLine();
         }
         if (line.getLine().isPapiPlaceholders()) {
             content = SidebarManager.getInstance().getPapiSupport().replacePlaceholders(
@@ -151,9 +157,12 @@ public class WrappedSidebar implements Sidebar {
     }
 
     public String parsePlaceholders(@NotNull SidebarLine line) {
-        String content = line.getLine();
+        String content = null;
         if (line.isInternalPlaceholders()) {
             content = applyLinePlaceholders(line);
+        }
+        if (null == content) {
+            content = line.getLine();
         }
         if (line.isPapiPlaceholders()) {
             content = SidebarManager.getInstance().getPapiSupport().replacePlaceholders(
