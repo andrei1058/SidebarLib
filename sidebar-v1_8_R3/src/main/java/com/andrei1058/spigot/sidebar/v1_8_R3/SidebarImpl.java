@@ -54,6 +54,11 @@ public class SidebarImpl extends WrappedSidebar {
         }
 
         @Override
+        public SidebarLine getTitle() {
+            return displayName;
+        }
+
+        @Override
         public void sendCreate(Player player) {
             PlayerConnection playerConnection = ((CraftPlayer) player).getHandle().playerConnection;
             PacketPlayOutScoreboardObjective packetPlayOutScoreboardObjective = new PacketPlayOutScoreboardObjective(this, 0);
@@ -74,7 +79,7 @@ public class SidebarImpl extends WrappedSidebar {
 
         @Override
         public String getDisplayName() {
-            String t = parsePlaceholders(displayName);
+            String t = parsePlaceholders(getTitle());
 
             if (t.length() > 16) {
                 t = t.substring(0, 16);

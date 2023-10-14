@@ -6,6 +6,8 @@ public interface SidebarObjective {
 
      void setTitle(SidebarLine title);
 
+     SidebarLine getTitle();
+
      void sendCreate(Player player);
 
      void sendUpdate();
