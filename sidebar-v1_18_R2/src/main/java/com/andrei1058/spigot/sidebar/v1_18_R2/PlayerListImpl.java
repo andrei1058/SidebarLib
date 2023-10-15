@@ -6,27 +6,29 @@ import net.minecraft.network.chat.IChatBaseComponent;
 import net.minecraft.network.chat.IChatMutableComponent;
 import net.minecraft.network.protocol.game.PacketPlayOutScoreboardTeam;
 import net.minecraft.world.scores.ScoreboardTeam;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.LinkedList;
+import java.util.Collection;
 
 public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup {
 
     private EnumTeamPush pushingRule;
     private final SidebarLine prefix;
+    private ChatComponentText prefixComponent = new ChatComponentText("");
     private final SidebarLine suffix;
+    private ChatComponentText suffixComponent = new ChatComponentText("");
     private final WrappedSidebar sidebar;
     private final String id;
     private EnumNameTagVisibility nameTagVisibility = EnumNameTagVisibility.a;
     private Player papiSubject = null;
-    private final LinkedList<PlaceholderProvider> placeholders;
+    private final Collection<PlaceholderProvider> placeholders;
+
     public PlayerListImpl(@NotNull WrappedSidebar sidebar, String identifier, SidebarLine prefix, SidebarLine suffix,
                           PushingRule pushingRule, NameTagVisibility nameTagVisibility,
-                          @org.jetbrains.annotations.Nullable LinkedList<PlaceholderProvider> placeholders) {
+                          @org.jetbrains.annotations.Nullable Collection<PlaceholderProvider> placeholders) {
         super(null, identifier);
         this.suffix = suffix;
         this.prefix = prefix;
@@ -62,24 +64,7 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
 
     @Override
     public IChatBaseComponent e() {
-        String t = prefix.getLine();
-        if (null != this.placeholders) {
-            for (PlaceholderProvider placeholderProvider : this.placeholders) {
-                if (t.contains(placeholderProvider.getPlaceholder())) {
-                    t = t.replace(placeholderProvider.getPlaceholder(), placeholderProvider.getReplacement());
-                }
-            }
-        }
-        if (null != getSubject()) {
-            t = ChatColor.translateAlternateColorCodes('&',
-                    SidebarManager.getInstance().getPapiSupport().replacePlaceholders(getSubject(), t)
-            );
-        }
-
-        if (t.length() > 32) {
-            t = t.substring(0, 32);
-        }
-        return new ChatComponentText(t);
+        return prefixComponent;
     }
 
     @Override
@@ -88,25 +73,7 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
 
     @Override
     public IChatBaseComponent f() {
-        String t = suffix.getLine();
-        if (null != this.placeholders) {
-            for (PlaceholderProvider placeholderProvider : this.placeholders) {
-                if (t.contains(placeholderProvider.getPlaceholder())) {
-                    t = t.replace(placeholderProvider.getPlaceholder(), placeholderProvider.getReplacement());
-                }
-            }
-        }
-
-        if (null != getSubject()) {
-            t = ChatColor.translateAlternateColorCodes('&',
-                    SidebarManager.getInstance().getPapiSupport().replacePlaceholders(getSubject(), t)
-            );
-        }
-
-        if (t.length() > 32) {
-            t = t.substring(0, 32);
-        }
-        return new ChatComponentText(t);
+        return suffixComponent;
     }
 
     @Override
@@ -141,7 +108,7 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
         ((CraftPlayer) player).getHandle().b.a(packetPlayOutScoreboardTeam);
     }
 
-    public void remove(Player player) {
+    public void remove(@NotNull Player player) {
         // send 4: remove entities from team
         PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(
                 this, player.getName(), PacketPlayOutScoreboardTeam.a.b
@@ -150,7 +117,7 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
     }
 
     @Override
-    public void sendUserCreateToReceivers(Player player) {
+    public void sendUserCreateToReceivers(@NotNull Player player) {
         // send 3: add entities to team
         PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(
                 this, player.getName(), PacketPlayOutScoreboardTeam.a.a
@@ -167,6 +134,21 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
     public void sendRemoveToReceivers() {
         PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(this);
         sidebar.getReceivers().forEach(r -> ((CraftPlayer) r).getHandle().b.a(packetPlayOutScoreboardTeam));
+    }
+
+    @Override
+    public boolean refreshContent() {
+        String newPrefix = this.prefix.getTrimReplacePlaceholders(getSubject(), 32, this.placeholders);
+        String newSuffix = this.suffix.getTrimReplacePlaceholders(getSubject(), 32, this.placeholders);
+
+        if (newPrefix.equals(this.prefixComponent.h()) && newSuffix.equals(this.suffixComponent.h())) {
+            return false;
+        }
+
+        this.prefixComponent = new ChatComponentText(newPrefix);
+        this.suffixComponent = new ChatComponentText(newSuffix);
+
+        return true;
     }
 
     @Override
@@ -205,7 +187,7 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
             case HIDE_FOR_OTHER_TEAMS -> this.nameTagVisibility = EnumNameTagVisibility.c;
             case HIDE_FOR_OWN_TEAM -> this.nameTagVisibility = EnumNameTagVisibility.d;
         }
-        if (null != id){
+        if (null != id) {
             sendUpdateToReceivers();
         }
     }

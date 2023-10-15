@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class WrappedSidebar implements Sidebar {
 
@@ -14,7 +15,7 @@ public class WrappedSidebar implements Sidebar {
     // who is receiving this sidebar
     private final LinkedList<Player> receivers = new LinkedList<>();
     // placeholders for sidebar lines
-    private final LinkedList<PlaceholderProvider> placeholderProviders = new LinkedList<>();
+    private final Collection<PlaceholderProvider> placeholderProviders = new ConcurrentLinkedQueue<>();
     // chat colors used for line indexing -
     private final LinkedList<String> availableColors = new LinkedList<>();
     // sidebar lines objective
@@ -37,9 +38,13 @@ public class WrappedSidebar implements Sidebar {
         }
 
         this.placeholderProviders.addAll(placeholderProvider);
+        for (SidebarLine line : lines) {
+            SidebarLine.markHasPlaceholders(line, placeholderProvider);
+        }
         this.sidebarObjective = SidebarManager.getInstance().getSidebarProvider().createObjective(
                 this, "Sidebar", false, title, 1
         );
+        this.sidebarObjective.refreshTitle();
         for (SidebarLine line : lines) {
             this.addLine(line);
         }
@@ -47,7 +52,9 @@ public class WrappedSidebar implements Sidebar {
 
     @Override
     public void setTitle(SidebarLine title) {
+        SidebarLine.markHasPlaceholders(title, getPlaceholders());
         this.sidebarObjective.setTitle(title);
+        this.sidebarObjective.sendUpdate();
     }
 
     @Override
@@ -55,13 +62,14 @@ public class WrappedSidebar implements Sidebar {
         placeholderProviders.remove(placeholderProvider);
         placeholderProviders.add(placeholderProvider);
 
-        List<PlaceholderProvider> placeholder = List.of(placeholderProvider);
+        ConcurrentLinkedQueue<PlaceholderProvider> placeholder = new ConcurrentLinkedQueue<>();
+        placeholder.add(placeholderProvider);
 
         for (ScoreLine line : lines) {
             SidebarLine.markHasPlaceholders(line.getLine(), placeholder);
         }
         if (null != this.sidebarObjective) {
-            SidebarLine.markHasPlaceholders(this.sidebarObjective.getTitle(), getPlaceholders());
+            SidebarLine.markHasPlaceholders(this.sidebarObjective.getTitle(), placeholder);
         }
     }
 
@@ -94,9 +102,11 @@ public class WrappedSidebar implements Sidebar {
         if (availableColors.isEmpty()) return;
         scoreOffsetIncrease(this.lines);
         String color = availableColors.removeFirst();
+        SidebarLine.markHasPlaceholders(sidebarLine, getPlaceholders());
         ScoreLine s = SidebarManager.getInstance().getSidebarProvider().createScoreLine(
                 this, sidebarLine, score == 0 ? score : score - 1, color
         );
+        s.refreshContent();
         s.sendCreateToAllReceivers();
         this.lines.add(s);
         order();
@@ -114,7 +124,7 @@ public class WrappedSidebar implements Sidebar {
     @Override
     public void add(Player player) {
         sidebarObjective.sendCreate(player);
-        this.lines.forEach(line -> applyPlaceholders(line).sendCreate(player));
+        this.lines.forEach(line -> line.sendCreate(player));
         if (healthObjective != null) {
             healthObjective.sendCreate(player);
             this.tabView.forEach(tab -> tab.sendCreateToPlayer(player));
@@ -125,64 +135,72 @@ public class WrappedSidebar implements Sidebar {
     @Override
     public void refreshPlaceholders() {
         for (ScoreLine line : this.lines) {
-            applyPlaceholders(line).sendUpdateToAllReceivers();
+            if (!(line.getLine() instanceof SidebarLineAnimated)) {
+                if (line.refreshContent()) {
+                    line.sendUpdateToAllReceivers();
+                }
+            }
         }
     }
 
     // refresh placeholders for the given line before sending it
-    private String applyLinePlaceholders(@NotNull SidebarLine line) {
-        String content = line.getLine();
-        for (PlaceholderProvider pp : this.placeholderProviders) {
-            content = content.replace(pp.getPlaceholder(), pp.getReplacement());
-        }
-        return content;
-    }
+//    private String applyLinePlaceholders(@NotNull SidebarLine line) {
+//        String content = line.getLine();
+//        for (PlaceholderProvider pp : this.placeholderProviders) {
+//            content = content.replace(pp.getPlaceholder(), pp.getReplacement());
+//        }
+//        return content;
+//    }
 
-    public ScoreLine applyPlaceholders(@NotNull ScoreLine line) {
-        String content = null;
-        if (line.getLine().isInternalPlaceholders()) {
-            content = applyLinePlaceholders(line.getLine());
-        }
-        if (null == content) {
-            content = line.getLine().getLine();
-        }
-        if (line.getLine().isPapiPlaceholders()) {
-            content = SidebarManager.getInstance().getPapiSupport().replacePlaceholders(
-                    getReceivers().size() > 1 ? null : getReceivers().getFirst(), content
-            );
-        }
-        line.setContent(content);
+//    public ScoreLine applyPlaceholders(@NotNull ScoreLine line) {
+//        String content = null;
+//        if (line.getLine().isInternalPlaceholders()) {
+//            content = applyLinePlaceholders(line.getLine());
+//        }
+//        if (null == content) {
+//            content = line.getLine().getLine();
+//        }
+//        if (line.getLine().isPapiPlaceholders()) {
+//            content = SidebarManager.getInstance().getPapiSupport().replacePlaceholders(
+//                    getReceivers().size() > 1 ? null : getReceivers().getFirst(), content
+//            );
+//        }
+//        line.setContent(content);
+//
+//        return line;
+//    }
 
-        return line;
-    }
-
-    public String parsePlaceholders(@NotNull SidebarLine line) {
-        String content = null;
-        if (line.isInternalPlaceholders()) {
-            content = applyLinePlaceholders(line);
-        }
-        if (null == content) {
-            content = line.getLine();
-        }
-        if (line.isPapiPlaceholders()) {
-            content = SidebarManager.getInstance().getPapiSupport().replacePlaceholders(
-                    getReceivers().size() > 1 ? null : getReceivers().getFirst(), content
-            );
-        }
-
-        return content;
-    }
+//    public String parsePlaceholders(@NotNull SidebarLine line) {
+//        String content = null;
+//        if (line.isInternalPlaceholders()) {
+//            content = applyLinePlaceholders(line);
+//        }
+//        if (null == content) {
+//            content = line.getLine();
+//        }
+//        if (line.isPapiPlaceholders()) {
+//            content = SidebarManager.getInstance().getPapiSupport().replacePlaceholders(
+//                    getReceivers().size() > 1 ? null : getReceivers().getFirst(), content
+//            );
+//        }
+//
+//        return content;
+//    }
 
     @Override
     public void refreshTitle() {
-        this.sidebarObjective.sendUpdate();
+        if (this.sidebarObjective.refreshTitle()) {
+            this.sidebarObjective.sendUpdate();
+        }
     }
 
     @Override
     public void refreshAnimatedLines() {
         for (ScoreLine line : lines) {
             if (line.getLine() instanceof SidebarLineAnimated) {
-                applyPlaceholders(line).sendUpdateToAllReceivers();
+                if (line.refreshContent()) {
+                    line.sendUpdateToAllReceivers();
+                }
             }
         }
     }
@@ -225,8 +243,8 @@ public class WrappedSidebar implements Sidebar {
     }
 
     @Override
-    public List<PlaceholderProvider> getPlaceholders() {
-        return Collections.unmodifiableList(placeholderProviders);
+    public Collection<PlaceholderProvider> getPlaceholders() {
+        return placeholderProviders;
     }
 
     @Override
@@ -278,6 +296,7 @@ public class WrappedSidebar implements Sidebar {
             healthObjective = SidebarManager.getInstance().getSidebarProvider().createObjective(
                     this, list ? "health" : "health2", true, displayName, 2
             );
+            healthObjective.refreshTitle();
             this.receivers.forEach(receiver -> healthObjective.sendCreate(receiver));
         } else {
             healthObjective.sendUpdate();
@@ -294,7 +313,7 @@ public class WrappedSidebar implements Sidebar {
             SidebarLine prefix,
             SidebarLine suffix,
             PlayerTab.PushingRule pushingRule,
-            @Nullable LinkedList<PlaceholderProvider> placeholders
+            @Nullable Collection<PlaceholderProvider> placeholders
     ) {
 
         if (identifier.length() > 16) {
@@ -304,6 +323,7 @@ public class WrappedSidebar implements Sidebar {
                 this, identifier, prefix, suffix, pushingRule, PlayerTab.NameTagVisibility.ALWAYS,
                 placeholders
         );
+        tab.refreshContent();
         // send tab create to sidebar receivers
         getReceivers().forEach(tab::sendCreateToPlayer);
         if (null != player) {
@@ -334,7 +354,11 @@ public class WrappedSidebar implements Sidebar {
 
     @Override
     public void playerTabRefreshAnimation() {
-        this.tabView.forEach(VersionedTabGroup::sendUpdateToReceivers);
+        for (VersionedTabGroup tab : this.tabView) {
+            if (tab.refreshContent()) {
+                tab.sendUpdateToReceivers();
+            }
+        }
     }
 
     @Override

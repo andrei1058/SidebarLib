@@ -86,7 +86,7 @@ public class SidebarManager {
     public Sidebar createSidebar(
             SidebarLine title,
             @NotNull Collection<SidebarLine> lines,
-            List<PlaceholderProvider> placeholderProviders) {
+            Collection<PlaceholderProvider> placeholderProviders) {
         lines.forEach(sidebarLine -> SidebarLine.markHasPlaceholders(sidebarLine, placeholderProviders));
         return sidebarProvider.createSidebar(title, lines, placeholderProviders);
     }

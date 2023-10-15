@@ -1,8 +1,11 @@
 package com.andrei1058.spigot.sidebar;
 
+import net.md_5.bungee.api.ChatColor;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+import java.util.Collection;
 
 public abstract class SidebarLine {
 
@@ -36,7 +39,7 @@ public abstract class SidebarLine {
     /**
      * Search for placeholders and mark line as placeholder dependent.
      */
-    public static void markHasPlaceholders(@NotNull SidebarLine text, List<PlaceholderProvider> placeholders) {
+    public static void markHasPlaceholders(@NotNull SidebarLine text, Collection<PlaceholderProvider> placeholders) {
         if (text.isPapiPlaceholders() && text.isInternalPlaceholders()) {
             return;
         }
@@ -65,6 +68,38 @@ public abstract class SidebarLine {
                 text.setPapiPlaceholders(true);
             }
         }
+    }
+
+    /**
+     * Use this for tab prefix-suffix or scoreboard title.
+     * @param papiSubject papi player subject.
+     * @param limit char limit.
+     * @param placeholders internal placeholders.
+     * @return parsed string.
+     */
+    public String getTrimReplacePlaceholders(@Nullable Player papiSubject, @Nullable Integer limit, Collection<PlaceholderProvider> placeholders) {
+        return getTrimReplacePlaceholders(this.getLine(), papiSubject, limit, placeholders);
+    }
+
+    public static @NotNull String getTrimReplacePlaceholders(String scope, @Nullable Player papiSubject, @Nullable Integer limit, Collection<PlaceholderProvider> placeholders) {
+        String t = scope;
+        if (null != placeholders) {
+            for (PlaceholderProvider placeholderProvider : placeholders) {
+                if (t.contains(placeholderProvider.getPlaceholder())) {
+                    t = t.replace(placeholderProvider.getPlaceholder(), placeholderProvider.getReplacement());
+                }
+            }
+        }
+        if (null != papiSubject) {
+            t = ChatColor.translateAlternateColorCodes('&',
+                    SidebarManager.getInstance().getPapiSupport().replacePlaceholders(papiSubject, t)
+            );
+        }
+
+        if (null != limit && t.length() > limit) {
+            t = t.substring(0, limit);
+        }
+        return t;
     }
 
     /**

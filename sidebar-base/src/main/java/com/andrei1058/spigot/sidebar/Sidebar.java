@@ -3,8 +3,7 @@ package com.andrei1058.spigot.sidebar;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Collection;
 
 public interface Sidebar {
 
@@ -36,8 +35,9 @@ public interface Sidebar {
     void setTitle(SidebarLine title);
 
     /**
-     * Refresh scoreboard placeholders.
+     * Refresh scoreboard placeholders where line is not animated.
      * Can be used async.
+     * Does not refresh instances of {@link SidebarLineAnimated}, use {@link #refreshAnimatedLines()} instead.
      */
     @SuppressWarnings("unused")
     void refreshPlaceholders();
@@ -99,7 +99,7 @@ public interface Sidebar {
      *
      * @return placeholder providers list.
      */
-    List<PlaceholderProvider> getPlaceholders();
+    Collection<PlaceholderProvider> getPlaceholders();
 
     /**
      * Update player health if shown with {@link #showPlayersHealth(SidebarLine, boolean)}.
@@ -160,7 +160,7 @@ public interface Sidebar {
             SidebarLine prefix,
             SidebarLine suffix,
             PlayerTab.PushingRule pushingRule,
-            @Nullable LinkedList<PlaceholderProvider> placeholders
+            @Nullable Collection<PlaceholderProvider> placeholders
     );
 
     /**

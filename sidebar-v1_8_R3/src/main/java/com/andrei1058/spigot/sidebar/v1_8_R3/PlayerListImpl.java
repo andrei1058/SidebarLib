@@ -1,7 +1,6 @@
 package com.andrei1058.spigot.sidebar.v1_8_R3;
 
 import com.andrei1058.spigot.sidebar.*;
-import net.md_5.bungee.api.ChatColor;
 import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardTeam;
 import net.minecraft.server.v1_8_R3.ScoreboardTeam;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
@@ -9,22 +8,24 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedList;
 
 public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup {
 
     private final SidebarLine prefix;
+    public String prefixString = "";
     private final SidebarLine suffix;
+    public String suffixString = "";
     private final WrappedSidebar sidebar;
     private final String id;
     private EnumNameTagVisibility nameTagVisibility;
     private Player papiSubject = null;
-    private final LinkedList<PlaceholderProvider> placeholders;
+    private final Collection<PlaceholderProvider> placeholders;
 
     public PlayerListImpl(@NotNull WrappedSidebar sidebar, String identifier, SidebarLine prefix, SidebarLine suffix,
                           PushingRule pushingRule, NameTagVisibility nameTagVisibility,
-                          @Nullable LinkedList<PlaceholderProvider> placeholders) {
+                          @Nullable Collection<PlaceholderProvider> placeholders) {
         super(null, identifier);
         this.suffix = suffix;
         this.prefix = prefix;
@@ -41,53 +42,17 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
 
     @Override
     public String getFormattedName(String var0) {
-        return prefix.getLine().concat(var0).concat(suffix.getLine());
+        return getPrefix().concat(var0).concat(getSuffix());
     }
 
     @Override
     public String getPrefix() {
-        String t = prefix.getLine();
-
-        if (null != this.placeholders) {
-            for (PlaceholderProvider placeholderProvider : this.placeholders) {
-                if (t.contains(placeholderProvider.getPlaceholder())) {
-                    t = t.replace(placeholderProvider.getPlaceholder(), placeholderProvider.getReplacement());
-                }
-            }
-        }
-        if (null != getSubject()) {
-            t = ChatColor.translateAlternateColorCodes('&',
-                    SidebarManager.getInstance().getPapiSupport().replacePlaceholders(getSubject(), t)
-            );
-        }
-
-        if (t.length() > 16) {
-            t = t.substring(0, 16);
-        }
-        return t;
+        return prefixString;
     }
 
     @Override
     public String getSuffix() {
-        String t = suffix.getLine();
-        if (null != this.placeholders) {
-            for (PlaceholderProvider placeholderProvider : this.placeholders) {
-                if (t.contains(placeholderProvider.getPlaceholder())) {
-                    t = t.replace(placeholderProvider.getPlaceholder(), placeholderProvider.getReplacement());
-                }
-            }
-        }
-
-        if (null != getSubject()) {
-            t = ChatColor.translateAlternateColorCodes('&',
-                    SidebarManager.getInstance().getPapiSupport().replacePlaceholders(getSubject(), t)
-            );
-        }
-
-        if (t.length() > 16) {
-            t = t.substring(0, 16);
-        }
-        return t;
+        return suffixString;
     }
 
     @Override
@@ -140,6 +105,20 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
     public void sendRemoveToReceivers() {
         PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = new PacketPlayOutScoreboardTeam(this, 1);
         sidebar.getReceivers().forEach(r -> ((CraftPlayer) r).getHandle().playerConnection.sendPacket(packetPlayOutScoreboardTeam));
+    }
+
+    @Override
+    public boolean refreshContent() {
+        String newPrefix = prefix.getTrimReplacePlaceholders(getSubject(), 16, this.placeholders);
+        String newSuffix = suffix.getTrimReplacePlaceholders(getSubject(), 16, this.placeholders);
+
+        if (newPrefix.equals(prefixString) && newSuffix.equals(suffixString)) {
+            return false;
+        }
+
+        this.prefixString = newPrefix;
+        this.suffixString = newSuffix;
+        return true;
     }
 
     @Override
