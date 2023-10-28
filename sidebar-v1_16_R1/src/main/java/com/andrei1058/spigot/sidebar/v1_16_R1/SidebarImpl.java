@@ -52,11 +52,6 @@ public class SidebarImpl extends WrappedSidebar {
         }
 
         @Override
-        public SidebarLine getTitle() {
-            return displayName;
-        }
-
-        @Override
         public void sendCreate(Player player) {
             PlayerConnection playerConnection = ((CraftPlayer) player).getHandle().playerConnection;
             PacketPlayOutScoreboardObjective packetPlayOutScoreboardObjective = new PacketPlayOutScoreboardObjective(this, 0);
