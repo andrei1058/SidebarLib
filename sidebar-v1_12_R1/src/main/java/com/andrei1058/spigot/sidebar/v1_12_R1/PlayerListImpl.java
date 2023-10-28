@@ -6,21 +6,27 @@ import net.minecraft.server.v1_12_R1.ScoreboardTeam;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.Collections;
 
 public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup {
 
     private EnumTeamPush pushingRule;
     private final SidebarLine prefix;
+    private String prefixString = "";
     private final SidebarLine suffix;
+    private String suffixString = "";
     private final WrappedSidebar sidebar;
     private final String id;
     private EnumNameTagVisibility nameTagVisibility;
     private Player papiSubject = null;
+    private final Collection<PlaceholderProvider> placeholders;
 
     public PlayerListImpl(@NotNull WrappedSidebar sidebar, String identifier, SidebarLine prefix, SidebarLine suffix,
-                          PushingRule pushingRule, NameTagVisibility nameTagVisibility) {
+                          PushingRule pushingRule, NameTagVisibility nameTagVisibility,
+                          @Nullable Collection<PlaceholderProvider> placeholders) {
         super(null, identifier);
         this.suffix = suffix;
         this.prefix = prefix;
@@ -28,6 +34,7 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
         this.setPushingRule(pushingRule);
         this.setNameTagVisibility(nameTagVisibility);
         this.id = identifier;
+        this.placeholders = placeholders;
     }
 
     @Override
@@ -45,44 +52,17 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
 
     @Override
     public String getFormattedName(String var0) {
-        return prefix.getLine().concat(var0).concat(suffix.getLine());
+        return getPrefix().concat(var0).concat(getSuffix());
     }
 
     @Override
     public String getPrefix() {
-        String t = prefix.getLine();
-        for (PlaceholderProvider placeholderProvider : sidebar.getPlaceholders()) {
-            if (t.contains(placeholderProvider.getPlaceholder())) {
-                t = t.replace(placeholderProvider.getPlaceholder(), placeholderProvider.getReplacement());
-            }
-        }
-        if (null != getSubject()) {
-            t = SidebarManager.getInstance().getPapiSupport().replacePlaceholders(getSubject(), t);
-        }
-
-        if (t.length() > 16) {
-            t = t.substring(0, 16);
-        }
-        return t;
+        return prefixString;
     }
 
     @Override
     public String getSuffix() {
-        String t = suffix.getLine();
-        for (PlaceholderProvider placeholderProvider : sidebar.getPlaceholders()) {
-            if (t.contains(placeholderProvider.getPlaceholder())) {
-                t = t.replace(placeholderProvider.getPlaceholder(), placeholderProvider.getReplacement());
-            }
-        }
-
-        if (null != getSubject()) {
-            t = SidebarManager.getInstance().getPapiSupport().replacePlaceholders(getSubject(), t);
-        }
-
-        if (t.length() > 16) {
-            t = t.substring(0, 16);
-        }
-        return t;
+        return suffixString;
     }
 
     @Override
@@ -135,6 +115,20 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
     public void sendRemoveToReceivers() {
         PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = new PacketPlayOutScoreboardTeam(this, 1);
         sidebar.getReceivers().forEach(r -> ((CraftPlayer) r).getHandle().playerConnection.sendPacket(packetPlayOutScoreboardTeam));
+    }
+
+    @Override
+    public boolean refreshContent() {
+        String newPrefix = this.prefix.getTrimReplacePlaceholders(getSubject(), 16, this.placeholders);
+        String newSuffix = this.suffix.getTrimReplacePlaceholders(getSubject(), 16, this.placeholders);
+
+        if (newPrefix.equals(prefixString) && newSuffix.equals(suffixString)) {
+            return false;
+        }
+
+        this.prefixString = newPrefix;
+        this.suffixString = newSuffix;
+        return true;
     }
 
     @Override

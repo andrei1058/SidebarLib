@@ -2,7 +2,7 @@ package com.andrei1058.spigot.sidebar.v1_8_R3;
 
 import com.andrei1058.spigot.sidebar.*;
 import net.minecraft.server.v1_8_R3.*;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
@@ -32,6 +32,8 @@ public class SidebarImpl extends WrappedSidebar {
     protected class NarniaSidebarObjective extends ScoreboardObjective implements SidebarObjective {
 
         private SidebarLine displayName;
+        private String displayNameString = "";
+
         private final int type;
 
         public NarniaSidebarObjective(String name, IScoreboardCriteria criteria, SidebarLine displayName, int type) {
@@ -48,7 +50,11 @@ public class SidebarImpl extends WrappedSidebar {
         @Override
         public void setTitle(SidebarLine title) {
             this.displayName = title;
-            this.sendUpdate();
+        }
+
+        @Override
+        public SidebarLine getTitle() {
+            return displayName;
         }
 
         @Override
@@ -71,12 +77,24 @@ public class SidebarImpl extends WrappedSidebar {
         }
 
         @Override
-        public String getDisplayName() {
-            String t = displayName.getLine();
-            if (t.length() > 16) {
-                t = t.substring(0, 16);
+        public boolean refreshTitle() {
+            String newTitleString = getTitle().getTrimReplacePlaceholders(
+                    getReceivers().size() == 1 ? getReceivers().getFirst() : null,
+                    16,
+                    getPlaceholders()
+            );
+
+            if (this.getDisplayName().equals(newTitleString)){
+                return false;
             }
-            return t;
+
+            this.displayNameString = newTitleString;
+            return true;
+        }
+
+        @Override
+        public String getDisplayName() {
+            return this.displayNameString;
         }
 
 
@@ -95,37 +113,23 @@ public class SidebarImpl extends WrappedSidebar {
         private int score;
         private String prefix = " ", suffix = "";
         private final TeamLine team;
-        private SidebarLine text;
+        private SidebarLine content;
 
         public BucharestScoreLine(@NotNull SidebarLine text, int score, @NotNull String color) {
             super(null, (ScoreboardObjective) getSidebarObjective(), color);
             this.score = score;
-            this.text = text;
+            this.content = text;
             this.team = new TeamLine(color);
-
-            if (checkHasPlaceholders(text)) {
-                String content = text.getLine();
-                for (PlaceholderProvider pp : getPlaceholders()) {
-                    if (content.contains(pp.getPlaceholder())) {
-                        content = content.replace(pp.getPlaceholder(), pp.getReplacement());
-                    }
-                }
-                //noinspection ResultOfMethodCallIgnored
-                setContent(content);
-            } else {
-                //noinspection ResultOfMethodCallIgnored
-                setContent(text.getLine());
-            }
         }
 
         @Override
         public SidebarLine getLine() {
-            return text;
+            return content;
         }
 
         @Override
         public void setLine(SidebarLine line) {
-            this.text = line;
+            this.content = line;
         }
 
         @Override
@@ -179,10 +183,12 @@ public class SidebarImpl extends WrappedSidebar {
         }
 
         @Contract(pure = true)
-        public boolean setContent(@NotNull String content) {
-            if (!getReceivers().isEmpty()) {
-                content = SidebarManager.getInstance().getPapiSupport().replacePlaceholders(getReceivers().get(0), content);
-            }
+        public boolean setContent(@NotNull SidebarLine line) {
+            String content = line.getTrimReplacePlaceholders(
+                    getReceivers().isEmpty() ? null : getReceivers().getFirst(),
+                    null,
+                    getPlaceholders()
+            );
             String oldPrefix = this.prefix;
             String oldSuffix = this.suffix;
             if (content.length() > 16) {
@@ -205,7 +211,7 @@ public class SidebarImpl extends WrappedSidebar {
                 this.suffix = "";
                 return;
             }
-            secondPart = ChatColor.getLastColors(this.prefix) + secondPart;
+            secondPart = org.bukkit.ChatColor.getLastColors(this.prefix) + secondPart;
             this.suffix = secondPart.length() > 16 ? secondPart.substring(0, 16) : secondPart;
         }
 
@@ -246,6 +252,11 @@ public class SidebarImpl extends WrappedSidebar {
             return team.getName().charAt(0) == ChatColor.COLOR_CHAR ? team.getName() : ChatColor.COLOR_CHAR + team.getName();
         }
 
+        @Override
+        public boolean refreshContent() {
+            return setContent(this.getLine());
+        }
+
         private class TeamLine extends ScoreboardTeam {
 
             public TeamLine(String color) {
@@ -284,8 +295,8 @@ public class SidebarImpl extends WrappedSidebar {
             }
 
             @Override
-            public String getFormattedName(String var0) {
-                return prefix.concat(var0).concat(suffix);
+            public @NotNull String getFormattedName(String var0) {
+                return getPrefix().concat(var0).concat(getSuffix());
             }
         }
     }

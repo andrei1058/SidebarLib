@@ -5,9 +5,12 @@ import net.minecraft.server.v1_12_R1.*;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 @SuppressWarnings("unused")
 public class ProviderImpl extends SidebarProvider {
@@ -24,7 +27,7 @@ public class ProviderImpl extends SidebarProvider {
 
     @Override
     public SidebarObjective createObjective(@NotNull WrappedSidebar sidebar, String name, boolean health, SidebarLine title, int type) {
-        return ((SidebarImpl)sidebar).createObjective(name, health ? IScoreboardCriteria.g : IScoreboardCriteria.b, title, type);
+        return ((SidebarImpl)sidebar).createObjective(name, health ? new ScoreboardBaseCriteria("health") : IScoreboardCriteria.b, title, type);
     }
 
     @Override
@@ -69,8 +72,9 @@ public class ProviderImpl extends SidebarProvider {
 
     @Override
     public VersionedTabGroup createPlayerTab(WrappedSidebar sidebar, String identifier, SidebarLine prefix, SidebarLine suffix,
-                                             PlayerTab.PushingRule pushingRule, PlayerTab.NameTagVisibility nameTagVisibility) {
-        return new PlayerListImpl(sidebar, identifier, prefix, suffix, pushingRule, nameTagVisibility);
+                                             PlayerTab.PushingRule pushingRule, PlayerTab.NameTagVisibility nameTagVisibility,
+                                             @Nullable Collection<PlaceholderProvider> placeholders) {
+        return new PlayerListImpl(sidebar, identifier, prefix, suffix, pushingRule, nameTagVisibility, placeholders);
     }
 
     @Override

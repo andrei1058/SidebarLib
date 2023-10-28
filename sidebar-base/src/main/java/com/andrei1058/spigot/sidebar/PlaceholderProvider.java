@@ -31,7 +31,8 @@ public class PlaceholderProvider {
      */
     public String getReplacement() {
         try {
-            return replacement.call();
+            String rep =  replacement.call();
+            return null == rep ? "null" : rep;
         } catch (Exception e) {
             return "-";
         }

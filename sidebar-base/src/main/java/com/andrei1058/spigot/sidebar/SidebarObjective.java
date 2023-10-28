@@ -6,6 +6,8 @@ public interface SidebarObjective {
 
      void setTitle(SidebarLine title);
 
+     SidebarLine getTitle();
+
      void sendCreate(Player player);
 
      void sendUpdate();
@@ -13,4 +15,11 @@ public interface SidebarObjective {
      void sendRemove(Player player);
 
      String getName();
+
+     /**
+      * Refresh contents in case of placeholders etc.
+      * Used for triggering refresh a single time and then send the data to all receivers.
+      * @return true if different from previous state.
+      */
+    boolean refreshTitle();
 }
