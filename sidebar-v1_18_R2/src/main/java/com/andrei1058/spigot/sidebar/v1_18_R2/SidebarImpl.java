@@ -61,6 +61,11 @@ public class SidebarImpl extends WrappedSidebar {
         }
 
         @Override
+        public SidebarLine getTitle() {
+            return displayName;
+        }
+
+        @Override
         public void sendCreate(Player player) {
             this.sendCreate(((CraftPlayer) player).getHandle().b);
         }
