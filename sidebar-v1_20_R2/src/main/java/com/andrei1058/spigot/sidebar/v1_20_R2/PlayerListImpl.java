@@ -1,11 +1,11 @@
-package com.andrei1058.spigot.sidebar.v1_19_R3;
+package com.andrei1058.spigot.sidebar.v1_20_R2;
 
 import com.andrei1058.spigot.sidebar.*;
 import net.minecraft.network.chat.IChatBaseComponent;
 import net.minecraft.network.chat.IChatMutableComponent;
 import net.minecraft.network.protocol.game.PacketPlayOutScoreboardTeam;
 import net.minecraft.world.scores.ScoreboardTeam;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,9 +25,15 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
     private Player papiSubject = null;
     private final Collection<PlaceholderProvider> placeholders;
 
-    public PlayerListImpl(@NotNull WrappedSidebar sidebar, String identifier, SidebarLine prefix, SidebarLine suffix,
-                          PushingRule pushingRule, NameTagVisibility nameTagVisibility,
-                          @org.jetbrains.annotations.Nullable Collection<PlaceholderProvider> placeholders) {
+    public PlayerListImpl(
+            @NotNull WrappedSidebar sidebar,
+            String identifier,
+            SidebarLine prefix,
+            SidebarLine suffix,
+            PushingRule pushingRule,
+            NameTagVisibility nameTagVisibility,
+            @Nullable Collection<PlaceholderProvider> placeholders
+    ) {
         super(null, identifier);
         this.suffix = suffix;
         this.prefix = prefix;
@@ -98,13 +104,13 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
         PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(
                 this, player.getName(), PacketPlayOutScoreboardTeam.a.a
         );
-        sidebar.getReceivers().forEach(r -> ((CraftPlayer) r).getHandle().b.a(packetPlayOutScoreboardTeam));
+        sidebar.getReceivers().forEach(r -> ((CraftPlayer) r).getHandle().c.a(packetPlayOutScoreboardTeam));
     }
 
     @Override
     public void sendCreateToPlayer(Player player) {
         PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(this, true);
-        ((CraftPlayer) player).getHandle().b.a(packetPlayOutScoreboardTeam);
+        ((CraftPlayer) player).getHandle().c.a(packetPlayOutScoreboardTeam);
     }
 
     public void remove(@NotNull Player player) {
@@ -112,7 +118,7 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
         PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(
                 this, player.getName(), PacketPlayOutScoreboardTeam.a.b
         );
-        sidebar.getReceivers().forEach(r -> ((CraftPlayer) r).getHandle().b.a(packetPlayOutScoreboardTeam));
+        sidebar.getReceivers().forEach(r -> ((CraftPlayer) r).getHandle().c.a(packetPlayOutScoreboardTeam));
     }
 
     @Override
@@ -121,24 +127,24 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
         PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(
                 this, player.getName(), PacketPlayOutScoreboardTeam.a.a
         );
-        sidebar.getReceivers().forEach(r -> ((CraftPlayer) r).getHandle().b.a(packetPlayOutScoreboardTeam));
+        sidebar.getReceivers().forEach(r -> ((CraftPlayer) r).getHandle().c.a(packetPlayOutScoreboardTeam));
     }
 
     public void sendUpdateToReceivers() {
         PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(this, false);
-        sidebar.getReceivers().forEach(r -> ((CraftPlayer) r).getHandle().b.a(packetPlayOutScoreboardTeam));
+        sidebar.getReceivers().forEach(r -> ((CraftPlayer) r).getHandle().c.a(packetPlayOutScoreboardTeam));
     }
 
     @Override
     public void sendRemoveToReceivers() {
         PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(this);
-        sidebar.getReceivers().forEach(r -> ((CraftPlayer) r).getHandle().b.a(packetPlayOutScoreboardTeam));
+        sidebar.getReceivers().forEach(r -> ((CraftPlayer) r).getHandle().c.a(packetPlayOutScoreboardTeam));
     }
 
     @Override
     public boolean refreshContent() {
-        var newPrefix = prefix.getTrimReplacePlaceholders(getSubject(), 32, this.placeholders);
-        var newSuffix = suffix.getTrimReplacePlaceholders(getSubject(), 32, this.placeholders);
+        var newPrefix = prefix.getTrimReplacePlaceholders(getSubject(), 256, this.placeholders);
+        var newSuffix = suffix.getTrimReplacePlaceholders(getSubject(), 256, this.placeholders);
 
         if (newPrefix.equals(prefixComp.getString()) && newSuffix.equals(suffixComp.getString())) {
             return false;
@@ -185,7 +191,7 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
             case HIDE_FOR_OTHER_TEAMS -> this.nameTagVisibility = EnumNameTagVisibility.c;
             case HIDE_FOR_OWN_TEAM -> this.nameTagVisibility = EnumNameTagVisibility.d;
         }
-        if (null != id) {
+        if (null != id){
             sendUpdateToReceivers();
         }
     }

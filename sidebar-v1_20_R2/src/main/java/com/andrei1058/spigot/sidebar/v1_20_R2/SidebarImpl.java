@@ -1,8 +1,7 @@
-package com.andrei1058.spigot.sidebar.v1_18_R2;
+package com.andrei1058.spigot.sidebar.v1_20_R2;
 
 import com.andrei1058.spigot.sidebar.*;
 import net.minecraft.EnumChatFormat;
-import net.minecraft.network.chat.ChatComponentText;
 import net.minecraft.network.chat.IChatBaseComponent;
 import net.minecraft.network.chat.IChatMutableComponent;
 import net.minecraft.network.protocol.game.PacketPlayOutScoreboardDisplayObjective;
@@ -11,18 +10,19 @@ import net.minecraft.network.protocol.game.PacketPlayOutScoreboardScore;
 import net.minecraft.network.protocol.game.PacketPlayOutScoreboardTeam;
 import net.minecraft.server.ScoreboardServer;
 import net.minecraft.server.network.PlayerConnection;
+import net.minecraft.world.scores.DisplaySlot;
 import net.minecraft.world.scores.ScoreboardObjective;
 import net.minecraft.world.scores.ScoreboardScore;
 import net.minecraft.world.scores.ScoreboardTeam;
 import net.minecraft.world.scores.criteria.IScoreboardCriteria;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collection;
 
 public class SidebarImpl extends WrappedSidebar {
 
@@ -41,13 +41,13 @@ public class SidebarImpl extends WrappedSidebar {
     protected class NarniaSidebarObjective extends ScoreboardObjective implements SidebarObjective {
 
         private SidebarLine displayName;
-        private ChatComponentText displayNameComp;
-        private final int type;
+        private IChatMutableComponent displayNameComp = IChatBaseComponent.b("");
+        private final DisplaySlot type;
 
         public NarniaSidebarObjective(String name, IScoreboardCriteria criteria, SidebarLine displayName, int type) {
-            super(null, name, criteria, new ChatComponentText(name), IScoreboardCriteria.EnumScoreboardHealthDisplay.a);
+            super(null, name, criteria, IChatBaseComponent.b(name), IScoreboardCriteria.EnumScoreboardHealthDisplay.a);
             this.displayName = displayName;
-            this.type = type;
+            this.type = DisplaySlot.values()[type];
         }
 
         @Override
@@ -62,12 +62,12 @@ public class SidebarImpl extends WrappedSidebar {
 
         @Override
         public void sendCreate(Player player) {
-            this.sendCreate(((CraftPlayer) player).getHandle().b);
+            this.sendCreate(((CraftPlayer) player).getHandle().c);
         }
 
         @Override
         public void sendRemove(Player player) {
-            this.sendRemove(((CraftPlayer) player).getHandle().b);
+            this.sendRemove(((CraftPlayer) player).getHandle().c);
         }
 
         @Override
@@ -77,17 +77,16 @@ public class SidebarImpl extends WrappedSidebar {
 
         @Override
         public boolean refreshTitle() {
-            String newTitle = displayName.getTrimReplacePlaceholders(
+            var newTitle = displayName.getTrimReplacePlaceholders(
                     getReceivers().isEmpty() ? null : getReceivers().getFirst(),
-                    32,
+                    256,
                     getPlaceholders()
             );
 
-            if (newTitle.equals(this.displayNameComp.h())) {
+            if (newTitle.equals(displayNameComp.getString())) {
                 return false;
             }
-
-            this.displayNameComp = new ChatComponentText(newTitle);
+            this.displayNameComp = IChatBaseComponent.b(newTitle);
             return true;
         }
 
@@ -102,7 +101,8 @@ public class SidebarImpl extends WrappedSidebar {
 
         @Override
         public IChatBaseComponent e() {
-            return new ChatComponentText(this.d().a());
+            return IChatBaseComponent.b((this.d().toString()));
+
         }
 
         @Override
@@ -110,12 +110,13 @@ public class SidebarImpl extends WrappedSidebar {
         }
 
         private void sendCreate(@NotNull PlayerConnection playerConnection) {
-            PacketPlayOutScoreboardObjective packetPlayOutScoreboardObjective = new PacketPlayOutScoreboardObjective(this, 0);
+            var packetPlayOutScoreboardObjective = new PacketPlayOutScoreboardObjective(this, 0);
             playerConnection.a(packetPlayOutScoreboardObjective);
-            PacketPlayOutScoreboardDisplayObjective packetPlayOutScoreboardDisplayObjective = new PacketPlayOutScoreboardDisplayObjective(type, this);
+            var packetPlayOutScoreboardDisplayObjective = new PacketPlayOutScoreboardDisplayObjective(type, this);
             playerConnection.a(packetPlayOutScoreboardDisplayObjective);
+
             if (b().equalsIgnoreCase("health")) {
-                PacketPlayOutScoreboardDisplayObjective packetPlayOutScoreboardDisplayObjective2 = new PacketPlayOutScoreboardDisplayObjective(0, this);
+                var packetPlayOutScoreboardDisplayObjective2 = new PacketPlayOutScoreboardDisplayObjective(DisplaySlot.a, this);
                 playerConnection.a(packetPlayOutScoreboardDisplayObjective2);
             }
         }
@@ -123,7 +124,7 @@ public class SidebarImpl extends WrappedSidebar {
         // must be called when updating the name
         public void sendUpdate() {
             PacketPlayOutScoreboardObjective packetPlayOutScoreboardObjective = new PacketPlayOutScoreboardObjective(this, 2);
-            getReceivers().forEach(player -> ((CraftPlayer) player).getHandle().b.a(packetPlayOutScoreboardObjective));
+            getReceivers().forEach(player -> ((CraftPlayer) player).getHandle().c.a(packetPlayOutScoreboardObjective));
         }
 
         public void sendRemove(@NotNull PlayerConnection playerConnection) {
@@ -135,8 +136,7 @@ public class SidebarImpl extends WrappedSidebar {
     public class NarniaScoreLine extends ScoreboardScore implements ScoreLine, Comparable<ScoreLine> {
 
         private int score;
-        private ChatComponentText prefixComp = new ChatComponentText("");
-        private ChatComponentText suffixComp = new ChatComponentText("");
+        private IChatMutableComponent prefix = IChatBaseComponent.b(""), suffix = IChatBaseComponent.b("");
         private final TeamLine team;
         private SidebarLine text;
 
@@ -170,16 +170,16 @@ public class SidebarImpl extends WrappedSidebar {
         @Override
         public void sendCreateToAllReceivers() {
             PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(team, true);
-            getReceivers().forEach(p -> ((CraftPlayer) p).getHandle().b.a(packetPlayOutScoreboardTeam));
+            getReceivers().forEach(p -> ((CraftPlayer) p).getHandle().c.a(packetPlayOutScoreboardTeam));
             PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(
-                    ScoreboardServer.Action.a, getSidebarObjective().getName(), this.getColor(), this.getScoreAmount()
+                    ScoreboardServer.Action.a,getSidebarObjective().getName(), this.getColor(), this.getScoreAmount()
             );
-            getReceivers().forEach(p -> ((CraftPlayer) p).getHandle().b.a(packetPlayOutScoreboardScore));
+            getReceivers().forEach(p -> ((CraftPlayer) p).getHandle().c.a(packetPlayOutScoreboardScore));
         }
 
         @Override
         public void sendCreate(Player player) {
-            PlayerConnection conn = ((CraftPlayer) player).getHandle().b;
+            PlayerConnection conn = ((CraftPlayer) player).getHandle().c;
             PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(team, true);
             conn.a(packetPlayOutScoreboardTeam);
             PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(
@@ -190,7 +190,7 @@ public class SidebarImpl extends WrappedSidebar {
 
         @Override
         public void sendRemove(Player player) {
-            PlayerConnection conn = ((CraftPlayer) player).getHandle().b;
+            PlayerConnection conn = ((CraftPlayer) player).getHandle().c;
             PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(team);
             PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(
                     ScoreboardServer.Action.b, getSidebarObjective().getName(), this.getColor(), this.getScoreAmount()
@@ -201,54 +201,55 @@ public class SidebarImpl extends WrappedSidebar {
 
         public void sendRemoveToAllReceivers() {
             PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(team);
-            getReceivers().forEach(p -> ((CraftPlayer) p).getHandle().b.a(packetPlayOutScoreboardTeam));
+            getReceivers().forEach(p -> ((CraftPlayer) p).getHandle().c.a(packetPlayOutScoreboardTeam));
             PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(
                     ScoreboardServer.Action.b, getSidebarObjective().getName(), this.getColor(), this.getScoreAmount()
             );
-            getReceivers().forEach(p -> ((CraftPlayer) p).getHandle().b.a(packetPlayOutScoreboardScore));
+            getReceivers().forEach(p -> ((CraftPlayer) p).getHandle().c.a(packetPlayOutScoreboardScore));
         }
 
         public void sendUpdate(Player player) {
             PacketPlayOutScoreboardTeam packetTeamUpdate = PacketPlayOutScoreboardTeam.a(team, false);
-            ((CraftPlayer) player).getHandle().b.a(packetTeamUpdate);
+            ((CraftPlayer) player).getHandle().c.a(packetTeamUpdate);
         }
 
         @Contract(pure = true)
         public boolean setContent(@NotNull SidebarLine line) {
+            var oldPrefix = this.prefix;
+            var oldSuffix = this.suffix;
             String content = line.getTrimReplacePlaceholders(
                     getReceivers().isEmpty() ? null : getReceivers().getFirst(),
                     null,
                     getPlaceholders()
             );
-            var oldPrefix = this.prefixComp.h();
-            var oldSuffix = this.suffixComp.h();
-            if (content.length() > 64) {
-                this.prefixComp = new ChatComponentText(content.substring(0, 64));
-                if (this.prefixComp.h().charAt(63) == ChatColor.COLOR_CHAR) {
-                    this.prefixComp = new ChatComponentText(content.substring(0, 63));
-                    setSuffix(content.substring(63));
+
+            if (content.length() > 256) {
+                this.prefix = IChatBaseComponent.b(content.substring(0, 256));
+                if (this.prefix.getString().charAt(255) == ChatColor.COLOR_CHAR) {
+                    this.prefix = IChatBaseComponent.b(content.substring(0, 255));
+                    setSuffix(content.substring(255));
                 } else {
-                    setSuffix(content.substring(64));
+                    setSuffix(content.substring(256));
                 }
             } else {
-                this.prefixComp = new ChatComponentText(content);
-                this.suffixComp = new ChatComponentText("");
+                this.prefix = IChatBaseComponent.b(content);
+                this.suffix = IChatBaseComponent.b("");
             }
-            return !oldPrefix.equals(this.prefixComp.h()) || !oldSuffix.equals(this.suffixComp.h());
+            return !oldPrefix.equals(this.prefix) || !oldSuffix.equals(this.suffix);
         }
 
         public void setSuffix(@NotNull String secondPart) {
             if (secondPart.isEmpty()) {
-                this.suffixComp = new ChatComponentText("");
+                this.suffix = IChatBaseComponent.b("");
                 return;
             }
-            secondPart = org.bukkit.ChatColor.getLastColors(this.prefixComp.h()) + secondPart;
-            this.suffixComp = new ChatComponentText(secondPart.length() > 64 ? secondPart.substring(0, 64) : secondPart);
+            secondPart = org.bukkit.ChatColor.getLastColors(this.prefix.getString()) + secondPart;
+            this.suffix = IChatBaseComponent.b(secondPart.length() > 256 ? secondPart.substring(0, 256) : secondPart);
         }
 
         public void sendUpdateToAllReceivers() {
             PacketPlayOutScoreboardTeam packetTeamUpdate = PacketPlayOutScoreboardTeam.a(team, false);
-            getReceivers().forEach(r -> ((CraftPlayer) r).getHandle().b.a(packetTeamUpdate));
+            getReceivers().forEach(r -> ((CraftPlayer) r).getHandle().c.a(packetTeamUpdate));
         }
 
         public int compareTo(@NotNull ScoreLine o) {
@@ -261,7 +262,7 @@ public class SidebarImpl extends WrappedSidebar {
             PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(
                     ScoreboardServer.Action.a, ((ScoreboardObjective) getSidebarObjective()).b(), e(), score
             );
-            getReceivers().forEach(r -> ((CraftPlayer) r).getHandle().b.a(packetPlayOutScoreboardScore));
+            getReceivers().forEach(r -> ((CraftPlayer) r).getHandle().c.a(packetPlayOutScoreboardScore));
         }
 
         @Override
@@ -299,7 +300,7 @@ public class SidebarImpl extends WrappedSidebar {
             @Contract(value = " -> new", pure = true)
             @Override
             public @NotNull IChatBaseComponent e() {
-                return prefixComp;
+                return prefix;
             }
 
             @Override
@@ -313,7 +314,7 @@ public class SidebarImpl extends WrappedSidebar {
             @Contract(value = " -> new", pure = true)
             @Override
             public @NotNull IChatBaseComponent f() {
-                return suffixComp;
+                return suffix;
             }
 
             @Override
@@ -339,7 +340,7 @@ public class SidebarImpl extends WrappedSidebar {
             @Contract(value = "_ -> new", pure = true)
             @Override
             public @NotNull IChatMutableComponent d(IChatBaseComponent var0) {
-                return new ChatComponentText(prefixComp.h() + var0 + suffixComp.h());
+                return IChatBaseComponent.b(prefix.getString() + var0 + suffix.getString());
             }
         }
     }

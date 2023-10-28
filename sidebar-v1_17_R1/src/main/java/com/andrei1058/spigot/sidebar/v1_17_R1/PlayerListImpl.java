@@ -7,27 +7,28 @@ import net.minecraft.network.chat.IChatMutableComponent;
 import net.minecraft.network.protocol.game.PacketPlayOutScoreboardTeam;
 import net.minecraft.world.scores.ScoreboardTeam;
 import net.minecraft.world.scores.ScoreboardTeamBase;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.LinkedList;
+import java.util.Collection;
 
 public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup {
     private final SidebarLine prefix;
+    private ChatComponentText prefixComponent;
     private final SidebarLine suffix;
+    private ChatComponentText suffixComponent;
     private final WrappedSidebar sidebar;
     private final String id;
     private ScoreboardTeamBase.EnumNameTagVisibility nameTagVisibility;
     private Player papiSubject = null;
     private EnumTeamPush pushingRule;
-    private final LinkedList<PlaceholderProvider> placeholders;
+    private final Collection<PlaceholderProvider> placeholders;
 
     public PlayerListImpl(@NotNull WrappedSidebar sidebar, String identifier, SidebarLine prefix, SidebarLine suffix,
                           PushingRule pushingRule, NameTagVisibility nameTagVisibility,
-                          @org.jetbrains.annotations.Nullable LinkedList<PlaceholderProvider> placeholders) {
+                          @org.jetbrains.annotations.Nullable Collection<PlaceholderProvider> placeholders) {
         super(null, identifier);
         this.suffix = suffix;
         this.prefix = prefix;
@@ -54,52 +55,17 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
 
     @Override
     public IChatMutableComponent getFormattedName(IChatBaseComponent var0) {
-        return new ChatComponentText(prefix.getLine() + var0 + suffix.getLine());
+        return new ChatComponentText(prefixComponent.h() + var0 + suffixComponent.h());
     }
 
     @Override
     public IChatBaseComponent getPrefix() {
-        String t = prefix.getLine();
-        if (null != this.placeholders) {
-            for (PlaceholderProvider placeholderProvider : this.placeholders) {
-                if (t.contains(placeholderProvider.getPlaceholder())) {
-                    t = t.replace(placeholderProvider.getPlaceholder(), placeholderProvider.getReplacement());
-                }
-            }
-        }
-        if (null != getSubject()) {
-            t = ChatColor.translateAlternateColorCodes('&',
-                    SidebarManager.getInstance().getPapiSupport().replacePlaceholders(getSubject(), t)
-            );
-        }
-
-        if (t.length() > 16) {
-            t = t.substring(0, 16);
-        }
-        return new ChatComponentText(t);
+        return prefixComponent;
     }
 
     @Override
     public IChatBaseComponent getSuffix() {
-        String t = suffix.getLine();
-        if (null != this.placeholders) {
-            for (PlaceholderProvider placeholderProvider : this.placeholders) {
-                if (t.contains(placeholderProvider.getPlaceholder())) {
-                    t = t.replace(placeholderProvider.getPlaceholder(), placeholderProvider.getReplacement());
-                }
-            }
-        }
-
-        if (null != getSubject()) {
-            t = ChatColor.translateAlternateColorCodes('&',
-                    SidebarManager.getInstance().getPapiSupport().replacePlaceholders(getSubject(), t)
-            );
-        }
-
-        if (t.length() > 16) {
-            t = t.substring(0, 16);
-        }
-        return new ChatComponentText(t);
+        return suffixComponent;
     }
 
     @Override
@@ -113,7 +79,7 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
     }
 
     @Override
-    public void add(Player player) {
+    public void add(@NotNull Player player) {
         PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(
                 this, player.getName(), PacketPlayOutScoreboardTeam.a.a
         );
@@ -126,7 +92,7 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
         ((CraftPlayer) player).getHandle().b.sendPacket(packetPlayOutScoreboardTeam);
     }
 
-    public void remove(Player player) {
+    public void remove(@NotNull Player player) {
         // send 4: remove entities from team
         PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(
                 this, player.getName(), PacketPlayOutScoreboardTeam.a.b
@@ -135,7 +101,7 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
     }
 
     @Override
-    public void sendUserCreateToReceivers(Player player) {
+    public void sendUserCreateToReceivers(@NotNull Player player) {
         // send 3: add entities to team
         PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(
                 this, player.getName(), PacketPlayOutScoreboardTeam.a.a
@@ -152,6 +118,21 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
     public void sendRemoveToReceivers() {
         PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(this);
         sidebar.getReceivers().forEach(r -> ((CraftPlayer) r).getHandle().b.sendPacket(packetPlayOutScoreboardTeam));
+    }
+
+    @Override
+    public boolean refreshContent() {
+        String newPrefix = this.prefix.getTrimReplacePlaceholders(getSubject(), 16, this.placeholders);
+        String newSuffix = this.suffix.getTrimReplacePlaceholders(getSubject(), 16, this.placeholders);
+
+        if (newPrefix.equals(prefixComponent.h()) && newSuffix.equals(suffixComponent.h())) {
+            return false;
+        }
+
+        this.prefixComponent = new ChatComponentText(newPrefix);
+        this.suffixComponent = new ChatComponentText(newSuffix);
+
+        return true;
     }
 
     @Override

@@ -33,7 +33,7 @@ public abstract class SidebarProvider {
             SidebarLine suffix,
             PlayerTab.PushingRule pushingRule,
             PlayerTab.NameTagVisibility nameTagVisibility,
-            @Nullable LinkedList<PlaceholderProvider> placeholders
+            @Nullable Collection<PlaceholderProvider> placeholders
     );
 
 

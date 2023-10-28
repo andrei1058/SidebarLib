@@ -3,7 +3,9 @@ package com.andrei1058.spigot.sidebar;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.LinkedList;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static com.andrei1058.spigot.sidebar.SidebarLine.markHasPlaceholders;
 
@@ -11,7 +13,7 @@ public class TabHeaderFooter {
 
     private LinkedList<SidebarLine> header;
     private LinkedList<SidebarLine> footer;
-    private LinkedList<PlaceholderProvider> placeholders;
+    private Collection<PlaceholderProvider> placeholders;
 
     /**
      * Create a new tab context.
@@ -23,7 +25,7 @@ public class TabHeaderFooter {
     public TabHeaderFooter(
             LinkedList<SidebarLine> header,
             LinkedList<SidebarLine> footer,
-            @Nullable LinkedList<PlaceholderProvider> placeholders
+            @Nullable Collection<PlaceholderProvider> placeholders
     ) {
         this.header = header;
         this.footer = footer;
@@ -31,7 +33,7 @@ public class TabHeaderFooter {
     }
 
     @NotNull
-    public LinkedList<PlaceholderProvider> getPlaceholders() {
+    public Collection<PlaceholderProvider> getPlaceholders() {
         return placeholders;
     }
 
@@ -43,9 +45,9 @@ public class TabHeaderFooter {
         return footer;
     }
 
-    public void setPlaceholders(@Nullable LinkedList<PlaceholderProvider> placeholders) {
+    public void setPlaceholders(@Nullable Collection<PlaceholderProvider> placeholders) {
         if (null == placeholders) {
-            this.placeholders = new LinkedList<>();
+            this.placeholders = new ConcurrentLinkedQueue<>();
             return;
         }
 

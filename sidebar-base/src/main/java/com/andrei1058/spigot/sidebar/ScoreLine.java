@@ -19,7 +19,7 @@ public interface ScoreLine extends Comparable<ScoreLine> {
     /**
      * @return if content has been changed
      */
-    boolean setContent(String content);
+    boolean setContent(SidebarLine line);
 
     void sendUpdateToAllReceivers();
 
@@ -31,4 +31,11 @@ public interface ScoreLine extends Comparable<ScoreLine> {
     void sendRemove(Player player);
 
     String getColor();
+
+    /**
+     * Refresh contents in case of placeholders etc.
+     * Used for triggering refresh a single time and then send the data to all receivers.
+     * @return true if different from previous state.
+     */
+    boolean refreshContent();
 }

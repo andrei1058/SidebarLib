@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.LinkedList;
 
 @SuppressWarnings("unused")
 public class ProviderImpl extends SidebarProvider {
@@ -44,7 +43,7 @@ public class ProviderImpl extends SidebarProvider {
     @Override
     public VersionedTabGroup createPlayerTab(WrappedSidebar sidebar, String identifier, SidebarLine prefix, SidebarLine suffix,
                                              PlayerTab.PushingRule pushingRule, PlayerTab.NameTagVisibility nameTagVisibility,
-                                             @Nullable LinkedList<PlaceholderProvider> placeholders) {
+                                             @Nullable Collection<PlaceholderProvider> placeholders) {
         return new PlayerListImpl(sidebar, identifier, prefix, suffix, pushingRule, nameTagVisibility, placeholders);
     }
 

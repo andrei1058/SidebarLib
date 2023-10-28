@@ -40,20 +40,18 @@ public class SidebarImpl extends WrappedSidebar {
     protected class NarniaSidebarObjective extends ScoreboardObjective implements SidebarObjective {
 
         private SidebarLine displayName;
+        private IChatMutableComponent displayNameComp;
         private final int type;
 
         public NarniaSidebarObjective(String name, IScoreboardCriteria criteria, SidebarLine displayName, int type) {
             super(null, name, criteria, IChatBaseComponent.b(name), IScoreboardCriteria.EnumScoreboardHealthDisplay.a);
             this.displayName = displayName;
-            SidebarLine.markHasPlaceholders(this.displayName, getPlaceholders());
             this.type = type;
         }
 
         @Override
         public void setTitle(SidebarLine title) {
             this.displayName = title;
-            SidebarLine.markHasPlaceholders(this.displayName, getPlaceholders());
-            this.sendUpdate();
         }
 
         @Override
@@ -77,13 +75,23 @@ public class SidebarImpl extends WrappedSidebar {
         }
 
         @Override
-        public IChatBaseComponent d() {
-            String t = parsePlaceholders(displayName);
+        public boolean refreshTitle() {
+            String newTitle = displayName.getTrimReplacePlaceholders(
+                    getReceivers().isEmpty() ? null : getReceivers().getFirst(),
+                    32,
+                    getPlaceholders()
+            );
 
-            if (t.length() > 32) {
-                t = t.substring(0, 32);
+            if (newTitle.equals(this.displayNameComp.getString())) {
+                return false;
             }
-            return IChatBaseComponent.b(t);
+            this.displayNameComp = IChatBaseComponent.d(newTitle);
+            return true;
+        }
+
+        @Override
+        public IChatBaseComponent d() {
+            return displayNameComp;
         }
 
         @Override
@@ -92,7 +100,7 @@ public class SidebarImpl extends WrappedSidebar {
 
         @Override
         public IChatBaseComponent e() {
-            return IChatBaseComponent.b((this.d().toString()));
+            return d();
 
         }
 
@@ -126,7 +134,7 @@ public class SidebarImpl extends WrappedSidebar {
     public class NarniaScoreLine extends ScoreboardScore implements ScoreLine, Comparable<ScoreLine> {
 
         private int score;
-        private String prefix = " ", suffix = "";
+        private IChatMutableComponent prefix = IChatBaseComponent.b(""), suffix = IChatBaseComponent.b("");
         private final TeamLine team;
         private SidebarLine text;
 
@@ -135,12 +143,6 @@ public class SidebarImpl extends WrappedSidebar {
             this.score = score;
             this.text = text;
             this.team = new TeamLine(color);
-
-
-            SidebarLine.markHasPlaceholders(text, getPlaceholders());
-
-            //noinspection ResultOfMethodCallIgnored
-            setContent(parsePlaceholders(text));
         }
 
         @Override
@@ -210,35 +212,37 @@ public class SidebarImpl extends WrappedSidebar {
         }
 
         @Contract(pure = true)
-        public boolean setContent(@NotNull String content) {
-            if (!getReceivers().isEmpty()) {
-                content = SidebarManager.getInstance().getPapiSupport().replacePlaceholders(getReceivers().get(0), content);
-            }
+        public boolean setContent(@NotNull SidebarLine line) {
+            String content = line.getTrimReplacePlaceholders(
+                    getReceivers().isEmpty() ? null : getReceivers().getFirst(),
+                    null,
+                    getPlaceholders()
+            );
             var oldPrefix = this.prefix;
             var oldSuffix = this.suffix;
 
             if (content.length() > 16) {
-                this.prefix = content.substring(0, 16);
-                if (this.prefix.charAt(15) == ChatColor.COLOR_CHAR) {
-                    this.prefix = content.substring(0, 15);
+                this.prefix = IChatBaseComponent.b(content.substring(0, 16));
+                if (this.prefix.getString().charAt(15) == ChatColor.COLOR_CHAR) {
+                    this.prefix = IChatBaseComponent.b(content.substring(0, 15));
                     setSuffix(content.substring(15));
                 } else {
                     setSuffix(content.substring(16));
                 }
             } else {
-                this.prefix = content;
-                this.suffix = "";
+                this.prefix = IChatBaseComponent.b(content);
+                this.suffix = IChatBaseComponent.b("");
             }
             return !oldPrefix.equals(this.prefix) || !oldSuffix.equals(this.suffix);
         }
 
         public void setSuffix(@NotNull String secondPart) {
             if (secondPart.isEmpty()) {
-                this.suffix = "";
+                this.suffix = IChatBaseComponent.b("");
                 return;
             }
-            secondPart = org.bukkit.ChatColor.getLastColors(this.prefix) + secondPart;
-            this.suffix = secondPart.length() > 16 ? secondPart.substring(0, 16) : secondPart;
+            secondPart = org.bukkit.ChatColor.getLastColors(this.prefix.getString()) + secondPart;
+            this.suffix = IChatBaseComponent.b(secondPart.length() > 16 ? secondPart.substring(0, 16) : secondPart);
         }
 
         public void sendUpdateToAllReceivers() {
@@ -279,6 +283,11 @@ public class SidebarImpl extends WrappedSidebar {
             return team.b().charAt(0) == ChatColor.COLOR_CHAR ? team.b() : ChatColor.COLOR_CHAR + team.b();
         }
 
+        @Override
+        public boolean refreshContent() {
+            return setContent(getLine());
+        }
+
         private class TeamLine extends ScoreboardTeam {
 
             public TeamLine(String color) {
@@ -288,7 +297,7 @@ public class SidebarImpl extends WrappedSidebar {
 
             @Override
             public IChatBaseComponent e() {
-                return IChatBaseComponent.b(prefix);
+                return prefix;
             }
 
             @Override
@@ -301,7 +310,7 @@ public class SidebarImpl extends WrappedSidebar {
 
             @Override
             public IChatBaseComponent f() {
-                return IChatBaseComponent.b(suffix);
+                return suffix;
             }
 
             @Override
@@ -324,9 +333,10 @@ public class SidebarImpl extends WrappedSidebar {
             public void a(EnumChatFormat var0) {
             }
 
+            @Contract("_ -> new")
             @Override
-            public IChatMutableComponent d(IChatBaseComponent var0) {
-                return IChatBaseComponent.b(prefix + var0 + suffix);
+            public @NotNull IChatMutableComponent d(IChatBaseComponent var0) {
+                return IChatBaseComponent.b(prefix.getString() + var0 + suffix.getString());
             }
         }
     }
