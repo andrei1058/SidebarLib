@@ -40,7 +40,7 @@ public class SidebarImpl extends WrappedSidebar {
     protected class NarniaSidebarObjective extends ScoreboardObjective implements SidebarObjective {
 
         private SidebarLine displayName;
-        private IChatMutableComponent displayNameComp;
+        private IChatMutableComponent displayNameComp = IChatBaseComponent.b("");
         private final int type;
 
         public NarniaSidebarObjective(String name, IScoreboardCriteria criteria, SidebarLine displayName, int type) {
