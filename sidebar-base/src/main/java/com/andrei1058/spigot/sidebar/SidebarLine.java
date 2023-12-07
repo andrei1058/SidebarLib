@@ -2,6 +2,7 @@ package com.andrei1058.spigot.sidebar;
 
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -79,6 +80,14 @@ public abstract class SidebarLine {
      */
     public String getTrimReplacePlaceholders(@Nullable Player papiSubject, @Nullable Integer limit, Collection<PlaceholderProvider> placeholders) {
         return getTrimReplacePlaceholders(this.getLine(), papiSubject, limit, placeholders);
+    }
+
+    @ApiStatus.Experimental
+    public String getTrimReplacePlaceholdersScore(@Nullable Player papiSubject, @Nullable Integer limit, Collection<PlaceholderProvider> placeholders) {
+        if (this instanceof ScoredLine) {
+            return getTrimReplacePlaceholders(((ScoredLine) this).getScore(), papiSubject, limit, placeholders);
+        }
+        return "";
     }
 
     public static @NotNull String getTrimReplacePlaceholders(String scope, @Nullable Player papiSubject, @Nullable Integer limit, Collection<PlaceholderProvider> placeholders) {
