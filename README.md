@@ -208,6 +208,9 @@ public class MyPlugin extends JavaPlugin implements Listener {
 }
 ```
 
+## Experimental
+Since 1.20.3 we can replace sidebar score numbers with string placeholders. You can use our experimental feature by implementing **ScoredLine**.
+
 ### Maven repository
 
 ```xml
