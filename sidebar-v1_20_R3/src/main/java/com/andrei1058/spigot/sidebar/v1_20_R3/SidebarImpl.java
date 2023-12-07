@@ -154,7 +154,11 @@ public class SidebarImpl extends WrappedSidebar {
                     getSidebarObjective().getName(),
                     score,
                     null,
-                    new FixedFormat(IChatBaseComponent.b(""))
+                    new FixedFormat(IChatBaseComponent.b(text.getTrimReplacePlaceholdersScore(
+                            getReceivers().isEmpty() ? null : getReceivers().getFirst(),
+                            null,
+                            getPlaceholders()
+                    )))
             );
             getReceivers().forEach(r -> ((CraftPlayer) r).getHandle().c.b(packetPlayOutScoreboardScore));
         }
@@ -188,7 +192,11 @@ public class SidebarImpl extends WrappedSidebar {
                     getSidebarObjective().getName(),
                     this.getScoreAmount(),
                     null,
-                    new FixedFormat(IChatBaseComponent.b(""))
+                    new FixedFormat(IChatBaseComponent.b(text.getTrimReplacePlaceholdersScore(
+                            getReceivers().isEmpty() ? null : getReceivers().getFirst(),
+                            null,
+                            getPlaceholders()
+                    )))
             );
             getReceivers().forEach(p -> ((CraftPlayer) p).getHandle().c.b(packetPlayOutScoreboardScore));
         }
@@ -204,7 +212,11 @@ public class SidebarImpl extends WrappedSidebar {
                     getSidebarObjective().getName(),
                     this.getScoreAmount(),
                     null,
-                    new FixedFormat(IChatBaseComponent.b(""))
+                    new FixedFormat(IChatBaseComponent.b(text.getTrimReplacePlaceholdersScore(
+                            getReceivers().isEmpty() ? null : getReceivers().getFirst(),
+                            null,
+                            getPlaceholders()
+                    )))
             );
             conn.b(packetPlayOutScoreboardScore);
         }
