@@ -2,6 +2,10 @@
 This is a NMS based scoreboard library for Minecraft plugins (spigot, paper).  
 [![Discord](https://discordapp.com/api/guilds/201345265821679617/widget.png?style=shield)](https://discord.gg/XdJfN2X)
 
+**NOTICE:** Sidebar scores were removed from the right side in sidebar-v_1_20_R3.
+
+![image](.github/sidebar_1.20.3.png)
+
 ### Project structure
 This project is divided in several modules:
 - `sidebar-base` main API of this library
@@ -13,6 +17,8 @@ This project is divided in several modules:
 - `sidebar-v_1_19_R2` provides support for 1.19.2 (R2)
 - `sidebar-v_1_19_R3` provides support for 1.19.4 (R3)
 - `sidebar-v_1_20_R1` provides support for 1.20 (R1)
+- `sidebar-v_1_20_R2` provides support for 1.20.2 (R2)
+- `sidebar-v_1_20_R3` provides support for 1.20.3 (R3)
 
 ### IMPORTANT
 It is really important to call Sidebar#remove(player) when a player leaves the server to avoid memory leaks.
