@@ -189,7 +189,7 @@ public class MyPlugin extends JavaPlugin implements Listener {
                 20L, healthTextRefreshInTicks
         );
         
-        // to refresh tab formatting (in case of animated lines)
+        // to refresh tab (player-list) formatting (in case of animated lines)
         Bukkit.getScheduler().runTaskTimer(this,
                 ()-> sb.getHandle().playerTabRefreshAnimation(),
                 20L, tabUpdateInTicks
@@ -206,6 +206,46 @@ public class MyPlugin extends JavaPlugin implements Listener {
         sidebars.add(new MySidebar(event.getPlayer()));
     }
 }
+```
+
+## Creating a more advance tab header-footer
+```java
+// on server start
+SidebarManager sidebarHandler = SidebarManager.init();
+
+// tab logic
+LinkedList<SidebarLine> headers = new LinkedList<>();
+LinkedList<SidebarLine> footers = new LinkedList<>();
+
+headers.add(new SidebarLineAnimated(new String[]{
+    ChatColor.RED+"AAAAAAA",
+    ChatColor.BLUE+"BBBBBBB"
+));
+headers.add(new SidebarLine() {@Override
+    public @NotNull String getLine() {
+        return "This is static";
+    }
+});
+
+footers.add(new SidebarLineAnimated(new String[]{
+    ChatColor.YELLOW+"CCCCCC",
+    ChatColor.AQUA+"DDDDDD"
+));
+
+LinkedList<PlaceholderProvider> placeholders = new LinkedList<>();
+placeholders.add(new PlaceholderProvider("{server}", () -> "andrei1058.dev"));
+
+TabHeaderFooter tab = new TabHeaderFooter(headers, footers, placeholders);
+
+// apply to player
+sidebarHandler.sendHeaderFooter(player, tab);
+
+// refresh tabs (apply animations)
+Bukkit.getScheduler().runTaskTimer(this, () -> {
+    Bukkit.getOnlinePlayers().forEach(player -> {
+        sidebarHandler.sendHeaderFooter(player, tab);
+    });
+}, 1L, 10L);
 ```
 
 ## Experimental
