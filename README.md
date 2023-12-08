@@ -208,7 +208,7 @@ public class MyPlugin extends JavaPlugin implements Listener {
 }
 ```
 
-## Creating a more advance tab header-footer
+## Creating a more advanced tab header-footer
 ```java
 // on server start
 SidebarManager sidebarHandler = SidebarManager.init();
