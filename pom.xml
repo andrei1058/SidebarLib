@@ -10,6 +10,7 @@
     <version>23.12.1-SNAPSHOT</version>
     <modules>
         <module>sidebar-base</module>
+        <module>sidebar-v1_20_R4</module>
         <module>sidebar-v1_20_R3</module>
         <module>sidebar-v1_20_R2</module>
         <module>sidebar-v1_20_R1</module>
