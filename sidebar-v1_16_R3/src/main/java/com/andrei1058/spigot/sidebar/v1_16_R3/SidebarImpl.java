@@ -1,4 +1,4 @@
-package com.andrei1058.spigot.sidebar.v1_16_R1;
+package com.andrei1058.spigot.sidebar.v1_16_R3;
 
 import com.andrei1058.spigot.sidebar.*;
 import net.minecraft.server.v1_16_R3.*;
