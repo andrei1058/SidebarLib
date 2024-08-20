@@ -20,7 +20,7 @@ This project is divided in several modules:
 - `sidebar-v_1_20_R2` provides support for 1.20.2 (R2)
 - `sidebar-v_1_20_R3` provides support for 1.20.3 (R3)
 - `sidebar-v_1_20_R4` provides support for 1.20.4 (R4). Requires `sidebar-v_1_20_R3`.
-- `sidebar-v_1_21_R1` provides support for 1.21.1 (R1). Requires `sidebar-cmn1`.
+- `sidebar-v_1_21_R1` provides support for 1.21.1 (R1). Requires `sidebar-cmn1`. **UNTESTED**
 
 ### IMPORTANT
 It is really important to call Sidebar#remove(player) when a player leaves the server to avoid memory leaks.
@@ -273,7 +273,7 @@ Since 1.20.3 we can replace sidebar score numbers with string placeholders. You 
     <dependency>
         <groupId>com.andrei1058.spigot.sidebar</groupId>
         <artifactId>sidebar-base</artifactId>
-        <version>24.1</version> // make sure this is the latest
+        <version>24.8</version> // make sure this is the latest
         <scope>compile</scope>
     </dependency>
     
