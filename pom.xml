@@ -7,9 +7,10 @@
     <groupId>com.andrei1058.spigot.sidebar</groupId>
     <artifactId>sidebar-pom</artifactId>
     <packaging>pom</packaging>
-    <version>23.12.1-SNAPSHOT</version>
+    <version>24.8-SNAPSHOT</version>
     <modules>
         <module>sidebar-base</module>
+        <module>sidebar-v1_21_R1</module>
         <module>sidebar-v1_20_R4</module>
         <module>sidebar-v1_20_R3</module>
         <module>sidebar-v1_20_R2</module>
@@ -21,6 +22,7 @@
         <module>sidebar-v1_16_R3</module>
         <module>sidebar-v1_12_R1</module>
         <module>sidebar-v1_8_R3</module>
+        <module>sidebar-cmn1</module>
     </modules>
 
     <repositories>
