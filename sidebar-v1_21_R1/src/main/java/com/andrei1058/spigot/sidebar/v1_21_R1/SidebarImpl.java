@@ -156,7 +156,7 @@ public class SidebarImpl extends WrappedSidebar {
                     getColor(),
                     getSidebarObjective().getName(),
                     score,
-                    null,
+                    Optional.empty(),
                     Optional.of(new FixedFormat(IChatBaseComponent.b(text.getTrimReplacePlaceholdersScore(
                             getReceivers().isEmpty() ? null : getReceivers().getFirst(),
                             null,
@@ -194,7 +194,7 @@ public class SidebarImpl extends WrappedSidebar {
                     this.getColor(),
                     getSidebarObjective().getName(),
                     this.getScoreAmount(),
-                    null,
+                    Optional.empty(),
                     Optional.of(new FixedFormat(IChatBaseComponent.b(text.getTrimReplacePlaceholdersScore(
                             getReceivers().isEmpty() ? null : getReceivers().getFirst(),
                             null,
@@ -214,7 +214,7 @@ public class SidebarImpl extends WrappedSidebar {
                     this.getColor(),
                     getSidebarObjective().getName(),
                     this.getScoreAmount(),
-                    null,
+                    Optional.empty(),
                     Optional.of(new FixedFormat(IChatBaseComponent.b(text.getTrimReplacePlaceholdersScore(
                             getReceivers().isEmpty() ? null : getReceivers().getFirst(),
                             null,

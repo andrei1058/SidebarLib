@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.Optional;
 
 @SuppressWarnings("unused")
 public class ProviderImpl extends SidebarProvider {
@@ -39,8 +40,8 @@ public class ProviderImpl extends SidebarProvider {
                 sidebar.getHealthObjective().getName(),
                 playerName,
                 score,
-                null,
-                null
+                Optional.empty(),
+                Optional.empty()
         );
         for (Player player : sidebar.getReceivers()) {
             PlayerConnection playerConnection = ((CraftPlayer) player).getHandle().c;

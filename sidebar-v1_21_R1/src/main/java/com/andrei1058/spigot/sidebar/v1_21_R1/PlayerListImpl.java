@@ -33,7 +33,6 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
     ) {
         super(null, identifier);
         handle = new PlayerListImplCmn1(
-                this,
                 sidebar,
                 identifier,
                 prefix,
@@ -44,10 +43,16 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
         );
 
         if (null == cachedScoreboardActionA) {
-            cachedScoreboardActionA = (PacketPlayOutScoreboardTeam.a) getScoreboardAction("a");
+            cachedScoreboardActionA = (PacketPlayOutScoreboardTeam.a) getScoreboardAction("ADD");
+            if (null == cachedScoreboardActionA){
+                cachedScoreboardActionA = (PacketPlayOutScoreboardTeam.a) getScoreboardAction("a");
+            }
         }
         if (null == cachedScoreboardActionB) {
-            cachedScoreboardActionB = (PacketPlayOutScoreboardTeam.a) getScoreboardAction("b");
+            cachedScoreboardActionB = (PacketPlayOutScoreboardTeam.a) getScoreboardAction("REMOVE");
+            if (null == cachedScoreboardActionB) {
+                cachedScoreboardActionB = (PacketPlayOutScoreboardTeam.a) getScoreboardAction("b");
+            }
         }
     }
 
@@ -116,12 +121,7 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
 
     @Override
     public void setPushingRule(@NotNull PushingRule rule) {
-        switch (rule) {
-            case NEVER -> this.handle.setPushingRule(EnumTeamPush.b);
-            case ALWAYS -> this.handle.setPushingRule(EnumTeamPush.a);
-            case PUSH_OTHER_TEAMS -> this.handle.setPushingRule(EnumTeamPush.c);
-            case PUSH_OWN_TEAM -> this.handle.setPushingRule(EnumTeamPush.d);
-        }
+        this.handle.setPushingRule(this.handle.toNmsPushing(rule));
         if (null != this.handle.getId()) {
             sendUpdateToReceivers();
         }
@@ -129,12 +129,7 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
 
     @Override
     public void setNameTagVisibility(@NotNull NameTagVisibility nameTagVisibility) {
-        switch (nameTagVisibility) {
-            case NEVER -> this.handle.setNameTagVisibility(EnumNameTagVisibility.b);
-            case ALWAYS -> this.handle.setNameTagVisibility(EnumNameTagVisibility.a);
-            case HIDE_FOR_OTHER_TEAMS -> this.handle.setNameTagVisibility(EnumNameTagVisibility.c);
-            case HIDE_FOR_OWN_TEAM -> this.handle.setNameTagVisibility(EnumNameTagVisibility.d);
-        }
+        this.handle.setNameTagVisibility(this.handle.toNmsTagVisibility(nameTagVisibility));
         if (null != this.handle.getId()){
             sendUpdateToReceivers();
         }
@@ -147,7 +142,7 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
 
     private static Object getScoreboardAction(String action) {
         try {
-            Class<?> cls = Class.forName("net.minecraft.network.protocol.game.PacketPlayOutScoreboardTeam.a");
+            Class<?> cls = Class.forName("net.minecraft.network.protocol.game.PacketPlayOutScoreboardTeam$a");
             for (Object obj : cls.getEnumConstants()) {
                 try {
                     Method m = cls.getMethod("name");
@@ -156,10 +151,11 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
                         return obj;
                     }
                 } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ex) {
-                    System.out.println("could not find enum");
+                    //Bukkit.getConsoleSender().sendMessage(ChatColor.RED+"Could not find ENUM");
                 }
             }
         } catch (Exception exception) {
+//            exception.printStackTrace();
         }
         throw new RuntimeException("Something went wrong... please report this to SidebarLib by andrei1058");
     }

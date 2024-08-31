@@ -23,7 +23,6 @@ public class PlayerListImplCmn1 {
     private final Collection<PlaceholderProvider> placeholders;
 
     public PlayerListImplCmn1(
-            @NotNull VersionedTabGroup father,
             @NotNull WrappedSidebar sidebar,
             String identifier,
             SidebarLine prefix,
@@ -35,10 +34,28 @@ public class PlayerListImplCmn1 {
         this.suffix = suffix;
         this.prefix = prefix;
         this.sidebar = sidebar;
-        father.setPushingRule(pushingRule);
-        father.setNameTagVisibility(nameTagVisibility);
+        setPushingRule(toNmsPushing(pushingRule));
+        setNameTagVisibility(toNmsTagVisibility(nameTagVisibility));
         this.id = identifier;
         this.placeholders = placeholders;
+    }
+
+    public ScoreboardTeamBase.EnumTeamPush toNmsPushing(PlayerTab.@NotNull PushingRule rule) {
+        return switch (rule) {
+            case NEVER -> ScoreboardTeamBase.EnumTeamPush.b;
+            case ALWAYS -> ScoreboardTeamBase.EnumTeamPush.a;
+            case PUSH_OTHER_TEAMS -> ScoreboardTeamBase.EnumTeamPush.c;
+            case PUSH_OWN_TEAM -> ScoreboardTeamBase.EnumTeamPush.d;
+        };
+    }
+
+    public ScoreboardTeamBase.EnumNameTagVisibility toNmsTagVisibility(PlayerTab.@NotNull NameTagVisibility nameTagVisibility) {
+        return switch (nameTagVisibility) {
+            case NEVER -> ScoreboardTeamBase.EnumNameTagVisibility.b;
+            case ALWAYS -> ScoreboardTeamBase.EnumNameTagVisibility.a;
+            case HIDE_FOR_OTHER_TEAMS -> ScoreboardTeamBase.EnumNameTagVisibility.c;
+            case HIDE_FOR_OWN_TEAM -> ScoreboardTeamBase.EnumNameTagVisibility.d;
+        };
     }
 
 
