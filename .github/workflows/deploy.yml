@@ -9,9 +9,9 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: production
-      url: https://repo.andrei1058.com
+      url: https://repo.andrei1058.dev
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v2
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
