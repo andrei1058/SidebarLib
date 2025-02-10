@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.andrei1058.spigot.sidebar</groupId>
         <artifactId>sidebar-pom</artifactId>
-        <version>24.8-SNAPSHOT</version>
+        <version>25.2</version>
     </parent>
 
     <artifactId>sidebar-cmn1</artifactId>
