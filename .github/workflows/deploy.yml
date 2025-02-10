@@ -16,7 +16,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '21'
-          distribution: 'adopt'
+          distribution: 'temurin'
       - name: Deploy with Maven
         env:
           MVN_REPO_USER: ${{ secrets.MVN_REPO_USER }}
