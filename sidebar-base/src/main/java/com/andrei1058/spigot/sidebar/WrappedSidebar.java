@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class WrappedSidebar implements Sidebar {
+public abstract class WrappedSidebar implements Sidebar {
 
     // sidebar lines
     private final LinkedList<ScoreLine> lines = new LinkedList<>();

@@ -2,6 +2,10 @@
 This is a NMS based scoreboard library for Minecraft plugins (spigot, paper).  
 [![Discord](https://discordapp.com/api/guilds/201345265821679617/widget.png?style=shield)](https://discord.gg/XdJfN2X)
 
+**NOTICE:** Sidebar scores were removed from the right from version sidebar-v_1_20_R3.
+
+![image](.github/sidebar_1.20.3.png)
+
 ### Project structure
 This project is divided in several modules:
 - `sidebar-base` main API of this library
@@ -13,6 +17,10 @@ This project is divided in several modules:
 - `sidebar-v_1_19_R2` provides support for 1.19.2 (R2)
 - `sidebar-v_1_19_R3` provides support for 1.19.4 (R3)
 - `sidebar-v_1_20_R1` provides support for 1.20 (R1)
+- `sidebar-v_1_20_R2` provides support for 1.20.2 (R2)
+- `sidebar-v_1_20_R3` provides support for 1.20.3 (R3)
+- `sidebar-v_1_20_R4` provides support for 1.20.4 (R4). Requires `sidebar-v_1_20_R3`.
+- `sidebar-v_1_21_R1` provides support for 1.21.1 (R1). Requires `sidebar-cmn1`.
 
 ### IMPORTANT
 It is really important to call Sidebar#remove(player) when a player leaves the server to avoid memory leaks.
@@ -183,7 +191,7 @@ public class MyPlugin extends JavaPlugin implements Listener {
                 20L, healthTextRefreshInTicks
         );
         
-        // to refresh tab formatting (in case of animated lines)
+        // to refresh tab (player-list) formatting (in case of animated lines)
         Bukkit.getScheduler().runTaskTimer(this,
                 ()-> sb.getHandle().playerTabRefreshAnimation(),
                 20L, tabUpdateInTicks
@@ -201,6 +209,49 @@ public class MyPlugin extends JavaPlugin implements Listener {
     }
 }
 ```
+
+## Creating a more advanced tab header-footer
+```java
+// on server start
+SidebarManager sidebarHandler = SidebarManager.init();
+
+// tab logic
+LinkedList<SidebarLine> headers = new LinkedList<>();
+LinkedList<SidebarLine> footers = new LinkedList<>();
+
+headers.add(new SidebarLineAnimated(new String[]{
+    ChatColor.RED+"AAAAAAA",
+    ChatColor.BLUE+"BBBBBBB"
+));
+headers.add(new SidebarLine() {@Override
+    public @NotNull String getLine() {
+        return "This is static";
+    }
+});
+
+footers.add(new SidebarLineAnimated(new String[]{
+    ChatColor.YELLOW+"CCCCCC",
+    ChatColor.AQUA+"DDDDDD"
+));
+
+LinkedList<PlaceholderProvider> placeholders = new LinkedList<>();
+placeholders.add(new PlaceholderProvider("{server}", () -> "andrei1058.dev"));
+
+TabHeaderFooter tab = new TabHeaderFooter(headers, footers, placeholders);
+
+// apply to player
+sidebarHandler.sendHeaderFooter(player, tab);
+
+// refresh tabs (apply animations)
+Bukkit.getScheduler().runTaskTimer(this, () -> {
+    Bukkit.getOnlinePlayers().forEach(player -> {
+        sidebarHandler.sendHeaderFooter(player, tab);
+    });
+}, 1L, 10L);
+```
+
+## Experimental
+Since 1.20.3 we can replace sidebar score numbers with string placeholders. You can use our experimental feature by implementing **ScoredLine**.
 
 ### Maven repository
 
@@ -222,7 +273,7 @@ public class MyPlugin extends JavaPlugin implements Listener {
     <dependency>
         <groupId>com.andrei1058.spigot.sidebar</groupId>
         <artifactId>sidebar-base</artifactId>
-        <version>version-here</version>
+        <version>24.8</version> // make sure this is the latest
         <scope>compile</scope>
     </dependency>
     

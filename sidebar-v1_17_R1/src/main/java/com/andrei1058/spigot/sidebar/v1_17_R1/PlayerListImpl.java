@@ -16,9 +16,9 @@ import java.util.Collection;
 
 public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup {
     private final SidebarLine prefix;
-    private ChatComponentText prefixComponent;
+    private ChatComponentText prefixComponent = new ChatComponentText("");
     private final SidebarLine suffix;
-    private ChatComponentText suffixComponent;
+    private ChatComponentText suffixComponent = new ChatComponentText("");
     private final WrappedSidebar sidebar;
     private final String id;
     private ScoreboardTeamBase.EnumNameTagVisibility nameTagVisibility;

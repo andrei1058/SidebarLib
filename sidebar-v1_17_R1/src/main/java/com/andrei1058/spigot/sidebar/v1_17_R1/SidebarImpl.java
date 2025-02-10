@@ -45,7 +45,7 @@ public class SidebarImpl extends WrappedSidebar {
     protected class NarniaSidebarObjective extends ScoreboardObjective implements SidebarObjective {
 
         private SidebarLine displayName;
-        private ChatComponentText displayNameComponent;
+        private ChatComponentText displayNameComponent = new ChatComponentText("");
         private final int type;
 
         public NarniaSidebarObjective(String name, IScoreboardCriteria criteria, SidebarLine displayName, int type) {
