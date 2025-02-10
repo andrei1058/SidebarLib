@@ -16,7 +16,7 @@ public class SidebarManager {
 
 
     private static SidebarManager instance;
-    private final SidebarProvider sidebarProvider;
+    private SidebarProvider sidebarProvider;
     private PAPISupport papiSupport = new PAPISupport() {
         @Override
         public String replacePlaceholders(Player p, String s) {
@@ -153,6 +153,10 @@ public class SidebarManager {
 
     public SidebarProvider getSidebarProvider() {
         return sidebarProvider;
+    }
+
+    public void setSidebarProvider(SidebarProvider sidebarProvider) {
+        this.sidebarProvider = sidebarProvider;
     }
 
     public static SidebarManager getInstance() {
