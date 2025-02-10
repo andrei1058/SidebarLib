@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-class PAPIAdapter implements PAPISupport {
+public class PAPIAdapter implements PAPISupport {
     @Override
     public String replacePlaceholders(Player p, String s) {
         return PlaceholderAPI.setPlaceholders(p, s);
