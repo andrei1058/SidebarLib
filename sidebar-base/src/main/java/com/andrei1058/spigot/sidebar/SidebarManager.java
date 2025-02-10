@@ -16,7 +16,6 @@ public class SidebarManager {
 
 
     private static SidebarManager instance;
-
     private final SidebarProvider sidebarProvider;
     private PAPISupport papiSupport = new PAPISupport() {
         @Override
@@ -148,11 +147,19 @@ public class SidebarManager {
         return papiSupport;
     }
 
+    public void setPapiSupport(PAPISupport papiSupport) {
+        this.papiSupport = papiSupport;
+    }
+
     public SidebarProvider getSidebarProvider() {
         return sidebarProvider;
     }
 
     public static SidebarManager getInstance() {
         return instance;
+    }
+
+    public static void setInstance(SidebarManager instance) {
+        SidebarManager.instance = instance;
     }
 }
