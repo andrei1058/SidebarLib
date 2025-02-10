@@ -30,6 +30,14 @@ public class SidebarManager {
         }
     };
 
+    public SidebarManager(
+            SidebarProvider provider,
+            PAPISupport papiSupport
+    ) {
+        this.sidebarProvider = provider;
+        this.papiSupport = papiSupport;
+    }
+
     public SidebarManager() throws InstantiationException {
         instance = this;
 
