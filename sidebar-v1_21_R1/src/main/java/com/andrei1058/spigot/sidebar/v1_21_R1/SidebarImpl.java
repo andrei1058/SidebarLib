@@ -42,11 +42,13 @@ public class SidebarImpl extends WrappedSidebar {
         private SidebarLine displayName;
         private IChatMutableComponent displayNameComp = IChatBaseComponent.b(" ");
         private final DisplaySlot type;
+        private final String internalName;
 
         public SidebarObjectiveImpl(String name, IScoreboardCriteria criteria, SidebarLine displayName, int type) {
             super(null, name, criteria, IChatBaseComponent.b(name), IScoreboardCriteria.EnumScoreboardHealthDisplay.a, false, null);
             this.displayName = displayName;
             this.type = DisplaySlot.values()[type];
+            this.internalName = name;
         }
 
         @Override
@@ -71,7 +73,7 @@ public class SidebarImpl extends WrappedSidebar {
 
         @Override
         public String getName() {
-            return this.b();
+            return internalName;
         }
 
         @Override
