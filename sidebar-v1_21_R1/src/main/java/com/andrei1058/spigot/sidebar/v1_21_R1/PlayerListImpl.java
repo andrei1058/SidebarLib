@@ -65,7 +65,7 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
     public void sendUserCreateToReceivers(@NotNull Player player) {
         // send 3: add entities to team
         PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(
-                this, player.getName(), (PacketPlayOutScoreboardTeam.a) cachedScoreboardActionA);
+                this, player.getName(), cachedScoreboardActionA);
         handle.getSidebar().getReceivers().forEach(
                 r -> sendPacket(r, packetPlayOutScoreboardTeam)
         );

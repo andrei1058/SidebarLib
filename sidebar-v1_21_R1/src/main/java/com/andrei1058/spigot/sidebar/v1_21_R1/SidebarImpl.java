@@ -40,15 +40,13 @@ public class SidebarImpl extends WrappedSidebar {
     protected class SidebarObjectiveImpl extends ScoreboardObjective implements SidebarObjective {
 
         private SidebarLine displayName;
-        private IChatMutableComponent displayNameComp = IChatBaseComponent.b(" ");
+        private IChatMutableComponent displayNameComp = IChatBaseComponent.b("");
         private final DisplaySlot type;
-        private final String internalName;
 
         public SidebarObjectiveImpl(String name, IScoreboardCriteria criteria, SidebarLine displayName, int type) {
             super(null, name, criteria, IChatBaseComponent.b(name), IScoreboardCriteria.EnumScoreboardHealthDisplay.a, false, null);
             this.displayName = displayName;
             this.type = DisplaySlot.values()[type];
-            this.internalName = name;
         }
 
         @Override
@@ -73,7 +71,7 @@ public class SidebarImpl extends WrappedSidebar {
 
         @Override
         public String getName() {
-            return internalName;
+            return super.b();
         }
 
         @Override
@@ -229,6 +227,7 @@ public class SidebarImpl extends WrappedSidebar {
         @Override
         public void sendRemove(Player player) {
             PlayerConnection conn = ((CraftPlayer) player).getHandle().c;
+            // var1=1 means remove
             PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(team);
             var resetScore = new ClientboundResetScorePacket(team.b(), getSidebarObjective().getName());
             conn.b(resetScore);
@@ -243,6 +242,7 @@ public class SidebarImpl extends WrappedSidebar {
         }
 
         public void sendUpdate(Player player) {
+            // false=2 is for update packet, true=0 for create
             PacketPlayOutScoreboardTeam packetTeamUpdate = PacketPlayOutScoreboardTeam.a(team, false);
             ((CraftPlayer) player).getHandle().c.b(packetTeamUpdate);
         }
@@ -282,6 +282,7 @@ public class SidebarImpl extends WrappedSidebar {
         }
 
         public void sendUpdateToAllReceivers() {
+            // false=2 is for update packet, true=0 for create
             PacketPlayOutScoreboardTeam packetTeamUpdate = PacketPlayOutScoreboardTeam.a(team, false);
             getReceivers().forEach(r -> ((CraftPlayer) r).getHandle().c.b(packetTeamUpdate));
         }
