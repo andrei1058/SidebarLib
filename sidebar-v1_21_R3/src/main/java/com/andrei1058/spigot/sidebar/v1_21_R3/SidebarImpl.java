@@ -1,4 +1,4 @@
-package com.andrei1058.spigot.sidebar.v1_21_R1;
+package com.andrei1058.spigot.sidebar.v1_21_R3;
 
 import com.andrei1058.spigot.sidebar.*;
 import net.md_5.bungee.api.ChatColor;
@@ -13,7 +13,7 @@ import net.minecraft.world.scores.ScoreboardObjective;
 import net.minecraft.world.scores.ScoreboardScore;
 import net.minecraft.world.scores.ScoreboardTeam;
 import net.minecraft.world.scores.criteria.IScoreboardCriteria;
-import org.bukkit.craftbukkit.v1_21_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_21_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -61,12 +61,12 @@ public class SidebarImpl extends WrappedSidebar {
 
         @Override
         public void sendCreate(Player player) {
-            this.sendCreate(((CraftPlayer) player).getHandle().c);
+            this.sendCreate(((CraftPlayer) player).getHandle().f);
         }
 
         @Override
         public void sendRemove(Player player) {
-            this.sendRemove(((CraftPlayer) player).getHandle().c);
+            this.sendRemove(((CraftPlayer) player).getHandle().f);
         }
 
         @Override
@@ -123,7 +123,7 @@ public class SidebarImpl extends WrappedSidebar {
         // must be called when updating the name
         public void sendUpdate() {
             PacketPlayOutScoreboardObjective packetPlayOutScoreboardObjective = new PacketPlayOutScoreboardObjective(this, 2);
-            getReceivers().forEach(player -> ((CraftPlayer) player).getHandle().c.b(packetPlayOutScoreboardObjective));
+            getReceivers().forEach(player -> ((CraftPlayer) player).getHandle().f.b(packetPlayOutScoreboardObjective));
         }
 
         public void sendRemove(@NotNull PlayerConnection playerConnection) {
@@ -163,7 +163,7 @@ public class SidebarImpl extends WrappedSidebar {
                             getPlaceholders()
                     ))))
             );
-            getReceivers().forEach(r -> ((CraftPlayer) r).getHandle().c.b(packetPlayOutScoreboardScore));
+            getReceivers().forEach(r -> ((CraftPlayer) r).getHandle().f.b(packetPlayOutScoreboardScore));
         }
 
         @Override
@@ -189,7 +189,7 @@ public class SidebarImpl extends WrappedSidebar {
         @Override
         public void sendCreateToAllReceivers() {
             PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(team, true);
-            getReceivers().forEach(p -> ((CraftPlayer) p).getHandle().c.b(packetPlayOutScoreboardTeam));
+            getReceivers().forEach(p -> ((CraftPlayer) p).getHandle().f.b(packetPlayOutScoreboardTeam));
             PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(
                     this.getColor(),
                     getSidebarObjective().getName(),
@@ -201,12 +201,12 @@ public class SidebarImpl extends WrappedSidebar {
                             getPlaceholders()
                     ))))
             );
-            getReceivers().forEach(p -> ((CraftPlayer) p).getHandle().c.b(packetPlayOutScoreboardScore));
+            getReceivers().forEach(p -> ((CraftPlayer) p).getHandle().f.b(packetPlayOutScoreboardScore));
         }
 
         @Override
         public void sendCreate(Player player) {
-            PlayerConnection conn = ((CraftPlayer) player).getHandle().c;
+            PlayerConnection conn = ((CraftPlayer) player).getHandle().f;
             PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(team, true);
             conn.b(packetPlayOutScoreboardTeam);
 
@@ -226,7 +226,7 @@ public class SidebarImpl extends WrappedSidebar {
 
         @Override
         public void sendRemove(Player player) {
-            PlayerConnection conn = ((CraftPlayer) player).getHandle().c;
+            PlayerConnection conn = ((CraftPlayer) player).getHandle().f;
             // var1=1 means remove
             PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(team);
             var resetScore = new ClientboundResetScorePacket(team.b(), getSidebarObjective().getName());
@@ -237,14 +237,14 @@ public class SidebarImpl extends WrappedSidebar {
         public void sendRemoveToAllReceivers() {
             PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(team);
             var resetScore = new ClientboundResetScorePacket(team.b(), getSidebarObjective().getName());
-            getReceivers().forEach(p -> ((CraftPlayer) p).getHandle().c.b(resetScore));
-            getReceivers().forEach(p -> ((CraftPlayer) p).getHandle().c.b(packetPlayOutScoreboardTeam));
+            getReceivers().forEach(p -> ((CraftPlayer) p).getHandle().f.b(resetScore));
+            getReceivers().forEach(p -> ((CraftPlayer) p).getHandle().f.b(packetPlayOutScoreboardTeam));
         }
 
         public void sendUpdate(Player player) {
             // false=2 is for update packet, true=0 for create
             PacketPlayOutScoreboardTeam packetTeamUpdate = PacketPlayOutScoreboardTeam.a(team, false);
-            ((CraftPlayer) player).getHandle().c.b(packetTeamUpdate);
+            ((CraftPlayer) player).getHandle().f.b(packetTeamUpdate);
         }
 
         @Contract(pure = true)
@@ -284,7 +284,7 @@ public class SidebarImpl extends WrappedSidebar {
         public void sendUpdateToAllReceivers() {
             // false=2 is for update packet, true=0 for create
             PacketPlayOutScoreboardTeam packetTeamUpdate = PacketPlayOutScoreboardTeam.a(team, false);
-            getReceivers().forEach(r -> ((CraftPlayer) r).getHandle().c.b(packetTeamUpdate));
+            getReceivers().forEach(r -> ((CraftPlayer) r).getHandle().f.b(packetTeamUpdate));
         }
 
         public int compareTo(@NotNull ScoreLine o) {
