@@ -2,11 +2,16 @@ package com.andrei1058.spigot.sidebar.v1_21_R1;
 
 import com.andrei1058.spigot.sidebar.*;
 import dev.andrei1058.spigot.sidebar.cmn1.PlayerListImplCmn1;
+import net.minecraft.network.chat.IChatBaseComponent;
+import net.minecraft.network.chat.IChatMutableComponent;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.PacketPlayOutScoreboardTeam;
 import net.minecraft.world.scores.ScoreboardTeam;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.v1_21_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -150,13 +155,25 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
                     if (action.equals(name)) {
                         return obj;
                     }
-                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ex) {
-                    //Bukkit.getConsoleSender().sendMessage(ChatColor.RED+"Could not find ENUM");
+                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {
                 }
             }
-        } catch (Exception exception) {
-//            exception.printStackTrace();
+        } catch (Exception ignored) {
         }
         throw new RuntimeException("Something went wrong... please report this to SidebarLib by andrei1058");
+    }
+
+    public @NotNull IChatBaseComponent e() {
+        return handle.getPrefixComp();
+    }
+
+    public @NotNull IChatBaseComponent f() {
+        return handle.getSuffixComp();
+    }
+
+    @Contract(value = "_ -> new", pure = true)
+    @Override
+    public @NotNull IChatMutableComponent d(IChatBaseComponent var0) {
+        return IChatBaseComponent.b(handle.getPrefixComp().toString() + var0.getString() + handle.getSuffixComp().toString());
     }
 }
