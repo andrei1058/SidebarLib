@@ -52,24 +52,24 @@
     </dependencies>
 
 
-<!--    <build>-->
-<!--        <extensions>-->
-<!--            <extension>-->
-<!--                <groupId>org.apache.maven.wagon</groupId>-->
-<!--                <artifactId>wagon-ftp</artifactId>-->
-<!--                <version>3.5.3</version>-->
-<!--            </extension>-->
-<!--        </extensions>-->
-<!--    </build>-->
+    <build>
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-ftp</artifactId>
+                <version>3.5.3</version>
+            </extension>
+        </extensions>
+    </build>
 
-<!--    <distributionManagement>-->
-<!--        <repository>-->
-<!--            <id>ftp-repo</id>-->
-<!--            <url>ftp://andrei1058.dev/releases</url>-->
-<!--        </repository>-->
-<!--        <snapshotRepository>-->
-<!--            <id>ftp-repo</id>-->
-<!--            <url>ftp://andrei1058.dev/snapshots</url>-->
-<!--        </snapshotRepository>-->
-<!--    </distributionManagement>-->
+    <distributionManagement>
+        <repository>
+            <id>ftp-repo</id>
+            <url>ftp://andrei1058.dev/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>ftp-repo</id>
+            <url>ftp://andrei1058.dev/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
