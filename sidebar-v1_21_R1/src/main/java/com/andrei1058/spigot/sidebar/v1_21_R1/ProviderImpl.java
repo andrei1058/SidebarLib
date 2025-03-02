@@ -37,8 +37,8 @@ public class ProviderImpl extends SidebarProvider {
     public void sendScore(@NotNull WrappedSidebar sidebar, String playerName, int score) {
         if (sidebar.getHealthObjective() == null) return;
         PacketPlayOutScoreboardScore packetPlayOutScoreboardScore = new PacketPlayOutScoreboardScore(
-                sidebar.getHealthObjective().getName(),
                 playerName,
+                sidebar.getHealthObjective().getName(),
                 score,
                 Optional.empty(),
                 Optional.empty()
