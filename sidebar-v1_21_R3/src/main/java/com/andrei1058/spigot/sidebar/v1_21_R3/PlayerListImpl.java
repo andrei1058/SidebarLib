@@ -1,4 +1,4 @@
-package com.andrei1058.spigot.sidebar.v1_21_R1;
+package com.andrei1058.spigot.sidebar.v1_21_R3;
 
 import com.andrei1058.spigot.sidebar.*;
 import dev.andrei1058.spigot.sidebar.cmn1.PlayerListImplCmn1;
@@ -7,9 +7,7 @@ import net.minecraft.network.chat.IChatMutableComponent;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.PacketPlayOutScoreboardTeam;
 import net.minecraft.world.scores.ScoreboardTeam;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.craftbukkit.v1_21_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_21_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -94,7 +92,7 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
     }
 
     private void sendPacket(Player player, Packet<?> packet) {
-        ((CraftPlayer) player).getHandle().c.b(packet);
+        ((CraftPlayer) player).getHandle().f.b(packet);
     }
 
     @Override
