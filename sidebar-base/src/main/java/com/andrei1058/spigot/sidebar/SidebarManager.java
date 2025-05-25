@@ -91,11 +91,16 @@ public class SidebarManager {
      */
     @SuppressWarnings("unused")
     public Sidebar createSidebar(
-            SidebarLine title,
+            @Nullable SidebarLine title,
             @NotNull Collection<SidebarLine> lines,
             Collection<PlaceholderProvider> placeholderProviders) {
         lines.forEach(sidebarLine -> SidebarLine.markHasPlaceholders(sidebarLine, placeholderProviders));
-        return sidebarProvider.createSidebar(title, lines, placeholderProviders);
+        return sidebarProvider.createSidebar(null == title ? new SidebarLine() {
+            @Override
+            public @NotNull String getLine() {
+                return "";
+            }
+        } : title, lines, placeholderProviders);
     }
 
     /**
