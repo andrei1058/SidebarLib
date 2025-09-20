@@ -290,9 +290,3 @@ Created with <3 by Andrei Dascălu (andrei1058)
 
 # Contact
 [![Discord Server](https://discordapp.com/api/guilds/201345265821679617/widget.png?style=banner3)](https://discord.gg/XdJfN2X)
-
-# Special Thanks To
-[<img src="https://user-images.githubusercontent.com/21148213/121807008-8ffc6700-cc52-11eb-96a7-2f6f260f8fda.png" alt="" width="150">](https://www.jetbrains.com)
-
-Jetbrains supports SidebarLib with their [Open Source Licenses](https://www.jetbrains.com/opensource/).
-
