@@ -7,9 +7,10 @@
     <groupId>com.andrei1058.spigot.sidebar</groupId>
     <artifactId>sidebar-pom</artifactId>
     <packaging>pom</packaging>
-    <version>25.2.2-SNAPSHOT</version>
+    <version>26.4</version>
     <modules>
         <module>sidebar-base</module>
+        <module>sidebar-v26_1_2</module>
         <module>sidebar-v1_21_R3</module>
         <module>sidebar-v1_21_R2</module>
         <module>sidebar-v1_21_R1</module>
@@ -35,6 +36,10 @@
         <repository>
             <id>placeholderapi</id>
             <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+        </repository>
+        <repository>
+            <id>nms</id>
+            <url>https://repo.codemc.io/repository/nms/</url>
         </repository>
     </repositories>
 
