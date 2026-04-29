@@ -48,6 +48,7 @@ public class SidebarManager {
         }
 
         // load server version support
+        /*
         String serverVersion = Bukkit.getServer().getClass().getName().split("\\.")[3];
 
         String className = "com.andrei1058.spigot.sidebar." + serverVersion + ".ProviderImpl";
@@ -58,6 +59,7 @@ public class SidebarManager {
                  InstantiationException | IllegalAccessException ignored) {
             throw new InstantiationException();
         }
+        */
     }
 
     /**
