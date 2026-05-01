@@ -21,6 +21,7 @@ public class PlayerListImpl extends PlayerTeam implements VersionedTabGroup {
     private final SidebarLine prefix;
     private final SidebarLine suffix;
     private final Collection<PlaceholderProvider> placeholders;
+    private final CompiledPlaceholders compiledPlaceholders;
     private Player papiSubject = null;
     private Component prefixComp = Component.literal(" ");
     private Component suffixComp = Component.literal(" ");
@@ -40,7 +41,8 @@ public class PlayerListImpl extends PlayerTeam implements VersionedTabGroup {
         this.prefix = prefix;
         this.suffix = suffix;
         this.placeholders = placeholders;
-        
+        this.compiledPlaceholders = new CompiledPlaceholders(placeholders);
+
         super.setCollisionRule(toNmsPushing(pushingRule));
         super.setNameTagVisibility(toNmsTagVisibility(nameTagVisibility));
     }
@@ -89,8 +91,8 @@ public class PlayerListImpl extends PlayerTeam implements VersionedTabGroup {
 
     @Override
     public boolean refreshContent() {
-        var newPrefix = prefix.getTrimReplacePlaceholders(papiSubject, 256, this.placeholders);
-        var newSuffix = suffix.getTrimReplacePlaceholders(papiSubject, 256, this.placeholders);
+        var newPrefix = prefix.getTrimReplacePlaceholders(papiSubject, 256, this.compiledPlaceholders);
+        var newSuffix = suffix.getTrimReplacePlaceholders(papiSubject, 256, this.compiledPlaceholders);
 
         if (newPrefix.equals(prefixComp.getString()) && newSuffix.equals(suffixComp.getString())) {
             return false;

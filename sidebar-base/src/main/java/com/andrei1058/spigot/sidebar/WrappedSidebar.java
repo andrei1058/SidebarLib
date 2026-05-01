@@ -16,6 +16,7 @@ public abstract class WrappedSidebar implements Sidebar {
     private final LinkedList<Player> receivers = new LinkedList<>();
     // placeholders for sidebar lines
     private final Collection<PlaceholderProvider> placeholderProviders = new ConcurrentLinkedQueue<>();
+    private volatile CompiledPlaceholders compiledPlaceholders;
     // chat colors used for line indexing -
     private final LinkedList<String> availableColors = new LinkedList<>();
     // sidebar lines objective
@@ -38,6 +39,7 @@ public abstract class WrappedSidebar implements Sidebar {
         }
 
         this.placeholderProviders.addAll(placeholderProvider);
+        this.compiledPlaceholders = new CompiledPlaceholders(this.placeholderProviders);
         for (SidebarLine line : lines) {
             SidebarLine.markHasPlaceholders(line, placeholderProvider);
         }
@@ -61,6 +63,7 @@ public abstract class WrappedSidebar implements Sidebar {
     public void addPlaceholder(PlaceholderProvider placeholderProvider) {
         placeholderProviders.remove(placeholderProvider);
         placeholderProviders.add(placeholderProvider);
+        this.compiledPlaceholders = new CompiledPlaceholders(this.placeholderProviders);
 
         ConcurrentLinkedQueue<PlaceholderProvider> placeholder = new ConcurrentLinkedQueue<>();
         placeholder.add(placeholderProvider);
@@ -145,11 +148,7 @@ public abstract class WrappedSidebar implements Sidebar {
 
     // refresh placeholders for the given line before sending it
 //    private String applyLinePlaceholders(@NotNull SidebarLine line) {
-//        String content = line.getLine();
-//        for (PlaceholderProvider pp : this.placeholderProviders) {
-//            content = content.replace(pp.getPlaceholder(), pp.getReplacement());
-//        }
-//        return content;
+//        return SidebarManager.replacePlaceholders(line.getLine(), this.placeholderProviders);
 //    }
 
 //    public ScoreLine applyPlaceholders(@NotNull ScoreLine line) {
@@ -240,6 +239,11 @@ public abstract class WrappedSidebar implements Sidebar {
     @Override
     public void removePlaceholder(String placeholder) {
         placeholderProviders.removeIf(p -> p.getPlaceholder().equalsIgnoreCase(placeholder));
+        this.compiledPlaceholders = new CompiledPlaceholders(this.placeholderProviders);
+    }
+
+    public CompiledPlaceholders getCompiledPlaceholders() {
+        return compiledPlaceholders;
     }
 
     @Override

@@ -14,6 +14,7 @@ public class TabHeaderFooter {
     private LinkedList<SidebarLine> header;
     private LinkedList<SidebarLine> footer;
     private Collection<PlaceholderProvider> placeholders;
+    private volatile CompiledPlaceholders compiledPlaceholders;
 
     /**
      * Create a new tab context.
@@ -37,6 +38,10 @@ public class TabHeaderFooter {
         return placeholders;
     }
 
+    public CompiledPlaceholders getCompiledPlaceholders() {
+        return compiledPlaceholders;
+    }
+
     public LinkedList<SidebarLine> getHeader() {
         return header;
     }
@@ -48,10 +53,12 @@ public class TabHeaderFooter {
     public void setPlaceholders(@Nullable Collection<PlaceholderProvider> placeholders) {
         if (null == placeholders) {
             this.placeholders = new ConcurrentLinkedQueue<>();
+            this.compiledPlaceholders = new CompiledPlaceholders(this.placeholders);
             return;
         }
 
         this.placeholders = placeholders;
+        this.compiledPlaceholders = new CompiledPlaceholders(this.placeholders);
         for (SidebarLine line : footer) {
             markHasPlaceholders(line, placeholders);
         }

@@ -23,6 +23,7 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
     private EnumNameTagVisibility nameTagVisibility;
     private Player papiSubject = null;
     private final Collection<PlaceholderProvider> placeholders;
+    private final CompiledPlaceholders compiledPlaceholders;
 
     public PlayerListImpl(@NotNull WrappedSidebar sidebar, String identifier, SidebarLine prefix, SidebarLine suffix,
                           PushingRule pushingRule, NameTagVisibility nameTagVisibility,
@@ -35,6 +36,7 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
         this.setNameTagVisibility(nameTagVisibility);
         this.id = identifier;
         this.placeholders = placeholders;
+        this.compiledPlaceholders = new CompiledPlaceholders(placeholders);
     }
 
     @Override
@@ -119,8 +121,8 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
 
     @Override
     public boolean refreshContent() {
-        String newPrefix = this.prefix.getTrimReplacePlaceholders(getSubject(), 16, this.placeholders);
-        String newSuffix = this.suffix.getTrimReplacePlaceholders(getSubject(), 16, this.placeholders);
+        String newPrefix = this.prefix.getTrimReplacePlaceholders(getSubject(), 16, this.compiledPlaceholders);
+        String newSuffix = this.suffix.getTrimReplacePlaceholders(getSubject(), 16, this.compiledPlaceholders);
 
         if (newPrefix.equals(prefixString) && newSuffix.equals(suffixString)) {
             return false;

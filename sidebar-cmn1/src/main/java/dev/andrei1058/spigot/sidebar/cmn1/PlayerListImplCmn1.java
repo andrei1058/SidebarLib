@@ -21,6 +21,7 @@ public class PlayerListImplCmn1 {
     private ScoreboardTeamBase.EnumNameTagVisibility nameTagVisibility = ScoreboardTeamBase.EnumNameTagVisibility.a;
     private Player papiSubject = null;
     private final Collection<PlaceholderProvider> placeholders;
+    private final CompiledPlaceholders compiledPlaceholders;
 
     public PlayerListImplCmn1(
             @NotNull WrappedSidebar sidebar,
@@ -38,6 +39,7 @@ public class PlayerListImplCmn1 {
         setNameTagVisibility(toNmsTagVisibility(nameTagVisibility));
         this.id = identifier;
         this.placeholders = placeholders;
+        this.compiledPlaceholders = new CompiledPlaceholders(placeholders);
     }
 
     public ScoreboardTeamBase.EnumTeamPush toNmsPushing(PlayerTab.@NotNull PushingRule rule) {
@@ -120,8 +122,8 @@ public class PlayerListImplCmn1 {
     }
 
     public boolean refreshContent() {
-        var newPrefix = prefix.getTrimReplacePlaceholders(papiSubject, 256, this.placeholders);
-        var newSuffix = suffix.getTrimReplacePlaceholders(papiSubject, 256, this.placeholders);
+        var newPrefix = prefix.getTrimReplacePlaceholders(papiSubject, 256, this.compiledPlaceholders);
+        var newSuffix = suffix.getTrimReplacePlaceholders(papiSubject, 256, this.compiledPlaceholders);
 
         if (newPrefix.equals(prefixComp.getString()) && newSuffix.equals(suffixComp.getString())) {
             return false;

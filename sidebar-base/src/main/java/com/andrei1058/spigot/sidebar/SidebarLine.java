@@ -47,26 +47,33 @@ public abstract class SidebarLine {
 
         if (text instanceof SidebarLineAnimated) {
             for (String line : ((SidebarLineAnimated) text).getLines()) {
-                if (SidebarManager.getInstance().getPapiSupport().hasPlaceholders(line)) {
-                    text.setPapiPlaceholders(true);
-                    break;
-                }
-                for (PlaceholderProvider provider : placeholders) {
-                    if (text.getLine().contains(provider.getPlaceholder())) {
-                        text.setInternalPlaceholders(true);
-                        break;
+                if (!text.isPapiPlaceholders()) {
+                    if (SidebarManager.getInstance().getPapiSupport().hasPlaceholders(line)) {
+                        text.setPapiPlaceholders(true);
                     }
+                }
+                if (!text.isInternalPlaceholders()) {
+                    for (PlaceholderProvider provider : placeholders) {
+                        if (line.contains(provider.getPlaceholder())) {
+                            text.setInternalPlaceholders(true);
+                            break;
+                        }
+                    }
+                }
+                if (text.isPapiPlaceholders() && text.isInternalPlaceholders()) {
+                    break;
                 }
             }
         } else {
-            for (PlaceholderProvider provider : placeholders) {
-                if (text.getLine().contains(provider.getPlaceholder())) {
-                    text.setInternalPlaceholders(true);
-                }
-            }
-
-            if (SidebarManager.getInstance().getPapiSupport().hasPlaceholders(text.getLine())) {
+            String line = text.getLine();
+            if (SidebarManager.getInstance().getPapiSupport().hasPlaceholders(line)) {
                 text.setPapiPlaceholders(true);
+            }
+            for (PlaceholderProvider provider : placeholders) {
+                if (line.contains(provider.getPlaceholder())) {
+                    text.setInternalPlaceholders(true);
+                    break;
+                }
             }
         }
     }
@@ -82,8 +89,27 @@ public abstract class SidebarLine {
         return getTrimReplacePlaceholders(this.getLine(), papiSubject, limit, placeholders);
     }
 
+    /**
+     * Use this for tab prefix-suffix or scoreboard title.
+     * @param papiSubject papi player subject.
+     * @param limit char limit.
+     * @param placeholders internal placeholders.
+     * @return parsed string.
+     */
+    public String getTrimReplacePlaceholders(@Nullable Player papiSubject, @Nullable Integer limit, CompiledPlaceholders placeholders) {
+        return getTrimReplacePlaceholders(this.getLine(), papiSubject, limit, placeholders);
+    }
+
     @ApiStatus.Experimental
     public String getTrimReplacePlaceholdersScore(@Nullable Player papiSubject, @Nullable Integer limit, Collection<PlaceholderProvider> placeholders) {
+        if (this instanceof ScoredLine) {
+            return getTrimReplacePlaceholders(((ScoredLine) this).getScore(), papiSubject, limit, placeholders);
+        }
+        return "";
+    }
+
+    @ApiStatus.Experimental
+    public String getTrimReplacePlaceholdersScore(@Nullable Player papiSubject, @Nullable Integer limit, CompiledPlaceholders placeholders) {
         if (this instanceof ScoredLine) {
             return getTrimReplacePlaceholders(((ScoredLine) this).getScore(), papiSubject, limit, placeholders);
         }
@@ -93,12 +119,23 @@ public abstract class SidebarLine {
     public static @NotNull String getTrimReplacePlaceholders(String scope, @Nullable Player papiSubject, @Nullable Integer limit, Collection<PlaceholderProvider> placeholders) {
         String t = scope;
         if (null != placeholders) {
-            for (PlaceholderProvider placeholderProvider : placeholders) {
-                if (t.contains(placeholderProvider.getPlaceholder())) {
-                    t = t.replace(placeholderProvider.getPlaceholder(), placeholderProvider.getReplacement());
-                }
-            }
+            t = SidebarManager.replacePlaceholders(t, placeholders);
         }
+        return getTrimReplacePlaceholdersAfterInternal(t, papiSubject, limit);
+    }
+
+    /**
+     * Use this for internal placeholders replacement with pre-compiled placeholders.
+     */
+    public static @NotNull String getTrimReplacePlaceholders(String scope, @Nullable Player papiSubject, @Nullable Integer limit, CompiledPlaceholders placeholders) {
+        String t = scope;
+        if (null != placeholders) {
+            t = SidebarManager.replacePlaceholders(t, placeholders);
+        }
+        return getTrimReplacePlaceholdersAfterInternal(t, papiSubject, limit);
+    }
+
+    private static String getTrimReplacePlaceholdersAfterInternal(String t, @Nullable Player papiSubject, @Nullable Integer limit) {
         if (null != papiSubject) {
             t = ChatColor.translateAlternateColorCodes('&',
                     SidebarManager.getInstance().getPapiSupport().replacePlaceholders(papiSubject, t)
