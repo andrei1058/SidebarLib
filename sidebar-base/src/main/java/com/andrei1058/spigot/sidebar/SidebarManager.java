@@ -132,9 +132,7 @@ public class SidebarManager {
                 currentLine = replacePlaceholders(currentLine, headerFooter.getCompiledPlaceholders());
             }
             if (line.isPapiPlaceholders()) {
-                currentLine = ChatColor.translateAlternateColorCodes(
-                        '&', SidebarManager.getInstance().getPapiSupport().replacePlaceholders(player, currentLine)
-                );
+                currentLine = SidebarManager.getInstance().getPapiSupport().replacePlaceholders(player, currentLine);
             }
             data[i] = currentLine;
         }

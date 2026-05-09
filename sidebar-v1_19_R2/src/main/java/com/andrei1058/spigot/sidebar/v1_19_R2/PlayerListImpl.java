@@ -6,6 +6,7 @@ import net.minecraft.network.chat.IChatMutableComponent;
 import net.minecraft.network.protocol.game.PacketPlayOutScoreboardTeam;
 import net.minecraft.world.scores.ScoreboardTeam;
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -102,6 +103,11 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
     }
 
     @Override
+    public void add(Entity entity) {
+
+    }
+
+    @Override
     public void sendCreateToPlayer(Player player) {
         PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(this, true);
         ((CraftPlayer) player).getHandle().b.a(packetPlayOutScoreboardTeam);
@@ -113,6 +119,11 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
                 this, player.getName(), PacketPlayOutScoreboardTeam.a.b
         );
         sidebar.getReceivers().forEach(r -> ((CraftPlayer) r).getHandle().b.a(packetPlayOutScoreboardTeam));
+    }
+
+    @Override
+    public void remove(Entity entity) {
+
     }
 
     @Override

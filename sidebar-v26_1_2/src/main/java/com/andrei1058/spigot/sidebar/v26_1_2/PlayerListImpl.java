@@ -2,11 +2,14 @@ package com.andrei1058.spigot.sidebar.v26_1_2;
 
 import com.andrei1058.spigot.sidebar.*;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundSetPlayerTeamPacket;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Team;
+import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,9 +45,6 @@ public class PlayerListImpl extends PlayerTeam implements VersionedTabGroup {
         this.suffix = suffix;
         this.placeholders = placeholders;
         this.compiledPlaceholders = new CompiledPlaceholders(placeholders);
-
-        super.setCollisionRule(toNmsPushing(pushingRule));
-        super.setNameTagVisibility(toNmsTagVisibility(nameTagVisibility));
     }
 
     private Team.CollisionRule toNmsPushing(PlayerTab.@NotNull PushingRule rule) {
@@ -98,8 +98,8 @@ public class PlayerListImpl extends PlayerTeam implements VersionedTabGroup {
             return false;
         }
 
-        this.prefixComp = Component.literal(newPrefix);
-        this.suffixComp = Component.literal(newSuffix);
+        this.prefixComp = ComponentUtil.fromColoredString(newPrefix);
+        this.suffixComp = ComponentUtil.fromColoredString(newSuffix);
         return true;
     }
 
@@ -109,16 +109,26 @@ public class PlayerListImpl extends PlayerTeam implements VersionedTabGroup {
 
     @Override
     public void add(@NotNull Player player) {
+        add((Entity) player);
+    }
+
+    @Override
+    public void add(@NotNull Entity entity) {
         ClientboundSetPlayerTeamPacket packet = ClientboundSetPlayerTeamPacket.createPlayerPacket(
-                this, player.getName(), ClientboundSetPlayerTeamPacket.Action.ADD
+                this, entity.getUniqueId().toString(), ClientboundSetPlayerTeamPacket.Action.ADD
         );
         sidebar.getReceivers().forEach(r -> sendPacket(r, packet));
     }
 
     @Override
     public void remove(@NotNull Player player) {
+        remove((Entity) player);
+    }
+
+    @Override
+    public void remove(@NotNull Entity entity) {
         ClientboundSetPlayerTeamPacket packet = ClientboundSetPlayerTeamPacket.createPlayerPacket(
-                this, player.getName(), ClientboundSetPlayerTeamPacket.Action.REMOVE
+                this, entity.getUniqueId().toString(), ClientboundSetPlayerTeamPacket.Action.REMOVE
         );
         sidebar.getReceivers().forEach(r -> sendPacket(r, packet));
     }
@@ -135,7 +145,7 @@ public class PlayerListImpl extends PlayerTeam implements VersionedTabGroup {
 
     @Override
     public void setPushingRule(@NotNull PushingRule rule) {
-        super.setCollisionRule(toNmsPushing(rule));
+        // todo
         if (null != this.id) {
             sendUpdateToReceivers();
         }
@@ -143,7 +153,7 @@ public class PlayerListImpl extends PlayerTeam implements VersionedTabGroup {
 
     @Override
     public void setNameTagVisibility(@NotNull NameTagVisibility nameTagVisibility) {
-        super.setNameTagVisibility(toNmsTagVisibility(nameTagVisibility));
+        // todo
         if (null != this.id){
             sendUpdateToReceivers();
         }

@@ -6,18 +6,18 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.numbers.FixedFormat;
+import net.minecraft.network.chat.numbers.NumberFormat;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.scores.DisplaySlot;
 import net.minecraft.world.scores.Objective;
 import net.minecraft.world.scores.PlayerTeam;
-import net.minecraft.world.scores.Team;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
+import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -85,7 +85,7 @@ public class SidebarImpl extends WrappedSidebar {
             if (newTitle.equals(displayNameComp.getString())) {
                 return false;
             }
-            this.displayNameComp = Component.literal(newTitle);
+            this.displayNameComp = ComponentUtil.fromColoredString(newTitle);
             return true;
         }
 
@@ -142,7 +142,7 @@ public class SidebarImpl extends WrappedSidebar {
                     getSidebarObjective().getName(),
                     score,
                     Optional.empty(),
-                    Optional.of(new FixedFormat(Component.literal(text.getTrimReplacePlaceholdersScore(
+                    Optional.of(new FixedFormat(ComponentUtil.fromColoredString(text.getTrimReplacePlaceholdersScore(
                             getReceivers().isEmpty() ? null : getReceivers().getFirst(),
                             null,
                             getPlaceholders()
@@ -175,7 +175,7 @@ public class SidebarImpl extends WrappedSidebar {
                     getSidebarObjective().getName(),
                     this.getScoreAmount(),
                     Optional.empty(),
-                    Optional.of(new FixedFormat(Component.literal(text.getTrimReplacePlaceholdersScore(
+                    Optional.of(new FixedFormat(ComponentUtil.fromColoredString(text.getTrimReplacePlaceholdersScore(
                             getReceivers().isEmpty() ? null : getReceivers().getFirst(),
                             null,
                             getPlaceholders()
@@ -195,7 +195,7 @@ public class SidebarImpl extends WrappedSidebar {
                     getSidebarObjective().getName(),
                     this.getScoreAmount(),
                     Optional.empty(),
-                    Optional.of(new FixedFormat(Component.literal(text.getTrimReplacePlaceholdersScore(
+                    Optional.of(new FixedFormat(ComponentUtil.fromColoredString(text.getTrimReplacePlaceholdersScore(
                             getReceivers().isEmpty() ? null : getReceivers().getFirst(),
                             null,
                             getPlaceholders()
@@ -236,15 +236,16 @@ public class SidebarImpl extends WrappedSidebar {
             );
 
             if (content.length() > 256) {
-                this.prefix = Component.literal(content.substring(0, 256));
+                this.prefix = ComponentUtil.fromColoredString(content.substring(0, 256));
+                int splitPoint = 256;
                 if (this.prefix.getString().charAt(255) == ChatColor.COLOR_CHAR) {
-                    this.prefix = Component.literal(content.substring(0, 255));
-                    setSuffix(content.substring(255));
-                } else {
-                    setSuffix(content.substring(256));
+                    this.prefix = ComponentUtil.fromColoredString(content.substring(0, 255));
+                    splitPoint = 255;
                 }
+                String lastColor = ComponentUtil.getLastColorCodeUpTo(content, splitPoint);
+                setSuffix(lastColor + content.substring(splitPoint));
             } else {
-                this.prefix = Component.literal(content);
+                this.prefix = ComponentUtil.fromColoredString(content);
                 this.suffix = Component.literal("");
             }
             return !oldPrefix.equals(this.prefix) || !oldSuffix.equals(this.suffix);
@@ -255,8 +256,7 @@ public class SidebarImpl extends WrappedSidebar {
                 this.suffix = Component.literal("");
                 return;
             }
-            secondPart = org.bukkit.ChatColor.getLastColors(this.prefix.getString()) + secondPart;
-            this.suffix = Component.literal(secondPart.length() > 256 ? secondPart.substring(0, 256) : secondPart);
+            this.suffix = ComponentUtil.fromColoredString(secondPart.length() > 256 ? secondPart.substring(0, 256) : secondPart);
         }
 
         public void sendUpdateToAllReceivers() {

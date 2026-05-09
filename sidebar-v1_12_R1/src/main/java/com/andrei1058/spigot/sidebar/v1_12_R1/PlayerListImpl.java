@@ -4,6 +4,7 @@ import com.andrei1058.spigot.sidebar.*;
 import net.minecraft.server.v1_12_R1.PacketPlayOutScoreboardTeam;
 import net.minecraft.server.v1_12_R1.ScoreboardTeam;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -86,6 +87,11 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
     }
 
     @Override
+    public void add(Entity entity) {
+
+    }
+
+    @Override
     public void sendCreateToPlayer(Player player) {
         PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = new PacketPlayOutScoreboardTeam(this, 0);
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packetPlayOutScoreboardTeam);
@@ -97,6 +103,11 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
                 this, Collections.singleton(player.getName()), 4
         );
         sidebar.getReceivers().forEach(r -> ((CraftPlayer) r).getHandle().playerConnection.sendPacket(packetPlayOutScoreboardTeam));
+    }
+
+    @Override
+    public void remove(Entity entity) {
+
     }
 
     @Override
