@@ -87,9 +87,21 @@ public class MySidebar {
                 ChatColor.GREEN + "Hello {player}",
                 ChatColor.LIGHT_PURPLE + "Hello {player}"
         }));
+        // a static line that rotates through multiple placeholder values
+        lines.add(new SidebarLine() {
+            @Override
+            public String getLine() {
+                return ChatColor.YELLOW + "Tip: {tip}";
+            }
+        });
         
         List<PlaceholderProvider> placeholders = new ArrayList<>();
         placeholders.add(new PlaceholderProvider("{player}", () -> receiver.getDisplayName()));
+        placeholders.add(new AlternatedPlaceholderProvider("{tip}",
+                () -> ChatColor.GOLD + "Mine blocks",
+                () -> ChatColor.GREEN + "Open crates",
+                () -> ChatColor.AQUA + "Visit spawn"
+        ));
         
         handle = MyPlugin.getSidebarManager().createSidebar(title, lines, placeholders);
         
@@ -140,6 +152,26 @@ public class MySidebar {
     }
 }
 ```
+
+## Alternated placeholders
+`AlternatedPlaceholderProvider` works like `PlaceholderProvider`, but rotates through multiple replacements.
+It accepts both static `String[]` values and lazy `Callable<String>` replacements, so you can compute each value right before it is rendered.
+
+The next value is selected every time the placeholder is parsed, which means it can be used anywhere internal placeholders are supported: sidebar titles, regular lines, animated lines, player tab formatting, and tab header/footer content.
+
+```java
+var tips = new AlternatedPlaceholderProvider("{tip}",
+        () -> "Mine blocks",
+        () -> "Open crates",
+        () -> "Visit spawn"
+);
+```
+
+Refresh guidance:
+- `Sidebar#refreshPlaceholders()` updates alternated placeholders in non-animated sidebar lines.
+- `Sidebar#refreshAnimatedLines()` also advances alternated placeholders used inside `SidebarLineAnimated`.
+- Re-sending tab header/footer or refreshing titles/tab animations re-parses alternated placeholders there as well.
+
 An example of how you can refresh and manage your sidebar.
 
 ```java
@@ -276,7 +308,7 @@ Since 1.20.3 we can replace sidebar score numbers with string placeholders. You 
     <dependency>
         <groupId>com.andrei1058.spigot.sidebar</groupId>
         <artifactId>sidebar-base</artifactId>
-        <version>26.4</version> // make sure this is the latest
+        <version>26.5-SNAPSHOT</version> // make sure this is the latest
         <scope>compile</scope>
     </dependency>
     
