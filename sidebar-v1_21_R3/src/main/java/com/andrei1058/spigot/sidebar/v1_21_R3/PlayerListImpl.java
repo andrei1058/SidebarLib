@@ -8,6 +8,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.PacketPlayOutScoreboardTeam;
 import net.minecraft.world.scores.ScoreboardTeam;
 import org.bukkit.craftbukkit.v1_21_R3.entity.CraftPlayer;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -97,17 +98,27 @@ public class PlayerListImpl extends ScoreboardTeam implements VersionedTabGroup 
 
     @Override
     public void add(@NotNull Player player) {
+        add((Entity) player);
+    }
+
+    @Override
+    public void add(@NotNull Entity entity) {
         PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(
-                this, player.getName(), cachedScoreboardActionA
+                this, entity.getUniqueId().toString(), cachedScoreboardActionA
         );
         handle.getSidebar().getReceivers().forEach(r -> sendPacket(r, packetPlayOutScoreboardTeam));
     }
 
     @Override
     public void remove(@NotNull Player player) {
+        remove((Entity) player);
+    }
+
+    @Override
+    public void remove(@NotNull Entity entity) {
         // send 4: remove entities from team
         PacketPlayOutScoreboardTeam packetPlayOutScoreboardTeam = PacketPlayOutScoreboardTeam.a(
-                this, player.getName(), cachedScoreboardActionB
+                this, entity.getUniqueId().toString(), cachedScoreboardActionB
         );
         handle.getSidebar().getReceivers().forEach(r -> sendPacket(r, packetPlayOutScoreboardTeam));
     }

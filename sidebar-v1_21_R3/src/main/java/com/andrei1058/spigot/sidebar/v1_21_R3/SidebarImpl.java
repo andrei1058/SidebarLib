@@ -79,7 +79,7 @@ public class SidebarImpl extends WrappedSidebar {
             var newTitle = displayName.getTrimReplacePlaceholders(
                     getReceivers().isEmpty() ? null : getReceivers().getFirst(),
                     256,
-                    getPlaceholders()
+                    getCompiledPlaceholders()
             );
 
             if (newTitle.equals(displayNameComp.getString())) {
@@ -254,7 +254,7 @@ public class SidebarImpl extends WrappedSidebar {
             String content = line.getTrimReplacePlaceholders(
                     getReceivers().isEmpty() ? null : getReceivers().getFirst(),
                     null,
-                    getPlaceholders()
+                    getCompiledPlaceholders()
             );
 
             if (content.length() > 256) {

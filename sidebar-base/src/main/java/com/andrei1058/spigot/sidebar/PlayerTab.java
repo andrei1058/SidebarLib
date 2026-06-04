@@ -1,5 +1,6 @@
 package com.andrei1058.spigot.sidebar;
 
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,10 +14,24 @@ public interface PlayerTab {
     void add(Player player);
 
     /**
+     * Add an entity to the tab-list formatting.
+     *
+     * @param entity the entity to be formatted.
+     */
+    void add(Entity entity);
+
+    /**
      * Remove the given player from tab-list formatting.
      * @param player to be removed.
      */
     void remove(Player player);
+
+    /**
+     * Removes the given entity from the tab-list formatting.
+     *
+     * @param entity the entity to be removed.
+     */
+    void remove(Entity entity);
 
     /**
      * PAPI subject.
