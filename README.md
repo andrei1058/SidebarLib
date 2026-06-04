@@ -294,11 +294,11 @@ Since 1.20.3 we can replace sidebar score numbers with string placeholders. You 
 <repositories>
     <repository>
         <id>andrei1058-snapshots</id>
-        <url>https://repo.andrei1058.dev/snapshots/</url>
+        <url>https://repo.andrei1058.com/snapshots/</url>
     </repository>
     <repository>
         <id>andrei1058-releases</id>
-        <url>https://repo.andrei1058.dev/releases/</url>
+        <url>https://repo.andrei1058.com/releases/</url>
     </repository>
 </repositories>
 ```

@@ -12,9 +12,9 @@
             </configuration>
         </server>
         <server>
-            <id>ftp-repo</id>
-            <username>${env.MVN_REPO_USER}</username>
-            <password>${env.MVN_REPO_PASS}</password>
+            <id>andrei1058-repo</id>
+            <username>token</username>
+            <password>${env.MVN_REPO_TOKEN}</password>
         </server>
     </servers>
 </settings>

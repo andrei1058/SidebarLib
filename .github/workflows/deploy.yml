@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: production
-      url: https://repo.andrei1058.dev
+      url: https://repo.andrei1058.com
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 21
@@ -19,8 +19,7 @@ jobs:
           distribution: 'temurin'
       - name: Deploy with Maven
         env:
-          MVN_REPO_USER: ${{ secrets.MVN_REPO_USER }}
-          MVN_REPO_PASS: ${{ secrets.MVN_REPO_PASS }}
+          MVN_REPO_TOKEN: ${{ secrets.MVN_REPO_TOKEN }}
           ANDEV_API_TOKEN: ${{ secrets.ANDEV_API_TOKEN }}
           J_DOCS_USER: ${{ secrets.J_DOCS_USER }}
           J_DOCS_PASS: ${{ secrets.J_DOCS_PASS }}
